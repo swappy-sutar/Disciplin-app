@@ -2,20 +2,28 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import routes from './routes';
 import { errorHandler } from './middlewares/error.middleware';
+import { responseFormatter } from './middlewares/response.middleware';
 import { NotFoundError } from './utils/custom-errors';
 import { env } from './config/env';
 
 const app = express();
 
-// Rate limiting for auth routes
-const authLimiter = rateLimit({
+// Global Response Formatter Middleware
+app.use(responseFormatter);
+
+// Secure app with Helmet headers
+app.use(helmet());
+
+// General API Rate Limiting (100 requests / 15 minutes)
+const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
   message: {
     success: false,
-    message: 'Too many requests from this IP, please try again after 15 minutes',
+    message: 'Too many requests, please try again after 15 minutes',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -32,11 +40,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Rate limit auth endpoints
-app.use('/api/v1/auth', authLimiter);
-
-// API Routes
-app.use('/api/v1', routes);
+// API Routes with general rate limiting
+app.use('/api/v1', apiLimiter, routes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

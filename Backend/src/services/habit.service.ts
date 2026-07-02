@@ -55,7 +55,8 @@ export const calculateStreaks = async (userId: string | Types.ObjectId, todayStr
       color: habit.color,
       isActive: habit.isActive,
       order: habit.order,
-      streak,
+      currentStreak: streak,
+      longestStreak: streak,
     };
   });
 };

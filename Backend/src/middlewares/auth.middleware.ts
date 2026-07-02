@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth-helpers';
-import { UnauthorizedError } from '../utils/custom-errors';
+import { UnauthorizedError, ForbiddenError } from '../utils/custom-errors';
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -18,7 +18,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     try {
       const decoded = verifyToken(token);
-      req.user = { id: decoded.userId };
+      req.user = { id: decoded.userId, role: decoded.role };
       next();
     } catch (err) {
       throw new UnauthorizedError('Not authorized, token failed');
@@ -26,4 +26,13 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   } catch (error) {
     next(error);
   }
+};
+
+export const restrictTo = (...allowedRoles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      throw new ForbiddenError('You do not have permission to perform this action');
+    }
+    next();
+  };
 };
