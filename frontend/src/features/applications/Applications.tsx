@@ -1,0 +1,519 @@
+import React, { useState } from 'react';
+import { useApplications } from '../../hooks/useApplications';
+import { useStore } from '../../app/store';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { PillBadge } from '../../components/ui/PillBadge';
+import { DotGrid } from '../../components/ui/DotGrid';
+import { Modal } from '../../components/ui/Modal';
+import { StatCard } from '../../components/ui/StatCard';
+import { format, parseISO } from 'date-fns';
+import { 
+  Search, 
+  Filter, 
+  Plus, 
+  Edit2, 
+  Trash2, 
+  Briefcase, 
+  CheckCircle, 
+  ChevronLeft, 
+  ChevronRight,
+  ExternalLink
+} from 'lucide-react';
+import type { ApplicationStatus, Application } from '../../types';
+
+export default function Applications() {
+  const { activeDate } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  
+  // Modals state
+  const [isAddOpen, setAddOpen] = useState(false);
+  const [isEditOpen, setEditOpen] = useState(false);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+
+  // Form states
+  const [company, setCompany] = useState('');
+  const [role, setRole] = useState('');
+  const [dateApplied, setDateApplied] = useState(activeDate);
+  const [status, setStatus] = useState<ApplicationStatus>('Applied');
+  const [link, setLink] = useState('');
+  const [notes, setNotes] = useState('');
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Queries
+  const { applications, isLoading, createApplication, updateApplication, deleteApplication } = useApplications();
+
+  if (isLoading) {
+    return <div className="p-8 text-center text-gray-500 animate-pulse select-none">Loading job logs...</div>;
+  }
+
+  // Filter application items
+  const filteredApps = applications.filter((app) => {
+    const matchesSearch = app.company.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          app.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (app.notes || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || app.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Pagination calculation
+  const totalPages = Math.ceil(filteredApps.length / itemsPerPage);
+  const paginatedApps = filteredApps.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Stats
+  const todayApps = applications.filter(a => a.dateApplied === activeDate);
+  const weekStart = new Date(activeDate);
+  const dayOffset = weekStart.getDay() || 7; // get current week Monday
+  weekStart.setDate(weekStart.getDate() - dayOffset + 1);
+  const weekStartStr = weekStart.toISOString().split('T')[0];
+  const weeklyCount = applications.filter(a => a.dateApplied >= weekStartStr).length;
+
+  const targetCount = 20;
+
+  const statusVariantMap: Record<ApplicationStatus, 'blue' | 'orange' | 'green' | 'pink' | 'gray'> = {
+    Applied: 'gray',
+    OA: 'orange',
+    Interview: 'blue',
+    Offer: 'green',
+    Rejected: 'pink',
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!company.trim() || !role.trim()) return;
+
+    await createApplication({
+      company,
+      role,
+      dateApplied,
+      status,
+      link: link || undefined,
+      notes: notes || undefined,
+    });
+
+    setCompany('');
+    setRole('');
+    setLink('');
+    setNotes('');
+    setAddOpen(false);
+  };
+
+  const handleEditClick = (app: Application) => {
+    setSelectedApp(app);
+    setCompany(app.company);
+    setRole(app.role);
+    setDateApplied(app.dateApplied);
+    setStatus(app.status);
+    setLink(app.link || '');
+    setNotes(app.notes || '');
+    setEditOpen(true);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedApp) return;
+    if (!company.trim() || !role.trim()) return;
+
+    await updateApplication({
+      id: selectedApp._id,
+      body: {
+        company,
+        role,
+        dateApplied,
+        status,
+        link: link || null,
+        notes: notes || null,
+      }
+    });
+
+    setCompany('');
+    setRole('');
+    setLink('');
+    setNotes('');
+    setEditOpen(false);
+    setSelectedApp(null);
+  };
+
+  return (
+    <div className="space-y-6 md:space-y-8 select-none">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-none">
+            Job Search Tracker
+          </h1>
+          <p className="text-sm font-medium text-gray-400 mt-2 select-none">
+            Manage your recruitment stages, follow-up dates, and active offers.
+          </p>
+        </div>
+        <Button 
+          icon={<Plus size={16} />} 
+          onClick={() => {
+            setDateApplied(activeDate);
+            setAddOpen(true);
+          }}
+          className="md:self-center select-none"
+        >
+          Add Application
+        </Button>
+      </div>
+
+      {/* Main Counter Indicator Widget */}
+      <Card className="p-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Daily Applications Goal</span>
+            <div className="flex items-baseline gap-2 select-none">
+              <span className="text-4xl font-black text-gray-900 leading-none">{todayApps.length} / {targetCount}</span>
+              <span className="text-sm text-gray-400 font-semibold select-none">Submitted today</span>
+            </div>
+            <p className="text-xs text-gray-400">Log application filings to fill your daily dot grid.</p>
+          </div>
+          
+          <div className="flex-1 md:max-w-md bg-gray-50/50 rounded-2xl p-4 border border-gray-100/50 flex flex-col justify-center">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2 select-none">
+              Progress Visualization
+            </span>
+            <DotGrid value={todayApps.length} target={targetCount} />
+          </div>
+        </div>
+      </Card>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
+        <StatCard 
+          label="Today's Logged Total" 
+          value={`${todayApps.length} Job Apps`} 
+          icon={<Briefcase size={20} />} 
+          iconBgColor="bg-blue-50 text-primary-blue"
+        />
+        
+        <StatCard 
+          label="Weekly Submitted" 
+          value={`${weeklyCount} Job Apps`} 
+          icon={<CheckCircle size={20} />} 
+          iconBgColor="bg-emerald-50 text-emerald-500 animate-pulse"
+          trendText="+34 vs last week"
+          trendDirection="up"
+        />
+
+        <StatCard 
+          label="Active Interview Tracks" 
+          value={`${applications.filter(a => a.status === 'Interview').length} Scheduled`} 
+          icon={<Edit2 size={20} />} 
+          iconBgColor="bg-purple-50 text-purple-500"
+        />
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 select-none">
+        
+        {/* Search */}
+        <div className="relative flex-1">
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
+            <Search size={16} />
+          </span>
+          <input
+            type="text"
+            placeholder="Search by company name, role title or notes..."
+            value={searchTerm}
+            onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:border-primary-blue shadow-sm font-medium"
+          />
+        </div>
+
+        {/* Status Dropdown Filter */}
+        <div className="relative min-w-[160px]">
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
+            <Filter size={14} />
+          </span>
+          <select
+            value={statusFilter}
+            onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+            className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:border-primary-blue shadow-sm font-semibold text-gray-700 cursor-pointer appearance-none animate-scale-up"
+          >
+            <option value="All">All Statuses</option>
+            <option value="Applied">Applied</option>
+            <option value="OA">OA</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none">
+            <ChevronRight size={14} className="transform rotate-90" />
+          </span>
+        </div>
+
+      </div>
+
+      {/* Applications Table Card */}
+      <Card title="Applications Log">
+        <div className="overflow-x-auto select-none">
+          <table className="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr className="border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="pb-3 text-left font-semibold">Company</th>
+                <th className="pb-3 text-left font-semibold">Role Title</th>
+                <th className="pb-3 text-left font-semibold">Date Logged</th>
+                <th className="pb-3 text-center font-semibold">Status Stage</th>
+                <th className="pb-3 text-left font-semibold">Notes / Details</th>
+                <th className="pb-3 text-center font-semibold">Links</th>
+                <th className="pb-3 text-right font-semibold pr-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {paginatedApps.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-12 text-gray-400 text-sm">
+                    No applications recorded matching this status. Add one above!
+                  </td>
+                </tr>
+              ) : (
+                paginatedApps.map((app) => (
+                  <tr key={app._id} className="text-xs text-gray-700 hover:bg-gray-50/30 transition-colors">
+                    <td className="py-3.5 font-bold select-none">{app.company}</td>
+                    <td className="py-3.5 font-medium text-gray-500 select-none">{app.role}</td>
+                    <td className="py-3.5 text-gray-400 font-semibold select-none">
+                      {format(parseISO(app.dateApplied), 'MMM d, yyyy')}
+                    </td>
+                    <td className="py-3.5 text-center select-none">
+                      <PillBadge variant={statusVariantMap[app.status]}>
+                        {app.status}
+                      </PillBadge>
+                    </td>
+                    <td className="py-3.5 max-w-[200px] truncate text-gray-500 font-medium select-none" title={app.notes || ''}>
+                      {app.notes || '—'}
+                    </td>
+                    <td className="py-3.5 text-center select-none">
+                      {app.link ? (
+                        <a 
+                          href={app.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex p-1.5 rounded-lg text-primary-blue hover:bg-blue-50 transition-colors cursor-pointer"
+                          aria-label="View application link"
+                        >
+                          <ExternalLink size={14} />
+                        </a>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 text-right pr-2 select-none">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleEditClick(app)}
+                          className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-all cursor-pointer"
+                          aria-label="Edit application"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => deleteApplication(app._id)}
+                          className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer"
+                          aria-label="Delete application"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination footer bar */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100 select-none">
+            <span className="text-xs text-gray-400 font-medium">
+              Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredApps.length)} of {filteredApps.length} applications
+            </span>
+            
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={15} />
+              </button>
+              <span className="text-xs font-semibold px-2 text-gray-700">{currentPage} / {totalPages}</span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={15} />
+              </button>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* Add Application Modal */}
+      <Modal isOpen={isAddOpen} onClose={() => setAddOpen(false)} title="Log Job Application">
+        <form onSubmit={handleCreate} className="space-y-4 font-medium select-none">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Company Name</label>
+              <input 
+                type="text" 
+                placeholder="Google"
+                value={company}
+                onChange={e => setCompany(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Role Title</label>
+              <input 
+                type="text" 
+                placeholder="Frontend Engineer"
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+                required
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Date Applied</label>
+              <input 
+                type="date" 
+                value={dateApplied}
+                onChange={e => setDateApplied(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status Stage</label>
+              <select
+                value={status}
+                onChange={e => setStatus(e.target.value as ApplicationStatus)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:border-primary-blue font-medium cursor-pointer"
+              >
+                <option value="Applied">Applied</option>
+                <option value="OA">OA</option>
+                <option value="Interview">Interview</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Posting link URL (Optional)</label>
+            <input 
+              type="url" 
+              placeholder="https://careers.google.com/jobs/..."
+              value={link}
+              onChange={e => setLink(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Notes (Optional)</label>
+            <textarea
+              placeholder="Referral from John Doe, recruiter follow-up scheduled"
+              rows={3}
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+            />
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Log Job Posting</Button>
+        </form>
+      </Modal>
+
+      {/* Edit Application Modal */}
+      <Modal isOpen={isEditOpen} onClose={() => { setEditOpen(false); setSelectedApp(null); }} title="Edit Application Details">
+        <form onSubmit={handleUpdate} className="space-y-4 font-medium select-none">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Company Name</label>
+              <input 
+                type="text" 
+                placeholder="Google"
+                value={company}
+                onChange={e => setCompany(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Role Title</label>
+              <input 
+                type="text" 
+                placeholder="Frontend Engineer"
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+                required
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Date Applied</label>
+              <input 
+                type="date" 
+                value={dateApplied}
+                onChange={e => setDateApplied(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status Stage</label>
+              <select
+                value={status}
+                onChange={e => setStatus(e.target.value as ApplicationStatus)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:border-primary-blue font-medium cursor-pointer"
+              >
+                <option value="Applied">Applied</option>
+                <option value="OA">OA</option>
+                <option value="Interview">Interview</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Posting link URL (Optional)</label>
+            <input 
+              type="url" 
+              placeholder="https://careers.google.com/jobs/..."
+              value={link}
+              onChange={e => setLink(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Notes (Optional)</label>
+            <textarea
+              placeholder="Referral from John Doe, recruiter follow-up scheduled"
+              rows={3}
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
+            />
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Save Changes</Button>
+        </form>
+      </Modal>
+
+    </div>
+  );
+}
