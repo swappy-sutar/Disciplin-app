@@ -15,6 +15,7 @@ import { RadialProgress } from '../../components/ui/RadialProgress';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DotGrid } from '../../components/ui/DotGrid';
 import { Modal } from '../../components/ui/Modal';
+import { Logo } from '../../components/ui/Logo';
 import { Link } from 'react-router-dom';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { CalendarPicker } from '../../components/ui/CalendarPicker';
@@ -156,74 +157,109 @@ export default function Overview() {
   const handleAddSlot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSlotTitle.trim()) return;
-    await createBlock({
-      title: `${newSlotTitle} [${newSlotCategory}]`,
-      startTime: newSlotStart,
-      endTime: newSlotEnd,
-      date: activeDate,
-    });
-    setNewSlotTitle('');
-    setAddTimetableOpen(false);
+    setSubmittingSlot(true);
+    try {
+      await createBlock({
+        title: `${newSlotTitle} [${newSlotCategory}]`,
+        startTime: newSlotStart,
+        endTime: newSlotEnd,
+        date: activeDate,
+      });
+      setNewSlotTitle('');
+      setAddTimetableOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingSlot(false);
+    }
   };
 
   const handleAddGoal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGoalTitle.trim()) return;
-    await createGoal({
-      title: newGoalTitle,
-      dueDay: newGoalDueDay || undefined,
-      weekStartDate: activeWeekStart,
-    });
-    setNewGoalTitle('');
-    setNewGoalDueDay('');
-    setAddGoalOpen(false);
+    setSubmittingGoal(true);
+    try {
+      await createGoal({
+        title: newGoalTitle,
+        dueDay: newGoalDueDay || undefined,
+        weekStartDate: activeWeekStart,
+      });
+      setNewGoalTitle('');
+      setNewGoalDueDay('');
+      setAddGoalOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingGoal(false);
+    }
   };
 
   const handleAddApplication = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAppName.trim() || !newAppRole.trim()) return;
-    await createApplication({
-      company: newAppName,
-      role: newAppRole,
-      status: newAppStatus,
-      link: newAppLink || undefined,
-      dateApplied: activeDate,
-    });
-    setNewAppName('');
-    setNewAppRole('');
-    setNewAppLink('');
-    setAddAppOpen(false);
+    setSubmittingApp(true);
+    try {
+      await createApplication({
+        company: newAppName,
+        role: newAppRole,
+        status: newAppStatus,
+        link: newAppLink || undefined,
+        dateApplied: activeDate,
+      });
+      setNewAppName('');
+      setNewAppRole('');
+      setNewAppLink('');
+      setAddAppOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingApp(false);
+    }
   };
 
   const handleAddTopic = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTopicTitle.trim() || !newTopicCategory.trim()) return;
-    const subTopics = newTopicSubtopics
-      .split('\n')
-      .filter(line => line.trim())
-      .map(line => ({ title: line.trim() }));
-      
-    await createTopic({
-      title: newTopicTitle,
-      category: newTopicCategory,
-      subTopics,
-    });
-    setNewTopicTitle('');
-    setNewTopicCategory('');
-    setNewTopicSubtopics('');
-    setAddTopicOpen(false);
+    setSubmittingTopic(true);
+    try {
+      const subTopics = newTopicSubtopics
+        .split('\n')
+        .filter(line => line.trim())
+        .map(line => ({ title: line.trim() }));
+        
+      await createTopic({
+        title: newTopicTitle,
+        category: newTopicCategory,
+        subTopics,
+      });
+      setNewTopicTitle('');
+      setNewTopicCategory('');
+      setNewTopicSubtopics('');
+      setAddTopicOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingTopic(false);
+    }
   };
 
   const handleAddCustomQuote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customQuoteText.trim()) return;
-    await addQuote({
-      text: customQuoteText,
-      author: customQuoteAuthor || undefined,
-    });
-    setCustomQuoteText('');
-    setCustomQuoteAuthor('');
-    setAddQuoteOpen(false);
+    setSubmittingQuote(true);
+    try {
+      await addQuote({
+        text: customQuoteText,
+        author: customQuoteAuthor || undefined,
+      });
+      setCustomQuoteText('');
+      setCustomQuoteAuthor('');
+      setAddQuoteOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingQuote(false);
+    }
   };
 
   // Check off date ranges
@@ -804,7 +840,9 @@ export default function Overview() {
               <option value="Personal">Personal</option>
             </select>
           </div>
-          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Block</Button>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isSubmittingSlot}>
+            {isSubmittingSlot ? 'Creating...' : 'Add Block'}
+          </Button>
         </form>
       </Modal>
 
@@ -839,7 +877,9 @@ export default function Overview() {
               <option value="Sunday">Sunday</option>
             </select>
           </div>
-          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Weekly Goal</Button>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isSubmittingGoal}>
+            {isSubmittingGoal ? 'Adding...' : 'Add Weekly Goal'}
+          </Button>
         </form>
       </Modal>
 
@@ -894,7 +934,9 @@ export default function Overview() {
               <option value="Rejected">Rejected</option>
             </select>
           </div>
-          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Log Application</Button>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isSubmittingApp}>
+            {isSubmittingApp ? 'Logging...' : 'Log Application'}
+          </Button>
         </form>
       </Modal>
 
@@ -935,7 +977,9 @@ export default function Overview() {
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
             />
           </div>
-          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Topic</Button>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isSubmittingTopic}>
+            {isSubmittingTopic ? 'Adding...' : 'Add Topic'}
+          </Button>
         </form>
       </Modal>
 
@@ -963,7 +1007,9 @@ export default function Overview() {
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
             />
           </div>
-          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Custom Quote</Button>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isSubmittingQuote}>
+            {isSubmittingQuote ? 'Adding...' : 'Add Custom Quote'}
+          </Button>
         </form>
       </Modal>
 
