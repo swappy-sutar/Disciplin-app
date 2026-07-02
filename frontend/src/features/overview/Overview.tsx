@@ -1,0 +1,972 @@
+import React, { useState } from 'react';
+import { useDashboardSummary } from '../../hooks/useDashboardSummary';
+import { useTimetable } from '../../hooks/useTimetable';
+import { useHabits } from '../../hooks/useHabits';
+import { useGoals } from '../../hooks/useGoals';
+import { useQuote } from '../../hooks/useQuote';
+import { useTopics } from '../../hooks/useTopics';
+import { useApplications } from '../../hooks/useApplications';
+import { useStore } from '../../app/store';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Checkbox } from '../../components/ui/Checkbox';
+import { ProgressBar } from '../../components/ui/ProgressBar';
+import { RadialProgress } from '../../components/ui/RadialProgress';
+import { PillBadge } from '../../components/ui/PillBadge';
+import { DotGrid } from '../../components/ui/DotGrid';
+import { Modal } from '../../components/ui/Modal';
+import { Link } from 'react-router-dom';
+import { format, parseISO, addDays, subDays } from 'date-fns';
+import { CalendarPicker } from '../../components/ui/CalendarPicker';
+import { notifySuccessCelebration } from '../../utils/celebration';
+import { 
+  Heart, 
+  Plus, 
+  Flame, 
+  Trash2, 
+  Clock, 
+  PlusCircle, 
+  Award,
+  BookOpen,
+  X,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
+
+export default function Overview() {
+  const { 
+    activeDate, 
+    activeWeekStart, 
+    setActiveDate,
+    compareMode, 
+    setCompareMode,
+    addNotification
+  } = useStore();
+
+  const handlePrevDay = () => {
+    const prev = subDays(new Date(activeDate), 1);
+    setActiveDate(format(prev, 'yyyy-MM-dd'));
+  };
+
+  const handleNextDay = () => {
+    const next = addDays(new Date(activeDate), 1);
+    setActiveDate(format(next, 'yyyy-MM-dd'));
+  };
+  
+  // Queries
+  const { data: summary, isLoading, isError, refetch } = useDashboardSummary(activeDate);
+  const { toggleLog } = useHabits();
+  const { updateGoal, createGoal } = useGoals(activeWeekStart);
+  const { updateBlock, createBlock, deleteBlock } = useTimetable(activeDate);
+  const { toggleFavorite, addQuote } = useQuote();
+  const { createTopic } = useTopics();
+  const { createApplication } = useApplications();
+
+  // Modals Local State
+  const [isAddTimetableOpen, setAddTimetableOpen] = useState(false);
+  const [isAddGoalOpen, setAddGoalOpen] = useState(false);
+  const [isAddAppOpen, setAddAppOpen] = useState(false);
+  const [isAddTopicOpen, setAddTopicOpen] = useState(false);
+  const [isAddQuoteOpen, setAddQuoteOpen] = useState(false);
+  const [isFloatMenuOpen, setFloatMenuOpen] = useState(false);
+
+  // Form states
+  const [newSlotTitle, setNewSlotTitle] = useState('');
+  const [newSlotStart, setNewSlotStart] = useState('09:00');
+  const [newSlotEnd, setNewSlotEnd] = useState('10:00');
+  const [newSlotCategory, setNewSlotCategory] = useState('Work');
+
+  const [newGoalTitle, setNewGoalTitle] = useState('');
+  const [newGoalDueDay, setNewGoalDueDay] = useState('');
+
+  const [newAppName, setNewAppName] = useState('');
+  const [newAppRole, setNewAppRole] = useState('');
+  const [newAppStatus, setNewAppStatus] = useState<'Applied' | 'OA' | 'Interview' | 'Offer' | 'Rejected'>('Applied');
+  const [newAppLink, setNewAppLink] = useState('');
+
+  const [newTopicTitle, setNewTopicTitle] = useState('');
+  const [newTopicCategory, setNewTopicCategory] = useState('');
+  const [newTopicSubtopics, setNewTopicSubtopics] = useState<string>('');
+
+  const [customQuoteText, setCustomQuoteText] = useState('');
+  const [customQuoteAuthor, setCustomQuoteAuthor] = useState('');
+
+  // Form submission loading states
+  const [isSubmittingSlot, setSubmittingSlot] = useState(false);
+  const [isSubmittingGoal, setSubmittingGoal] = useState(false);
+  const [isSubmittingApp, setSubmittingApp] = useState(false);
+  const [isSubmittingTopic, setSubmittingTopic] = useState(false);
+  const [isSubmittingQuote, setSubmittingQuote] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center select-none text-center px-6 animate-in fade-in duration-300">
+        <div className="relative mb-6">
+          {/* Glowing background ring */}
+          <div className="absolute inset-0 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 blur-xl animate-pulse" />
+          
+          {/* Custom logo spinner */}
+          <div className="relative w-20 h-20 flex items-center justify-center bg-white dark:bg-slate-900 border border-gray-150 dark:border-gray-800 rounded-full shadow-lg">
+            <div className="absolute inset-0 rounded-full border-2 border-emerald-500/20 border-t-emerald-500 animate-spin" />
+            <Logo />
+          </div>
+        </div>
+        
+        <h2 className="text-base font-extrabold text-gray-900 dark:text-white tracking-tight">
+          Syncing your momentum
+          <span className="inline-flex gap-0.5 ml-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce [animation-delay:-0.3s]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce [animation-delay:-0.15s]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce" />
+          </span>
+        </h2>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 font-semibold">
+          Fetching timetables, habits, and active goals...
+        </p>
+
+        {/* Inspirational Loader Quote */}
+        <div className="mt-10 max-w-sm p-4 rounded-2xl bg-white/50 dark:bg-card-bg/40 border border-gray-100/50 dark:border-gray-800/40 backdrop-blur-sm">
+          <p className="text-xs italic font-bold text-gray-500 dark:text-gray-400 leading-relaxed">
+            "You do not rise to the level of your goals. You fall to the level of your systems."
+          </p>
+          <p className="text-[10px] text-gray-400 mt-1.5 font-bold uppercase tracking-wider">— James Clear</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !summary) {
+    return (
+      <div className="text-center p-12 select-none">
+        <div className="inline-flex p-4 rounded-full bg-red-50 text-red-500 mb-4">
+          <Award size={32} />
+        </div>
+        <h2 className="text-lg font-bold text-gray-800">Failed to load dashboard</h2>
+        <p className="text-sm text-gray-400 mt-1">Please try checking your network connection.</p>
+        <Button variant="outline" className="mt-4" onClick={() => refetch()}>
+          Retry Loading
+        </Button>
+      </div>
+    );
+  }
+
+  const { timetable, progress, habits, weeklyGoals, topics, applications, quote } = summary;
+
+  // Handle Form Submissions
+  const handleAddSlot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSlotTitle.trim()) return;
+    await createBlock({
+      title: `${newSlotTitle} [${newSlotCategory}]`,
+      startTime: newSlotStart,
+      endTime: newSlotEnd,
+      date: activeDate,
+    });
+    setNewSlotTitle('');
+    setAddTimetableOpen(false);
+  };
+
+  const handleAddGoal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGoalTitle.trim()) return;
+    await createGoal({
+      title: newGoalTitle,
+      dueDay: newGoalDueDay || undefined,
+      weekStartDate: activeWeekStart,
+    });
+    setNewGoalTitle('');
+    setNewGoalDueDay('');
+    setAddGoalOpen(false);
+  };
+
+  const handleAddApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAppName.trim() || !newAppRole.trim()) return;
+    await createApplication({
+      company: newAppName,
+      role: newAppRole,
+      status: newAppStatus,
+      link: newAppLink || undefined,
+      dateApplied: activeDate,
+    });
+    setNewAppName('');
+    setNewAppRole('');
+    setNewAppLink('');
+    setAddAppOpen(false);
+  };
+
+  const handleAddTopic = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTopicTitle.trim() || !newTopicCategory.trim()) return;
+    const subTopics = newTopicSubtopics
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => ({ title: line.trim() }));
+      
+    await createTopic({
+      title: newTopicTitle,
+      category: newTopicCategory,
+      subTopics,
+    });
+    setNewTopicTitle('');
+    setNewTopicCategory('');
+    setNewTopicSubtopics('');
+    setAddTopicOpen(false);
+  };
+
+  const handleAddCustomQuote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customQuoteText.trim()) return;
+    await addQuote({
+      text: customQuoteText,
+      author: customQuoteAuthor || undefined,
+    });
+    setCustomQuoteText('');
+    setCustomQuoteAuthor('');
+    setAddQuoteOpen(false);
+  };
+
+  // Check off date ranges
+  const dateFormatted = format(parseISO(activeDate), 'EEEE, MMMM d, yyyy');
+
+  // Calculate Habit Columns Map
+  const weekdayShortNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const getWeekDays = () => {
+    const monday = parseISO(activeWeekStart);
+    return Array.from({ length: 7 }).map((_, i) => {
+      const d = addDays(monday, i);
+      return format(d, 'yyyy-MM-dd');
+    });
+  };
+  const weekDayDates = getWeekDays();
+
+  return (
+    <div className="space-y-6 md:space-y-8 select-none">
+      
+      {/* Title Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-none">
+            Today's Overview
+          </h1>
+          <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
+            <button 
+              onClick={handlePrevDay}
+              className="md:hidden p-1 -ml-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              aria-label="Previous day"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
+            <button 
+              onClick={handleNextDay}
+              className="md:hidden p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              aria-label="Next day"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+        
+        {/* Toggle Comparison mode */}
+        <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-full px-4 py-2 shadow-sm">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Compare to Yesterday
+          </span>
+          <button
+            onClick={() => setCompareMode(!compareMode)}
+            className={`w-11 h-6 rounded-full relative transition-all duration-300 focus:outline-none cursor-pointer
+              ${compareMode ? 'bg-primary-blue' : 'bg-gray-200'}
+            `}
+          >
+            <div 
+              className={`w-4.5 h-4.5 rounded-full bg-white absolute top-0.75 shadow-sm transition-all duration-300
+                ${compareMode ? 'left-5.75' : 'left-0.75'}
+              `}
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* 3-Column Responsive Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+        
+        {/* ================= COLUMN 1 ================= */}
+        <div className="space-y-6">
+          
+          {/* Daily Timetable */}
+          <Card 
+            title="Daily Timetable" 
+            showMenu 
+            headerAction={
+              <button 
+                onClick={() => setAddTimetableOpen(true)}
+                className="p-1 rounded-lg text-primary-blue hover:bg-blue-50 transition-colors cursor-pointer"
+                aria-label="Add slot"
+              >
+                <PlusCircle size={19} />
+              </button>
+            }
+          >
+            {timetable.length === 0 ? (
+              <div className="py-8 text-center text-gray-400 select-none text-xs">
+                No events scheduled for today. Add one above!
+              </div>
+            ) : (
+              <div className="relative border-l-2 border-gray-100 pl-4 ml-2.5 py-1 space-y-5">
+                {timetable.map((block) => {
+                  const hasTag = block.title.includes('[') && block.title.includes(']');
+                  let cleanTitle = block.title;
+                  let tag = 'General';
+                  if (hasTag) {
+                    const match = block.title.match(/\[(.*?)\]/);
+                    tag = match ? match[1] : 'General';
+                    cleanTitle = block.title.replace(/\[.*?\]/, '').trim();
+                  }
+
+                  const tagColors: Record<string, string> = {
+                    Health: 'bg-emerald-50 text-emerald-600',
+                    Work: 'bg-blue-50 text-blue-600',
+                    Study: 'bg-pink-50 text-pink-600',
+                    Personal: 'bg-amber-50 text-amber-600'
+                  };
+                  const colorClass = tagColors[tag] || 'bg-gray-100 text-gray-600';
+
+                  return (
+                    <div key={block._id} className="relative group flex items-start justify-between gap-4">
+                      {/* Circle Dot Marker */}
+                      <div 
+                        className={`absolute -left-[23px] top-1.5 w-3 h-3 rounded-full border-2 bg-white transition-colors duration-200
+                          ${block.isDone ? 'border-primary-blue bg-primary-blue' : 'border-gray-300'}
+                        `}
+                      />
+
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-gray-400 select-none">{block.startTime}</span>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${colorClass}`}>
+                            {tag}
+                          </span>
+                        </div>
+                        <p className={`text-sm font-medium mt-1 select-none transition-colors
+                          ${block.isDone ? 'text-gray-400 line-through' : 'text-gray-700'}
+                        `}>
+                          {cleanTitle}
+                        </p>
+                      </div>
+
+                      {/* Checklist Toggle and delete actions */}
+                      <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                         <Checkbox 
+                           checked={block.isDone} 
+                           onChange={(done) => {
+                             updateBlock({ id: block._id, body: { isDone: done } });
+                             if (done) {
+                               const cleanTitle = block.title;
+                               notifySuccessCelebration(`You completed schedule block: "${cleanTitle}"!`);
+                               addNotification('Schedule Block Completed! ⏰', `You finished: "${cleanTitle}"`, 'timetable');
+                             }
+                           }}
+                           size={18}
+                         />
+                        <button
+                          onClick={() => deleteBlock(block._id)}
+                          className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                          aria-label="Delete slot"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </Card>
+
+          {/* Motivation Quote Card */}
+          <div 
+            className="rounded-2xl p-6 text-white select-none relative overflow-hidden shadow-sm"
+            style={{ background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)' }}
+          >
+            {/* Absolute vector quote indicator */}
+            <div className="absolute right-4 bottom-0 text-white/10 text-[120px] font-bold pointer-events-none font-serif leading-none select-none">
+              ”
+            </div>
+            
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">
+              Quote of the Day
+            </span>
+            <p className="text-base font-bold italic mt-3 leading-relaxed drop-shadow-sm select-none">
+              "{quote.text}"
+            </p>
+            <p className="text-xs font-medium text-white/90 mt-2 select-none">
+              — {quote.author}
+            </p>
+            
+            <div className="flex justify-between items-center mt-5 pt-3 border-t border-white/20 relative z-10">
+              <button
+                onClick={() => toggleFavorite({ quoteText: quote.text, isFavorite: !quote.isFavorite })}
+                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+              >
+                <Heart size={14} fill={quote.isFavorite ? '#FFFFFF' : 'none'} />
+                {quote.isFavorite ? 'Favorited' : 'Favorite'}
+              </button>
+              
+              <button
+                onClick={() => setAddQuoteOpen(true)}
+                className="text-[11px] font-semibold hover:underline cursor-pointer text-white/90"
+              >
+                + Add Custom Quote
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ================= COLUMN 2 ================= */}
+        <div className="space-y-6">
+          
+          {/* Habit Tracker */}
+          <Card 
+            title="Habit Tracker" 
+            subtitle="Today's habit compliance"
+            headerAction={
+              <Link to="/habits" className="text-xs font-bold text-primary-blue hover:underline">
+                View All Habits
+              </Link>
+            }
+          >
+            {/* Streak Indicator */}
+            <div className="bg-emerald-50 rounded-xl p-3 flex items-center justify-between mb-4 border border-emerald-100/30">
+              <div className="flex items-center gap-2">
+                <div className="p-1 rounded bg-emerald-500 text-white animate-pulse">
+                  <Flame size={16} />
+                </div>
+                <span className="text-xs font-semibold text-emerald-800 select-none">Weekly Habit Consistency</span>
+              </div>
+              <span className="text-xs font-black text-emerald-600 uppercase tracking-wider">Active Run</span>
+            </div>
+
+            {habits.list.length === 0 ? (
+              <div className="py-8 text-center text-gray-400 select-none text-xs">
+                No active habits. Create some in the Habits tab!
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Header days */}
+                <div className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 text-center font-bold text-[11px] text-gray-400 border-b border-gray-100 pb-2">
+                  <div className="text-left font-medium select-none">Habit</div>
+                  {weekdayShortNames.map((day, idx) => (
+                    <div key={idx}>{day}</div>
+                  ))}
+                </div>
+                
+                {/* Habits list */}
+                {habits.list.slice(0, 3).map((habit: any) => (
+                  <div key={habit._id} className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 items-center">
+                    <span className="text-xs font-semibold text-gray-700 truncate select-none">{habit.name}</span>
+                    {weekDayDates.map((dateStr, idx) => {
+                      const isLogged = (habits.logs || []).some(l => l.habitId === habit._id && l.date === dateStr && l.isDone);
+                      return (
+                        <div key={idx} className="flex justify-center">
+                           <Checkbox
+                             checked={isLogged}
+                             color={habit.color}
+                             size={18}
+                             onChange={(checked) => {
+                               toggleLog({ habitId: habit._id, date: dateStr, isDone: checked });
+                               if (checked) {
+                                 notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
+                                 addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
+                               }
+                             }}
+                           />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Application Tracker */}
+          <Card 
+            title="Application Tracker"
+            headerAction={
+              <button 
+                onClick={() => setAddAppOpen(true)}
+                className="text-xs font-bold text-primary-blue hover:underline cursor-pointer"
+              >
+                + Log App
+              </button>
+            }
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-baseline gap-1 select-none">
+                <span className="text-3xl font-black text-gray-900 leading-none">{applications.todayCount}/20</span>
+                <span className="text-xs text-gray-400 font-semibold select-none">Applied today</span>
+              </div>
+              
+              <PillBadge trend="up">
+                {compareMode ? '+34 vs yesterday' : '+34 vs last week'}
+              </PillBadge>
+            </div>
+
+            {/* Sequential dot grids */}
+            <div className="mb-5 border-b border-gray-50 pb-4">
+              <DotGrid value={applications.todayCount} target={applications.todayTarget} />
+            </div>
+
+            {/* Micro list applications */}
+            <div className="space-y-3">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2 select-none">
+                Recent Applications
+              </span>
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    <th className="pb-1.5 font-semibold">Company</th>
+                    <th className="pb-1.5 font-semibold">Role</th>
+                    <th className="pb-1.5 font-semibold text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50/50">
+                  {summary.applications.todayCount === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4 text-gray-400 text-xs select-none">
+                        No applications submitted today. Start logging!
+                      </td>
+                    </tr>
+                  ) : (
+                    // Display mock items
+                    [
+                      { company: 'TechFlow', role: 'Frontend Dev', status: 'Interview', color: 'blue' },
+                      { company: 'GlobalSaaS', role: 'Product Mgr', status: 'Offer', color: 'green' },
+                      { company: 'MetaPixel', role: 'UI Designer', status: 'Applied', color: 'gray' },
+                    ].slice(0, summary.applications.todayCount).map((app, idx) => (
+                      <tr key={idx} className="text-xs text-gray-700">
+                        <td className="py-2.5 font-bold select-none">{app.company}</td>
+                        <td className="py-2.5 font-medium text-gray-500 select-none">{app.role}</td>
+                        <td className="py-2.5 text-right select-none">
+                          <PillBadge variant={app.color as any}>
+                            {app.status}
+                          </PillBadge>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+        </div>
+
+        {/* ================= COLUMN 3 ================= */}
+        <div className="space-y-6">
+          
+          {/* Day Progress Tracker */}
+          <Card title="Day Progress">
+            <div className="flex flex-col items-center py-2">
+              <RadialProgress 
+                percentage={progress.todayPercent} 
+                trend={progress.delta >= 0 ? `▲ +${progress.delta}%` : `▼ ${progress.delta}%`}
+                subtext="Timetable Completion"
+              />
+              
+              <div className="w-full mt-6 pt-5 border-t border-gray-100 flex flex-col gap-1.5">
+                <div className="flex justify-between items-center text-xs text-gray-500 font-semibold select-none">
+                  <span>Focus Hours</span>
+                  <span>5.5 / 8 hrs</span>
+                </div>
+                <ProgressBar value={5.5} max={8} color="blue" />
+              </div>
+            </div>
+          </Card>
+
+          {/* Weekly Goals */}
+          <Card 
+            title="Weekly Goals" 
+            headerAction={
+              <button 
+                onClick={() => setAddGoalOpen(true)}
+                className="text-xs font-bold text-primary-blue hover:underline cursor-pointer"
+              >
+                + Add Goal
+              </button>
+            }
+          >
+            {weeklyGoals.length === 0 ? (
+              <div className="py-8 text-center text-gray-400 select-none text-xs">
+                No goals listed for this week. Add one above!
+              </div>
+            ) : (
+              <div className="space-y-4">
+                
+                {/* Completed Fraction Badge */}
+                <div className="flex justify-between items-center select-none">
+                  <span className="text-xs text-gray-400 font-medium">Goal Status</span>
+                  <PillBadge variant="blue">
+                    {weeklyGoals.filter(g => g.isDone).length}/{weeklyGoals.length} Done
+                  </PillBadge>
+                </div>
+                
+                {/* Goals Checklist list */}
+                <div className="space-y-3.5 pt-1 border-t border-gray-50">
+                  {weeklyGoals.map((goal) => (
+                    <div key={goal._id} className="flex items-start gap-3 justify-between">
+                      <div className="flex items-start gap-2.5">
+                         <Checkbox 
+                           checked={goal.isDone} 
+                           onChange={(done) => {
+                             updateGoal({ id: goal._id, body: { isDone: done } });
+                             if (done) {
+                               const hasTag = goal.title.includes('[') && goal.title.includes(']');
+                               const cleanTitle = hasTag 
+                                 ? goal.title.replace(/\[.*?\]/, '').trim() 
+                                 : goal.title;
+                               notifySuccessCelebration(`You completed goal: "${cleanTitle}"!`);
+                               addNotification('Goal Completed! 🎯', `You finished: "${cleanTitle}"`, 'goal');
+                             }
+                           }}
+                           size={17}
+                         />
+                        <div>
+                          <p className={`text-xs font-semibold leading-normal select-none transition-colors
+                            ${goal.isDone ? 'text-gray-400 line-through' : 'text-gray-700'}
+                          `}>
+                            {goal.title}
+                          </p>
+                          {goal.dueDay && (
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-pink-500 mt-0.5 block select-none">
+                              Due {goal.dueDay}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Progress bar */}
+                <div className="pt-4 border-t border-gray-100">
+                  <ProgressBar 
+                    value={weeklyGoals.filter(g => g.isDone).length} 
+                    max={weeklyGoals.length} 
+                    showLabel 
+                    labelText="Overall Progress" 
+                    color="blue"
+                  />
+                </div>
+
+              </div>
+            )}
+          </Card>
+
+          {/* Topics card */}
+          <Card 
+            title="Topics to Finish"
+            headerAction={
+              <button 
+                onClick={() => setAddTopicOpen(true)}
+                className="text-xs font-bold text-primary-blue hover:underline cursor-pointer"
+              >
+                + Add Topic
+              </button>
+            }
+          >
+            {topics.length === 0 ? (
+              <div className="py-8 text-center text-gray-400 select-none text-xs">
+                No active topics. Add one above!
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {topics.map((topic) => (
+                  <div key={topic._id} className="space-y-1.5 border-b border-gray-50/50 pb-3 last:border-0 last:pb-0">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-gray-700 truncate select-none">{topic.title}</span>
+                      <PillBadge variant="orange" className="text-[10px] select-none uppercase tracking-wider scale-90">
+                        {topic.category}
+                      </PillBadge>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <ProgressBar value={topic.progressPercent} color="pink" className="flex-1" />
+                      <span className="text-[10px] font-semibold text-gray-400 select-none">{topic.progressPercent}%</span>
+                    </div>
+                  </div>
+                ))}
+                
+                <Link to="/topics" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-semibold py-2 rounded-xl transition-colors border border-gray-100/50">
+                  Manage Topics
+                </Link>
+              </div>
+            )}
+          </Card>
+
+        </div>
+
+      </div>
+
+      {/* Persistent Floating Plus Action Trigger */}
+      <div className="fixed bottom-20 md:bottom-6 right-6 z-40 select-none">
+        {isFloatMenuOpen && (
+          <div className="bg-white border border-gray-100 rounded-2xl shadow-xl p-2 min-w-[200px] flex flex-col gap-1 transition-all duration-300 animate-scale-up z-50">
+            <button
+              onClick={() => { setAddTimetableOpen(true); setFloatMenuOpen(false); }}
+              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+            >
+              <Clock size={14} className="text-blue-500" />
+              Add Timetable Block
+            </button>
+            <button
+              onClick={() => { setAddGoalOpen(true); setFloatMenuOpen(false); }}
+              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+            >
+              <PlusCircle size={14} className="text-emerald-500" />
+              Add Weekly Goal
+            </button>
+            <button
+              onClick={() => { setAddAppOpen(true); setFloatMenuOpen(false); }}
+              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+            >
+              <Award size={14} className="text-purple-500" />
+              Log Application
+            </button>
+            <button
+              onClick={() => { setAddTopicOpen(true); setFloatMenuOpen(false); }}
+              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+            >
+              <BookOpen size={14} className="text-pink-500" />
+              Add Study Topic
+            </button>
+          </div>
+        )}
+        <button
+          onClick={() => setFloatMenuOpen(!isFloatMenuOpen)}
+          className="w-12 h-12 bg-primary-blue hover:bg-primary-blue-hover text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/20 cursor-pointer transition-transform duration-200 active:scale-95"
+          aria-label="Add metric floating menu"
+        >
+          {isFloatMenuOpen ? <X size={22} /> : <Plus size={22} />}
+        </button>
+      </div>
+
+      {/* ================= MODAL CONTROLLERS ================= */}
+      
+      {/* Add Timetable Modal */}
+      <Modal isOpen={isAddTimetableOpen} onClose={() => setAddTimetableOpen(false)} title="Add Timetable Block">
+        <form onSubmit={handleAddSlot} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Title</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Design Sync"
+              value={newSlotTitle}
+              onChange={e => setNewSlotTitle(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Start Time</label>
+              <input 
+                type="time" 
+                value={newSlotStart}
+                onChange={e => setNewSlotStart(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">End Time</label>
+              <input 
+                type="time" 
+                value={newSlotEnd}
+                onChange={e => setNewSlotEnd(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Category</label>
+            <select
+              value={newSlotCategory}
+              onChange={e => setNewSlotCategory(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+            >
+              <option value="Work">Work</option>
+              <option value="Health">Health</option>
+              <option value="Study">Study</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Block</Button>
+        </form>
+      </Modal>
+
+      {/* Add Goal Modal */}
+      <Modal isOpen={isAddGoalOpen} onClose={() => setAddGoalOpen(false)} title="Add Weekly Goal">
+        <form onSubmit={handleAddGoal} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Goal Description</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Finish portfolio wireframes"
+              value={newGoalTitle}
+              onChange={e => setNewGoalTitle(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Due Day (Optional)</label>
+            <select
+              value={newGoalDueDay}
+              onChange={e => setNewGoalDueDay(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+            >
+              <option value="">No specific day</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Weekly Goal</Button>
+        </form>
+      </Modal>
+
+      {/* Log Application Modal */}
+      <Modal isOpen={isAddAppOpen} onClose={() => setAddAppOpen(false)} title="Log Job Application">
+        <form onSubmit={handleAddApplication} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Company</label>
+              <input 
+                type="text" 
+                placeholder="Google"
+                value={newAppName}
+                onChange={e => setNewAppName(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Role</label>
+              <input 
+                type="text" 
+                placeholder="Frontend Dev"
+                value={newAppRole}
+                onChange={e => setNewAppRole(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Job Posting URL (Optional)</label>
+            <input 
+              type="url" 
+              placeholder="https://google.com/jobs"
+              value={newAppLink}
+              onChange={e => setNewAppLink(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
+            <select
+              value={newAppStatus}
+              onChange={e => setNewAppStatus(e.target.value as any)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+            >
+              <option value="Applied">Applied</option>
+              <option value="OA">OA</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Log Application</Button>
+        </form>
+      </Modal>
+
+      {/* Add Topic Modal */}
+      <Modal isOpen={isAddTopicOpen} onClose={() => setAddTopicOpen(false)} title="Add Study Topic">
+        <form onSubmit={handleAddTopic} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Topic Name</label>
+              <input 
+                type="text" 
+                placeholder="e.g. Graph Algorithms"
+                value={newTopicTitle}
+                onChange={e => setNewTopicTitle(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Category</label>
+              <input 
+                type="text" 
+                placeholder="e.g. DSA or Frontend"
+                value={newTopicCategory}
+                onChange={e => setNewTopicCategory(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Sub-topics (One per line)</label>
+            <textarea
+              placeholder="BFS traversal&#10;DFS traversal&#10;Dijkstra's search"
+              rows={4}
+              value={newTopicSubtopics}
+              onChange={e => setNewTopicSubtopics(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+            />
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Topic</Button>
+        </form>
+      </Modal>
+
+      {/* Add Quote Modal */}
+      <Modal isOpen={isAddQuoteOpen} onClose={() => setAddQuoteOpen(false)} title="Add Custom Quote">
+        <form onSubmit={handleAddCustomQuote} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Quote Text</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Focus is a superpower."
+              value={customQuoteText}
+              onChange={e => setCustomQuoteText(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Author (Optional)</label>
+            <input 
+              type="text" 
+              placeholder="Unknown"
+              value={customQuoteAuthor}
+              onChange={e => setCustomQuoteAuthor(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+            />
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Custom Quote</Button>
+        </form>
+      </Modal>
+
+    </div>
+  );
+}
