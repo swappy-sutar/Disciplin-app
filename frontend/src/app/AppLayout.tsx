@@ -45,13 +45,26 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   } = useStore();
 
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'S';
+    return name.trim().charAt(0).toUpperCase();
+  };
 
   const handleToggleNotifications = () => {
     if (!isNotificationsOpen) {
       markAllAsRead();
     }
     setIsNotificationsOpen(!isNotificationsOpen);
+    setIsUserMenuOpen(false);
+  };
+
+  const handleToggleUserMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsUserMenuOpen(!isUserMenuOpen);
+    setIsNotificationsOpen(false);
   };
 
   const handleLogout = async () => {
@@ -257,40 +270,46 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* User Avatar & Logout */}
-            <div className="relative group">
-              <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
-                <img 
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" 
-                  alt="User profile" 
-                  className="w-8 h-8 rounded-full object-cover border border-gray-100 shadow-sm"
-                  onError={(e) => {
-                    // Fallback if unsplash is down
-                    (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/adventurer/svg?seed=${user?.name || 'Momentum'}`;
-                  }}
-                />
+            <div className="relative">
+              <button 
+                onClick={handleToggleUserMenu}
+                className="flex items-center justify-center p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer focus:outline-none"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-500 text-white font-bold text-xs tracking-wider flex items-center justify-center shadow-sm select-none border border-violet-500/10">
+                  {getInitials(user?.name)}
+                </div>
               </button>
               
-              {/* Dropdown on hover */}
-              <div className="absolute right-0 top-full mt-1.5 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100/80 dark:border-gray-800/85 py-1.5 min-w-[160px] opacity-0 translate-y-1 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 z-50">
-                <div className="px-3.5 py-1 border-b border-gray-100 dark:border-gray-800 mb-1">
-                  <p className="text-xs font-semibold text-gray-750 dark:text-white truncate">{user?.name || 'Vaishnavi'}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{user?.email || 'user@momentum.com'}</p>
-                </div>
-                <Link
-                  to="/profile"
-                  className="w-full text-left px-3.5 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 cursor-pointer transition-colors block"
-                >
-                  <UserIcon size={13} className="text-gray-400 dark:text-gray-500" />
-                  Account Settings
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-3.5 py-1.5 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 cursor-pointer transition-colors"
-                >
-                  <LogOut size={13} />
-                  Sign Out
-                </button>
-              </div>
+              {/* Dropdown Menu on Click */}
+              {isUserMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)} />
+                  <div className="absolute right-0 top-full mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-gray-100/80 dark:border-gray-800/85 py-1.5 min-w-[200px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
+                    <div className="px-3.5 py-1 border-b border-gray-100 dark:border-gray-800 mb-1">
+                      <p className="text-xs font-semibold text-gray-750 dark:text-white truncate">{user?.name || 'Swapnil Sutar'}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{user?.email || 'user@momentum.com'}</p>
+                    </div>
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 cursor-pointer transition-colors block"
+                    >
+                      <UserIcon size={13} className="text-gray-400 dark:text-gray-500" />
+                      Account Settings
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <LogOut size={13} />
+                      Sign Out
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
           </div>

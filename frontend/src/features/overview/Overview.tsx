@@ -70,6 +70,13 @@ export default function Overview() {
   const [isAddTopicOpen, setAddTopicOpen] = useState(false);
   const [isAddQuoteOpen, setAddQuoteOpen] = useState(false);
   const [isFloatMenuOpen, setFloatMenuOpen] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<{
+    type: 'delete' | 'update';
+    id: string;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   // Form states
   const [newSlotTitle, setNewSlotTitle] = useState('');
@@ -395,18 +402,30 @@ export default function Overview() {
                       <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                          <Checkbox 
                            checked={block.isDone} 
-                           onChange={(done) => {
-                             updateBlock({ id: block._id, body: { isDone: done } });
-                             if (done) {
-                               const cleanTitle = block.title;
-                               notifySuccessCelebration(`You completed schedule block: "${cleanTitle}"!`);
-                               addNotification('Schedule Block Completed! ⏰', `You finished: "${cleanTitle}"`, 'timetable');
+                           onChange={(done) => setConfirmModal({
+                             type: 'update',
+                             id: block._id,
+                             title: done ? 'Complete Schedule Block' : 'Undo Completion',
+                             message: `Are you sure you want to mark the timetable block "${block.title}" as ${done ? 'completed' : 'incomplete'}?`,
+                             onConfirm: () => {
+                               updateBlock({ id: block._id, body: { isDone: done } });
+                               if (done) {
+                                 const cleanTitle = block.title;
+                                 notifySuccessCelebration(`You completed schedule block: "${cleanTitle}"!`);
+                                 addNotification('Schedule Block Completed! ⏰', `You finished: "${cleanTitle}"`, 'timetable');
+                               }
                              }
-                           }}
+                           })}
                            size={18}
                          />
                         <button
-                          onClick={() => deleteBlock(block._id)}
+                          onClick={() => setConfirmModal({
+                            type: 'delete',
+                            id: block._id,
+                            title: 'Confirm Deletion',
+                            message: `Are you sure you want to delete the schedule block "${block.title}"? This action cannot be undone.`,
+                            onConfirm: () => deleteBlock(block._id)
+                          })}
                           className="text-gray-300 hover:text-red-500 transition-colors p-1"
                           aria-label="Delete slot"
                         >
@@ -492,7 +511,7 @@ export default function Overview() {
             ) : (
               <div className="space-y-4">
                 {/* Header days */}
-                <div className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 text-center font-bold text-[11px] text-gray-400 border-b border-gray-100 pb-2">
+                <div className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 text-center font-bold text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100 dark:border-slate-850/60 pb-2">
                   <div className="text-left font-medium select-none">Habit</div>
                   {weekdayShortNames.map((day, idx) => (
                     <div key={idx}>{day}</div>
@@ -502,7 +521,7 @@ export default function Overview() {
                 {/* Habits list */}
                 {habits.list.slice(0, 3).map((habit: any) => (
                   <div key={habit._id} className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 items-center">
-                    <span className="text-xs font-semibold text-gray-700 truncate select-none">{habit.name}</span>
+                    <span className="text-xs font-semibold text-gray-700 dark:text-slate-300 truncate select-none">{habit.name}</span>
                     {weekDayDates.map((dateStr, idx) => {
                       const isLogged = (habits.logs || []).some(l => l.habitId === habit._id && l.date === dateStr && l.isDone);
                       return (
@@ -511,13 +530,19 @@ export default function Overview() {
                              checked={isLogged}
                              color={habit.color}
                              size={18}
-                             onChange={(checked) => {
-                               toggleLog({ habitId: habit._id, date: dateStr, isDone: checked });
-                               if (checked) {
-                                 notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
-                                 addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
+                             onChange={(checked) => setConfirmModal({
+                               type: 'update',
+                               id: `${habit._id}-${dateStr}`,
+                               title: checked ? 'Complete Habit' : 'Undo Habit Logging',
+                               message: `Are you sure you want to mark "${habit.name}" as ${checked ? 'completed' : 'incomplete'}?`,
+                               onConfirm: () => {
+                                 toggleLog({ habitId: habit._id, date: dateStr, isDone: checked });
+                                 if (checked) {
+                                   notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
+                                   addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
+                                 }
                                }
-                             }}
+                             })}
                            />
                         </div>
                       );
@@ -747,46 +772,48 @@ export default function Overview() {
       </div>
 
       {/* Persistent Floating Plus Action Trigger */}
-      <div className="fixed bottom-20 md:bottom-6 right-6 z-40 select-none">
-        {isFloatMenuOpen && (
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-xl p-2 min-w-[200px] flex flex-col gap-1 transition-all duration-300 animate-scale-up z-50">
-            <button
-              onClick={() => { setAddTimetableOpen(true); setFloatMenuOpen(false); }}
-              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
-            >
-              <Clock size={14} className="text-blue-500" />
-              Add Timetable Block
-            </button>
-            <button
-              onClick={() => { setAddGoalOpen(true); setFloatMenuOpen(false); }}
-              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
-            >
-              <PlusCircle size={14} className="text-emerald-500" />
-              Add Weekly Goal
-            </button>
-            <button
-              onClick={() => { setAddAppOpen(true); setFloatMenuOpen(false); }}
-              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
-            >
-              <Award size={14} className="text-purple-500" />
-              Log Application
-            </button>
-            <button
-              onClick={() => { setAddTopicOpen(true); setFloatMenuOpen(false); }}
-              className="px-4 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
-            >
-              <BookOpen size={14} className="text-pink-500" />
-              Add Study Topic
-            </button>
-          </div>
-        )}
-        <button
-          onClick={() => setFloatMenuOpen(!isFloatMenuOpen)}
-          className="w-12 h-12 bg-primary-blue hover:bg-primary-blue-hover text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/20 cursor-pointer transition-transform duration-200 active:scale-95"
-          aria-label="Add metric floating menu"
-        >
-          {isFloatMenuOpen ? <X size={22} /> : <Plus size={22} />}
-        </button>
+      <div className="fixed bottom-20 md:bottom-6 right-6 z-40 select-none flex items-center">
+        <div className="relative flex items-center">
+          {isFloatMenuOpen && (
+            <div className="absolute right-full mr-3.5 bottom-0 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xl p-2 min-w-[200px] flex flex-col gap-1 transition-all duration-300 animate-scale-up z-50">
+              <button
+                onClick={() => { setAddTimetableOpen(true); setFloatMenuOpen(false); }}
+                className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+              >
+                <Clock size={14} className="text-blue-500" />
+                Add Timetable Block
+              </button>
+              <button
+                onClick={() => { setAddGoalOpen(true); setFloatMenuOpen(false); }}
+                className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+              >
+                <PlusCircle size={14} className="text-emerald-500" />
+                Add Weekly Goal
+              </button>
+              <button
+                onClick={() => { setAddAppOpen(true); setFloatMenuOpen(false); }}
+                className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+              >
+                <Award size={14} className="text-purple-500" />
+                Log Application
+              </button>
+              <button
+                onClick={() => { setAddTopicOpen(true); setFloatMenuOpen(false); }}
+                className="px-4 py-2 text-left text-xs font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60 rounded-xl cursor-pointer flex items-center gap-2.5 transition-colors"
+              >
+                <BookOpen size={14} className="text-pink-500" />
+                Add Study Topic
+              </button>
+            </div>
+          )}
+          <button
+            onClick={() => setFloatMenuOpen(!isFloatMenuOpen)}
+            className="w-12 h-12 bg-primary-blue hover:bg-primary-blue-hover text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/20 cursor-pointer transition-transform duration-200 active:scale-95"
+            aria-label="Add metric floating menu"
+          >
+            {isFloatMenuOpen ? <X size={22} /> : <Plus size={22} />}
+          </button>
+        </div>
       </div>
 
       {/* ================= MODAL CONTROLLERS ================= */}
@@ -1011,6 +1038,43 @@ export default function Overview() {
             {isSubmittingQuote ? 'Adding...' : 'Add Custom Quote'}
           </Button>
         </form>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        isOpen={!!confirmModal}
+        onClose={() => setConfirmModal(null)}
+        title={confirmModal?.title || 'Confirm Action'}
+      >
+        <div className="space-y-5 py-1">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            {confirmModal?.message}
+          </p>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setConfirmModal(null)}
+              className="font-bold border-slate-200 dark:border-slate-800 dark:hover:bg-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </Button>
+            <Button
+              className={`font-bold text-white transition-all hover:scale-105 active:scale-95 duration-150 ${
+                confirmModal?.type === 'delete' 
+                  ? 'bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-500/10' 
+                  : 'bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/10'
+              }`}
+              onClick={() => {
+                if (confirmModal) {
+                  confirmModal.onConfirm();
+                  setConfirmModal(null);
+                }
+              }}
+            >
+              {confirmModal?.type === 'delete' ? 'Delete' : 'Confirm'}
+            </Button>
+          </div>
+        </div>
       </Modal>
 
     </div>

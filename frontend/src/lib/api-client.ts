@@ -16,194 +16,37 @@ const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 // Seed initial data helper
 const seedLocalStorage = () => {
-  const todayStr = new Date().toISOString().split('T')[0];
-  const yesterdayDate = new Date();
-  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-  const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
-  
-  // Calculate Monday of current week
-  const curr = new Date();
-  const first = curr.getDate() - curr.getDay() + (curr.getDay() === 0 ? -6 : 1);
-  const monday = new Date(curr.setDate(first));
-  const weekStartStr = monday.toISOString().split('T')[0];
-
   if (!localStorage.getItem('mom_user')) {
     localStorage.setItem('mom_user', JSON.stringify({ id: 'u1', email: 'user@momentum.com', name: 'Vaishnavi' }));
     localStorage.setItem('mom_token', 'mock_jwt_token_123');
   }
 
   if (!localStorage.getItem('mom_timetable')) {
-    const defaultTimetable: TimetableBlock[] = [
-      { _id: 'tb1', userId: 'u1', title: 'Morning Routine', startTime: '08:00', endTime: '09:00', isDone: true, order: 1, date: todayStr },
-      { _id: 'tb2', userId: 'u1', title: 'System Architecture Review', startTime: '09:30', endTime: '11:30', isDone: false, order: 2, date: todayStr },
-      { _id: 'tb3', userId: 'u1', title: 'DSA Practice: Graphs', startTime: '12:00', endTime: '13:30', isDone: true, order: 3, date: todayStr },
-      { _id: 'tb4', userId: 'u1', title: 'Networking Call', startTime: '15:00', endTime: '16:00', isDone: false, order: 4, date: todayStr },
-      { _id: 'tb5', userId: 'u1', title: 'Project Deployment', startTime: '19:00', endTime: '20:30', isDone: false, order: 5, date: todayStr },
-      
-      { _id: 'tb_y1', userId: 'u1', title: 'Code Review', startTime: '09:00', endTime: '10:30', isDone: true, order: 1, date: yesterdayStr },
-      { _id: 'tb_y2', userId: 'u1', title: 'Design Session', startTime: '11:00', endTime: '13:00', isDone: true, order: 2, date: yesterdayStr },
-      { _id: 'tb_y3', userId: 'u1', title: 'Gym Workout', startTime: '17:00', endTime: '18:30', isDone: false, order: 3, date: yesterdayStr },
-    ];
-    localStorage.setItem('mom_timetable', JSON.stringify(defaultTimetable));
+    localStorage.setItem('mom_timetable', JSON.stringify([]));
   }
 
   if (!localStorage.getItem('mom_habits')) {
-    const defaultHabits: Habit[] = [
-      { _id: 'h1', userId: 'u1', name: 'Workout', color: '#3B82F6', order: 1, isActive: true, currentStreak: 5, longestStreak: 14, activeWeeks: 4 },
-      { _id: 'h2', userId: 'u1', name: 'Study', color: '#10B981', order: 2, isActive: true, currentStreak: 1, longestStreak: 12, activeWeeks: 5 },
-      { _id: 'h3', userId: 'u1', name: 'DSA', color: '#EC4899', order: 3, isActive: true, currentStreak: 12, longestStreak: 18, activeWeeks: 3 },
-      { _id: 'h4', userId: 'u1', name: 'Project Work', color: '#F59E0B', order: 4, isActive: true, currentStreak: 8, longestStreak: 15, activeWeeks: 6 },
-      { _id: 'h5', userId: 'u1', name: 'Interview Prep', color: '#8B5CF6', order: 5, isActive: true, currentStreak: 1, longestStreak: 9, activeWeeks: 2 },
-      { _id: 'h6', userId: 'u1', name: 'Help Mom', color: '#EF4444', order: 6, isActive: true, currentStreak: 20, longestStreak: 20, activeWeeks: 8 },
-      { _id: 'h7', userId: 'u1', name: 'Sleep', color: '#111827', order: 7, isActive: true, currentStreak: 32, longestStreak: 32, activeWeeks: 10 },
-    ];
-    localStorage.setItem('mom_habits', JSON.stringify(defaultHabits));
+    localStorage.setItem('mom_habits', JSON.stringify([]));
   }
 
   if (!localStorage.getItem('mom_habit_logs')) {
-    const defaultLogs: HabitLog[] = [];
-    
-    // Seed some logs for the current week
-    const habits = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7'];
-    
-    // Add logs for Mon, Tue, Wed, Thu of current week
-    const daysOffset = [0, 1, 2, 3]; // Mon, Tue, Wed, Thu
-    daysOffset.forEach(offset => {
-      const logDate = new Date(monday);
-      logDate.setDate(monday.getDate() + offset);
-      const logDateStr = logDate.toISOString().split('T')[0];
-      
-      habits.forEach(habitId => {
-        // Randomly skip some days to match screenshot
-        let isDone = true;
-        if (habitId === 'h2' && offset === 2) isDone = false; // Study missed on Wednesday
-        if (habitId === 'h3' && offset === 2) isDone = false; // DSA missed on Wednesday
-        if (habitId === 'h5' && (offset === 0 || offset === 2)) isDone = false; // Interview prep only Tue & Thu
-        if (habitId === 'h4' && offset === 3) isDone = true;
-        
-        defaultLogs.push({
-          _id: `hl_${habitId}_${offset}`,
-          userId: 'u1',
-          habitId,
-          date: logDateStr,
-          isDone
-        });
-      });
-    });
-    
-    localStorage.setItem('mom_habit_logs', JSON.stringify(defaultLogs));
+    localStorage.setItem('mom_habit_logs', JSON.stringify([]));
   }
 
   if (!localStorage.getItem('mom_goals')) {
-    const defaultGoals: WeeklyGoal[] = [
-      { _id: 'g1', userId: 'u1', weekStartDate: weekStartStr, title: 'Complete Portfolio UI', dueDay: 'Wednesday', isDone: true },
-      { _id: 'g2', userId: 'u1', weekStartDate: weekStartStr, title: 'Apply to 20 Jobs', isDone: true },
-      { _id: 'g3', userId: 'u1', weekStartDate: weekStartStr, title: 'Finish 10 DSA Medium', isDone: false },
-      { _id: 'g4', userId: 'u1', weekStartDate: weekStartStr, title: 'Call Recruiters', isDone: false },
-      { _id: 'g5', userId: 'u1', weekStartDate: weekStartStr, title: 'Morning 5km Run (3 days)', dueDay: 'Friday', isDone: false },
-    ];
-    localStorage.setItem('mom_goals', JSON.stringify(defaultGoals));
+    localStorage.setItem('mom_goals', JSON.stringify([]));
   }
 
   if (!localStorage.getItem('mom_topics')) {
-    const defaultTopics: Topic[] = [
-      { 
-        _id: 't1', 
-        userId: 'u1', 
-        title: 'Graph Algorithms & Theory', 
-        category: 'DSA', 
-        progressPercent: 75, 
-        subTopics: [
-          { title: 'BFS & DFS Traversals', isDone: true },
-          { title: 'Dijkstra\'s Shortest Path', isDone: true },
-          { title: 'Bellman-Ford Algorithm', isDone: true },
-          { title: 'Prim\'s & Kruskal\'s MST', isDone: false }
-        ] 
-      },
-      { 
-        _id: 't2', 
-        userId: 'u1', 
-        title: 'Microservices Architecture', 
-        category: 'System Design', 
-        progressPercent: 100, 
-        subTopics: [
-          { title: 'Service Discovery & Registry', isDone: true },
-          { title: 'API Gateway Pattern', isDone: true },
-          { title: 'Eventual Consistency & Saga Pattern', isDone: true }
-        ] 
-      },
-      { 
-        _id: 't3', 
-        userId: 'u1', 
-        title: 'React Performance Patterns', 
-        category: 'Frontend', 
-        progressPercent: 40, 
-        subTopics: [
-          { title: 'useMemo & useCallback optimization', isDone: true },
-          { title: 'Windowing/Virtualization (react-window)', isDone: false },
-          { title: 'Code Splitting and Suspense', isDone: false }
-        ] 
-      },
-      { 
-        _id: 't4', 
-        userId: 'u1', 
-        title: 'Relational DB Indexing', 
-        category: 'Backend', 
-        progressPercent: 15, 
-        subTopics: [
-          { title: 'B-Tree & Hash Indexes', isDone: true },
-          { title: 'Query Execution Plan Analysis', isDone: false },
-          { title: 'Index covering and performance trade-offs', isDone: false }
-        ] 
-      },
-      { 
-        _id: 't5', 
-        userId: 'u1', 
-        title: 'Load Balancing Strategies', 
-        category: 'System Design', 
-        progressPercent: 90, 
-        subTopics: [
-          { title: 'Round Robin & Weighted Round Robin', isDone: true },
-          { title: 'Least Connections Algorithm', isDone: true },
-          { title: 'IP Hash Routing', isDone: false }
-        ] 
-      },
-      { 
-        _id: 't6', 
-        userId: 'u1', 
-        title: 'Dynamic Programming', 
-        category: 'DSA', 
-        progressPercent: 100, 
-        subTopics: [
-          { title: 'Memoization (Top-down)', isDone: true },
-          { title: 'Tabulation (Bottom-up)', isDone: true },
-          { title: 'Knapsack & LCS variants', isDone: true }
-        ] 
-      }
-    ];
-    localStorage.setItem('mom_topics', JSON.stringify(defaultTopics));
+    localStorage.setItem('mom_topics', JSON.stringify([]));
   }
 
   if (!localStorage.getItem('mom_applications')) {
-    const defaultApps: Application[] = [
-      { _id: 'a1', userId: 'u1', company: 'TechFlow', role: 'Frontend Dev', dateApplied: todayStr, status: 'Interview', link: 'https://techflow.dev', notes: 'First round technical scheduled' },
-      { _id: 'a2', userId: 'u1', company: 'GlobalSaaS', role: 'Product Mgr', dateApplied: todayStr, status: 'Offer', link: 'https://globalsaas.co', notes: 'Offer received, negotiation in progress' },
-      { _id: 'a3', userId: 'u1', company: 'MetaPixel', role: 'UI Designer', dateApplied: todayStr, status: 'Applied', link: 'https://metapixel.design', notes: 'Applied via referral' },
-      { _id: 'a4', userId: 'u1', company: 'Stripe', role: 'Full Stack Engineer', dateApplied: yesterdayStr, status: 'Applied', link: 'https://stripe.com' },
-      { _id: 'a5', userId: 'u1', company: 'Vercel', role: 'React Engineer', dateApplied: yesterdayStr, status: 'OA', link: 'https://vercel.com', notes: 'Completed OA' },
-      { _id: 'a6', userId: 'u1', company: 'Netflix', role: 'UI Specialist', dateApplied: yesterdayStr, status: 'Rejected', link: 'https://netflix.com' }
-    ];
-    localStorage.setItem('mom_applications', JSON.stringify(defaultApps));
+    localStorage.setItem('mom_applications', JSON.stringify([]));
   }
 
   if (!localStorage.getItem('mom_quotes')) {
-    const defaultQuotes: Quote[] = [
-      { text: "Action is the foundational key to all success.", author: "Pablo Picasso", isFavorite: false, isCustom: false },
-      { text: "Make today your masterpiece.", author: "John Wooden", isFavorite: true, isCustom: false },
-      { text: "Consistency is what transforms average into excellence.", author: "Unknown", isFavorite: false, isCustom: false },
-      { text: "Your talent determines what you can do. Your motivation determines how much you are willing to do.", author: "Lou Holtz", isFavorite: false, isCustom: false }
-    ];
-    localStorage.setItem('mom_quotes', JSON.stringify(defaultQuotes));
+    localStorage.setItem('mom_quotes', JSON.stringify([]));
   }
 };
 

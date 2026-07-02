@@ -33,6 +33,13 @@ export default function Topics() {
   const [newTopicTitle, setNewTopicTitle] = useState('');
   const [newTopicCategory, setNewTopicCategory] = useState('');
   const [newTopicSubtopics, setNewTopicSubtopics] = useState('');
+  const [confirmModal, setConfirmModal] = useState<{
+    type: 'delete' | 'update';
+    id: string;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
   
   // Accordion state (mapped by topic ID: boolean)
   const [expandedTopics, setExpandedTopics] = useState<Record<string, boolean>>({});
@@ -260,7 +267,13 @@ export default function Topics() {
                           {topic.category}
                         </PillBadge>
                         <button
-                          onClick={() => deleteTopic(topic._id)}
+                          onClick={() => setConfirmModal({
+                            type: 'delete',
+                            id: topic._id,
+                            title: 'Confirm Deletion',
+                            message: `Are you sure you want to delete the study topic "${topic.title}"? This action cannot be undone.`,
+                            onConfirm: () => deleteTopic(topic._id)
+                          })}
                           className="text-gray-300 hover:text-red-500 transition-colors p-1"
                           aria-label={`Delete ${topic.title}`}
                         >
@@ -308,7 +321,13 @@ export default function Topics() {
                                 <Checkbox 
                                   checked={sub.isDone} 
                                   size={16}
-                                  onChange={(checked) => handleToggleSubtopic(topic._id, sIdx, checked)}
+                                  onChange={(checked) => setConfirmModal({
+                                    type: 'update',
+                                    id: `${topic._id}-${sIdx}`,
+                                    title: checked ? 'Complete Subtopic' : 'Undo Subtopic Completion',
+                                    message: `Are you sure you want to mark "${sub.title}" as ${checked ? 'completed' : 'incomplete'}?`,
+                                    onConfirm: () => handleToggleSubtopic(topic._id, sIdx, checked)
+                                  })}
                                 />
                               </div>
                             ))}
@@ -415,6 +434,43 @@ export default function Topics() {
           </div>
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Add Topic</Button>
         </form>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        isOpen={!!confirmModal}
+        onClose={() => setConfirmModal(null)}
+        title={confirmModal?.title || 'Confirm Action'}
+      >
+        <div className="space-y-5 py-1">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            {confirmModal?.message}
+          </p>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setConfirmModal(null)}
+              className="font-bold border-slate-200 dark:border-slate-800 dark:hover:bg-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </Button>
+            <Button
+              className={`font-bold text-white transition-all hover:scale-105 active:scale-95 duration-150 ${
+                confirmModal?.type === 'delete' 
+                  ? 'bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-500/10' 
+                  : 'bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/10'
+              }`}
+              onClick={() => {
+                if (confirmModal) {
+                  confirmModal.onConfirm();
+                  setConfirmModal(null);
+                }
+              }}
+            >
+              {confirmModal?.type === 'delete' ? 'Delete' : 'Confirm'}
+            </Button>
+          </div>
+        </div>
       </Modal>
 
     </div>

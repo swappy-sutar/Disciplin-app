@@ -14,12 +14,15 @@ import {
   Star,
   Check,
   Zap,
-  Globe
+  Shield,
+  EyeOff,
+  Server
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useStore } from '../../app/store';
 import { Logo } from '../../components/ui/Logo';
+import { Footer } from '../../components/ui/Footer';
 
 export default function LandingPage() {
   const { token, theme, toggleTheme } = useStore();
@@ -332,12 +335,31 @@ export default function LandingPage() {
             <span>Introducing v1.0 Release</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black text-gray-900 dark:text-white tracking-tight leading-[1.08]">
-            Plan your day.<br />
-            Build your habits.<br />
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 dark:from-blue-400 dark:via-indigo-300 dark:to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black text-gray-900 dark:text-white tracking-tight leading-[1.08] flex flex-col">
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+              className="block"
+            >
+              Plan your day.
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+              className="block"
+            >
+              Build your habits.
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+              className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 dark:from-blue-400 dark:via-indigo-300 dark:to-cyan-400 bg-clip-text text-transparent block"
+            >
               Land your job.
-            </span>
+            </motion.span>
           </h1>
           
           <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 font-medium max-w-lg leading-relaxed select-none">
@@ -488,22 +510,22 @@ export default function LandingPage() {
           <p className="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
             DESIGNED AROUND PURE MOMENTUM & PRODUCTIVITY PILLARS
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-xs font-black tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-            <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Privacy First
+          <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center gap-3.5 md:gap-4 max-w-md md:max-w-none mx-auto text-xs font-bold tracking-wide text-slate-500 dark:text-slate-400 uppercase select-none">
+            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-violet-300 dark:hover:border-violet-900/60 hover:text-violet-600 dark:hover:text-violet-400 hover:shadow-[0_4px_20px_rgba(139,92,246,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
+              <Shield size={16} className="text-violet-500 group-hover:scale-110 transition-transform flex-shrink-0" />
+              <span className="truncate">Privacy First</span>
             </span>
-            <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Zero Distractions
+            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-900/60 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-[0_4px_20px_rgba(59,130,246,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
+              <EyeOff size={16} className="text-blue-500 group-hover:scale-110 transition-transform flex-shrink-0" />
+              <span className="truncate">Zero Distractions</span>
             </span>
-            <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Deep Work Focused
+            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-orange-300 dark:hover:border-orange-900/60 hover:text-orange-600 dark:hover:text-orange-400 hover:shadow-[0_4px_20px_rgba(249,115,22,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
+              <Target size={16} className="text-orange-500 group-hover:scale-110 transition-transform flex-shrink-0" />
+              <span className="truncate">Deep Work Focused</span>
             </span>
-            <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Self-Hosted Friendly
+            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-emerald-300 dark:hover:border-emerald-900/60 hover:text-emerald-600 dark:hover:text-emerald-400 hover:shadow-[0_4px_20px_rgba(16,185,129,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
+              <Server size={16} className="text-emerald-500 group-hover:scale-110 transition-transform flex-shrink-0" />
+              <span className="truncate">Self-Hosted Friendly</span>
             </span>
           </div>
         </div>
@@ -951,75 +973,7 @@ export default function LandingPage() {
       </section>
 
       {/* 11. Footer Section */}
-      <footer className="bg-white dark:bg-slate-950 border-t border-gray-100 dark:border-gray-800/80 py-16 select-none text-xs text-gray-500 dark:text-gray-400 font-semibold relative z-10">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 border-b border-gray-100/50 dark:border-gray-800/60 pb-12">
-          
-          <div className="col-span-2 md:col-span-6 space-y-4 text-left">
-            <Logo />
-            <p className="max-w-xs leading-relaxed text-gray-400 dark:text-gray-500 select-none leading-normal">
-              Helping you land your dream role through systematic organization and habit excellence.
-            </p>
-          </div>
-          
-          <div className="col-span-1 md:col-span-2 space-y-3.5 text-left">
-            <span className="text-[10px] font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider block select-none">Product</span>
-            <a href="#features" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Features</a>
-            <a href="#demo" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Solutions</a>
-            <a href="#pricing" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Pricing</a>
-          </div>
-
-          <div className="col-span-1 md:col-span-2 space-y-3.5 text-left">
-            <span className="text-[10px] font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider block select-none">Company</span>
-            <a href="#" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">About Us</a>
-            <a href="#" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Careers</a>
-            <a href="#" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Contact</a>
-          </div>
-
-          <div className="col-span-2 md:col-span-2 space-y-3.5 text-left">
-            <span className="text-[10px] font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider block select-none">Legal</span>
-            <a href="#" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Privacy Policy</a>
-            <a href="#" className="block text-gray-500 dark:text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue transition-colors">Terms of Service</a>
-          </div>
-
-        </div>
-
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-450 dark:text-gray-500">
-          <p>© 2026 Disciplin Inc. All rights reserved.</p>
-          <div className="flex items-center gap-2 select-none">
-            <a 
-              href="https://linkedin.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-2 rounded-lg text-gray-400 hover:text-primary-blue dark:hover:text-primary-blue hover:bg-slate-100 dark:hover:bg-slate-900 transition-all cursor-pointer flex items-center justify-center"
-              aria-label="LinkedIn"
-            >
-              <svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-              </svg>
-            </a>
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-2 rounded-lg text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 transition-all cursor-pointer flex items-center justify-center"
-              aria-label="GitHub"
-            >
-              <svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-            </a>
-            <a 
-              href="https://disciplin.app" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-2 rounded-lg text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-450 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all cursor-pointer flex items-center justify-center"
-              aria-label="Profile Website"
-            >
-              <Globe size={18} />
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

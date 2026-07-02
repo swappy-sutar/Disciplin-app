@@ -31,6 +31,13 @@ export default function Applications() {
   const [isAddOpen, setAddOpen] = useState(false);
   const [isEditOpen, setEditOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    type: 'delete' | 'update';
+    id: string;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   // Form states
   const [company, setCompany] = useState('');
@@ -317,8 +324,14 @@ export default function Applications() {
                           <Edit2 size={13} />
                         </button>
                         <button
-                          onClick={() => deleteApplication(app._id)}
-                          className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer"
+                          onClick={() => setConfirmModal({
+                            type: 'delete',
+                            id: app._id,
+                            title: 'Confirm Deletion',
+                            message: `Are you sure you want to delete the job application to "${app.company}" for the role of "${app.role}"? This action cannot be undone.`,
+                            onConfirm: () => deleteApplication(app._id)
+                          })}
+                          className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all cursor-pointer"
                           aria-label="Delete application"
                         >
                           <Trash2 size={13} />
@@ -512,6 +525,43 @@ export default function Applications() {
           </div>
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Save Changes</Button>
         </form>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        isOpen={!!confirmModal}
+        onClose={() => setConfirmModal(null)}
+        title={confirmModal?.title || 'Confirm Action'}
+      >
+        <div className="space-y-5 py-1">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            {confirmModal?.message}
+          </p>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setConfirmModal(null)}
+              className="font-bold border-slate-200 dark:border-slate-800 dark:hover:bg-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </Button>
+            <Button
+              className={`font-bold text-white transition-all hover:scale-105 active:scale-95 duration-150 ${
+                confirmModal?.type === 'delete' 
+                  ? 'bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-500/10' 
+                  : 'bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/10'
+              }`}
+              onClick={() => {
+                if (confirmModal) {
+                  confirmModal.onConfirm();
+                  setConfirmModal(null);
+                }
+              }}
+            >
+              {confirmModal?.type === 'delete' ? 'Delete' : 'Confirm'}
+            </Button>
+          </div>
+        </div>
       </Modal>
 
     </div>

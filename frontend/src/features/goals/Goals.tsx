@@ -33,6 +33,13 @@ export default function Goals() {
   const [newGoalDueDay, setNewGoalDueDay] = useState('');
   const [newGoalCategory, setNewGoalCategory] = useState('Career');
   const [isHistoryExpanded, setHistoryExpanded] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<{
+    type: 'delete' | 'update';
+    id: string;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   // Queries
   const { goals, history, isLoading, createGoal, updateGoal, deleteGoal } = useGoals(activeWeekStart);
@@ -215,23 +222,25 @@ export default function Goals() {
                         <div className="pt-0.5">
                           <Checkbox 
                             checked={goal.isDone} 
-                            onChange={(done) => {
-                              updateGoal({ id: goal._id, body: { isDone: done } });
-                              if (done) {
-                                const hasTag = goal.title.includes('[') && goal.title.includes(']');
-                                const cleanTitle = hasTag 
-                                  ? goal.title.replace(/\[.*?\]/, '').trim() 
-                                  : goal.title;
-                                notifySuccessCelebration(`You have completed the goal: "${cleanTitle}"!`);
-                                addNotification('Goal Completed! 🎯', `You finished: "${cleanTitle}"`, 'goal');
+                            onChange={(done) => setConfirmModal({
+                              type: 'update',
+                              id: goal._id,
+                              title: done ? 'Complete Goal' : 'Undo Goal Completion',
+                              message: `Are you sure you want to mark the goal "${cleanTitle}" as ${done ? 'completed' : 'incomplete'}?`,
+                              onConfirm: () => {
+                                updateGoal({ id: goal._id, body: { isDone: done } });
+                                if (done) {
+                                  notifySuccessCelebration(`You have completed the goal: "${cleanTitle}"!`);
+                                  addNotification('Goal Completed! 🎯', `You finished: "${cleanTitle}"`, 'goal');
+                                }
                               }
-                            }}
+                            })}
                             size={20}
                           />
                         </div>
                         <div>
                           <p className={`text-sm font-semibold leading-normal transition-colors select-none
-                            ${goal.isDone ? 'text-gray-400 line-through' : 'text-gray-800'}
+                            ${goal.isDone ? 'text-gray-400 dark:text-gray-550 line-through' : 'text-gray-800 dark:text-slate-200'}
                           `}>
                             {cleanTitle}
                           </p>
@@ -240,7 +249,7 @@ export default function Goals() {
                               {category}
                             </span>
                             {goal.dueDay && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-pink-500">
+                              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-pink-500 dark:text-pink-400">
                                 <Clock size={10} />
                                 Due {goal.dueDay}
                               </span>
@@ -250,7 +259,13 @@ export default function Goals() {
                       </div>
 
                       <button
-                        onClick={() => deleteGoal(goal._id)}
+                        onClick={() => setConfirmModal({
+                          type: 'delete',
+                          id: goal._id,
+                          title: 'Confirm Deletion',
+                          message: `Are you sure you want to delete the goal "${cleanTitle}"? This action cannot be undone.`,
+                          onConfirm: () => deleteGoal(goal._id)
+                        })}
                         className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 cursor-pointer"
                         aria-label="Delete goal"
                       >
@@ -410,6 +425,43 @@ export default function Goals() {
 
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Create Goal</Button>
         </form>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        isOpen={!!confirmModal}
+        onClose={() => setConfirmModal(null)}
+        title={confirmModal?.title || 'Confirm Action'}
+      >
+        <div className="space-y-5 py-1">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            {confirmModal?.message}
+          </p>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setConfirmModal(null)}
+              className="font-bold border-slate-200 dark:border-slate-800 dark:hover:bg-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </Button>
+            <Button
+              className={`font-bold text-white transition-all hover:scale-105 active:scale-95 duration-150 ${
+                confirmModal?.type === 'delete' 
+                  ? 'bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-500/10' 
+                  : 'bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/10'
+              }`}
+              onClick={() => {
+                if (confirmModal) {
+                  confirmModal.onConfirm();
+                  setConfirmModal(null);
+                }
+              }}
+            >
+              {confirmModal?.type === 'delete' ? 'Delete' : 'Confirm'}
+            </Button>
+          </div>
+        </div>
       </Modal>
 
     </div>

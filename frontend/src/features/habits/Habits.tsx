@@ -25,6 +25,13 @@ export default function Habits() {
   const [isAddOpen, setAddOpen] = useState(false);
   const [newHabitName, setNewHabitName] = useState('');
   const [newHabitColor, setNewHabitColor] = useState('#3B82F6');
+  const [confirmModal, setConfirmModal] = useState<{
+    type: 'delete' | 'update';
+    id: string;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   // Calculate week start and end range strings
   const weekStart = parseISO(activeWeekStart);
@@ -81,20 +88,11 @@ export default function Habits() {
     };
   });
 
-  // Habit Breakdown completions rate (mock data / calculated from logs if possible, else defaults)
+  // Habit Breakdown completions rate
   const getHabitBreakdown = () => {
     return habits.map(h => {
-      // Calculate from local logs or use realistic defaults
       const habitLogs = logs.filter(l => l.habitId === h._id && l.isDone).length;
-      // Mock historical rate to represent realistic consistency rates e.g. 98%, 92%, etc.
-      let rate = 75;
-      if (h.name === 'Help Mom') rate = 98;
-      else if (h.name === 'Sleep') rate = 92;
-      else if (h.name === 'Workout') rate = 85;
-      else if (h.name === 'DSA') rate = 76;
-      else if (h.name === 'Project Work') rate = 64;
-      else if (h.name === 'Interview Prep') rate = 50;
-      else rate = habitLogs > 0 ? Math.round((habitLogs / 7) * 100) : 40;
+      const rate = habitLogs > 0 ? Math.min(100, Math.round((habitLogs / 7) * 100)) : 0;
       
       return {
         name: h.name,
@@ -199,17 +197,17 @@ export default function Habits() {
       <Card 
         title="Weekly Consistency"
         headerAction={
-          <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-full px-2 py-0.5 text-xs font-medium text-gray-600 shadow-sm select-none">
+          <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-full px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-slate-350 shadow-sm select-none">
             <button 
               onClick={handlePrevWeek}
-              className="p-1 rounded-full hover:bg-white text-gray-500 transition-colors cursor-pointer"
+              className="p-1 rounded-full hover:bg-white dark:hover:bg-slate-800 text-gray-500 dark:text-slate-400 transition-colors cursor-pointer"
             >
               <ChevronLeft size={14} />
             </button>
             <span className="font-semibold px-1">{weekRangeLabel}</span>
             <button 
               onClick={handleNextWeek}
-              className="p-1 rounded-full hover:bg-white text-gray-500 transition-colors cursor-pointer"
+              className="p-1 rounded-full hover:bg-white dark:hover:bg-slate-800 text-gray-500 dark:text-slate-400 transition-colors cursor-pointer"
             >
               <ChevronRight size={14} />
             </button>
@@ -219,13 +217,13 @@ export default function Habits() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+              <tr className="border-b border-gray-100 dark:border-slate-800/80 text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">
                 <th className="pb-3 text-left font-semibold">Habit Name</th>
                 {weekDays.map((day, idx) => (
                   <th 
                     key={idx} 
                     className={`pb-3 text-center font-semibold 
-                      ${day.isToday ? 'bg-indigo-50/50 rounded-t-xl text-primary-blue font-bold px-2' : ''}
+                      ${day.isToday ? 'bg-emerald-500/5 dark:bg-emerald-500/10 rounded-t-2xl text-emerald-600 dark:text-emerald-400 font-bold px-2' : ''}
                     `}
                   >
                     {day.label}
@@ -234,7 +232,7 @@ export default function Habits() {
                 <th className="pb-3 text-right font-semibold pr-2">Streak</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-50 dark:divide-slate-800/40">
               {habits.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="text-center py-8 text-gray-400 text-xs select-none">
@@ -242,12 +240,18 @@ export default function Habits() {
                   </td>
                 </tr>
               ) : (
-                habits.map((habit) => (
-                  <tr key={habit._id} className="text-xs text-gray-700 hover:bg-gray-50/40 transition-colors group">
+                habits.map((habit, hIdx) => (
+                  <tr key={habit._id} className="text-xs text-gray-700 dark:text-slate-350 hover:bg-gray-50/20 dark:hover:bg-slate-800/25 transition-colors group">
                     <td className="py-3.5 font-bold flex items-center justify-between select-none">
                       <span>{habit.name}</span>
                       <button 
-                        onClick={() => deleteHabit(habit._id)}
+                        onClick={() => setConfirmModal({
+                          type: 'delete',
+                          id: habit._id,
+                          title: 'Confirm Deletion',
+                          message: `Are you sure you want to delete the habit "${habit.name}"? This action cannot be undone.`,
+                          onConfirm: () => deleteHabit(habit._id)
+                        })}
                         className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                         aria-label={`Delete ${habit.name}`}
                       >
@@ -257,11 +261,12 @@ export default function Habits() {
                     
                     {weekDays.map((day, idx) => {
                       const isLogged = logs.some(l => l.habitId === habit._id && l.date === day.dateStr && l.isDone);
+                      const isLastRow = hIdx === habits.length - 1;
                       return (
                         <td 
                           key={idx} 
                           className={`py-3.5 text-center 
-                            ${day.isToday ? 'bg-indigo-50/50 px-2' : ''}
+                            ${day.isToday ? `bg-emerald-500/5 dark:bg-emerald-500/10 px-2 ${isLastRow ? 'rounded-b-2xl' : ''}` : ''}
                           `}
                         >
                           <div className="flex justify-center">
@@ -269,20 +274,26 @@ export default function Habits() {
                               checked={isLogged} 
                               color={habit.color}
                               size={20}
-                              onChange={(checked) => {
-                                toggleLog({ habitId: habit._id, date: day.dateStr, isDone: checked });
-                                if (checked) {
-                                  notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
-                                  addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
+                              onChange={(checked) => setConfirmModal({
+                                type: 'update',
+                                id: `${habit._id}-${day.dateStr}`,
+                                title: checked ? 'Complete Habit' : 'Undo Habit Logging',
+                                message: `Are you sure you want to mark "${habit.name}" as ${checked ? 'completed' : 'incomplete'} for ${day.label}?`,
+                                onConfirm: () => {
+                                  toggleLog({ habitId: habit._id, date: day.dateStr, isDone: checked });
+                                  if (checked) {
+                                    notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
+                                    addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
+                                  }
                                 }
-                              }}
+                              })}
                             />
                           </div>
                         </td>
                       );
                     })}
 
-                    <td className={`py-3.5 text-right font-bold text-gray-700 pr-2 select-none flex items-center justify-end gap-1.5`}>
+                    <td className={`py-3.5 text-right font-bold text-gray-700 dark:text-slate-350 pr-2 select-none flex items-center justify-end gap-1.5`}>
                       {/* Streak flame count */}
                       {habit.currentStreak > 0 && (
                         <div className="flex items-center text-orange-500 gap-0.5 scale-90">
@@ -371,6 +382,43 @@ export default function Habits() {
 
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Create Habit</Button>
         </form>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        isOpen={!!confirmModal}
+        onClose={() => setConfirmModal(null)}
+        title={confirmModal?.title || 'Confirm Action'}
+      >
+        <div className="space-y-5 py-1">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            {confirmModal?.message}
+          </p>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setConfirmModal(null)}
+              className="font-bold border-slate-200 dark:border-slate-800 dark:hover:bg-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </Button>
+            <Button
+              className={`font-bold text-white transition-all hover:scale-105 active:scale-95 duration-150 ${
+                confirmModal?.type === 'delete' 
+                  ? 'bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-500/10' 
+                  : 'bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-500/10'
+              }`}
+              onClick={() => {
+                if (confirmModal) {
+                  confirmModal.onConfirm();
+                  setConfirmModal(null);
+                }
+              }}
+            >
+              {confirmModal?.type === 'delete' ? 'Delete' : 'Confirm'}
+            </Button>
+          </div>
+        </div>
       </Modal>
 
     </div>

@@ -9,7 +9,7 @@ import { User as UserIcon, Mail, Lock } from 'lucide-react';
 export default function Profile() {
   const { user, token, setAuth } = useStore();
   const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const email = user?.email || '';
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -97,8 +97,8 @@ export default function Profile() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-canvas-bg dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white rounded-2xl pl-10 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue transition-all"
+                disabled
+                className="w-full bg-gray-50/50 dark:bg-slate-900/40 border border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-450 rounded-2xl pl-10 pr-4 py-3 text-sm font-semibold cursor-not-allowed opacity-70 transition-all select-none focus:outline-none"
                 placeholder="Enter your email"
               />
             </div>
