@@ -11,6 +11,7 @@ const loginLimiter = rateLimit({
   message: { success: false, message: 'Too many login attempts, please try again after a minute' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 const registerLimiter = rateLimit({
@@ -19,6 +20,7 @@ const registerLimiter = rateLimit({
   message: { success: false, message: 'Too many registration attempts, please try again after a minute' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 const forgotPasswordLimiter = rateLimit({
@@ -27,6 +29,7 @@ const forgotPasswordLimiter = rateLimit({
   message: { success: false, message: 'Too many password reset requests, please try again after an hour' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 const router = Router();
