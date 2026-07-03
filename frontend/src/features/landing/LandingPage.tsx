@@ -23,6 +23,7 @@ import { Card } from '../../components/ui/Card';
 import { useStore } from '../../app/store';
 import { Logo } from '../../components/ui/Logo';
 import { Footer } from '../../components/ui/Footer';
+import { GoToTop } from '../../components/ui/GoToTop';
 
 export default function LandingPage() {
   const { token, theme, toggleTheme } = useStore();
@@ -280,17 +281,44 @@ export default function LandingPage() {
       <div className="absolute inset-0 bg-[radial-gradient(#E5E7EB_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
 
       {/* 1. Header/Navigation */}
-      <header className="bg-white/70 backdrop-blur-md border-b border-gray-100/80 fixed top-0 left-0 right-0 z-50 select-none">
+      <header className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/40 fixed top-0 left-0 right-0 z-50 select-none transition-all duration-300">
+        {/* Glow underside line */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
+        
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
           <Link to="/" className="hover:opacity-90 transition-opacity">
             <Logo />
           </Link>
           
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-500">
-            <a href="#features" className="hover:text-primary-blue transition-colors">Features</a>
-            <a href="#demo" className="hover:text-primary-blue transition-colors">Solutions</a>
-            <a href="#pricing" className="hover:text-primary-blue transition-colors">Pricing</a>
-            <a href="#testimonials" className="hover:text-primary-blue transition-colors">Testimonials</a>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold">
+            <a 
+              href="#features" 
+              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
+            >
+              Features
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </a>
+            <a 
+              href="#demo" 
+              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
+            >
+              Solutions
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </a>
+            <a 
+              href="#pricing" 
+              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
+            >
+              Pricing
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </a>
+            <a 
+              href="#testimonials" 
+              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
+            >
+              Testimonials
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </a>
           </nav>
           
           <div className="flex items-center gap-4">
@@ -298,7 +326,7 @@ export default function LandingPage() {
             {/* Theme Toggle Button */}
             <button 
               onClick={toggleTheme}
-              className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              className="p-2.5 text-slate-450 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100/60 dark:hover:bg-slate-800/50 border border-transparent hover:border-slate-200/50 dark:hover:border-slate-800/50 transition-all duration-300 cursor-pointer"
               aria-label="Toggle Theme Mode"
             >
               {theme === 'dark' ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} />}
@@ -306,13 +334,13 @@ export default function LandingPage() {
 
             {token ? (
               <Link to="/overview">
-                <Button size="sm" className="px-5 py-2 font-semibold shadow-sm">
+                <Button size="sm" className="px-5 py-2 font-bold shadow-md hover:shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-300">
                   Go to Dashboard →
                 </Button>
               </Link>
             ) : (
               <Link to="/register">
-                <Button size="sm" className="px-5 py-2 font-semibold shadow-sm">Get started</Button>
+                <Button size="sm" className="px-5 py-2 font-bold shadow-md hover:shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-300">Get started</Button>
               </Link>
             )}
           </div>
@@ -974,6 +1002,9 @@ export default function LandingPage() {
 
       {/* 11. Footer Section */}
       <Footer />
+
+      {/* Go to Top Button */}
+      <GoToTop className="bottom-6 right-6" />
 
     </div>
   );

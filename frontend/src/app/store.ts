@@ -75,8 +75,8 @@ const getMondayStr = (date: Date): string => {
 
 export const useStore = create<UIState>((set) => {
   // Load initial auth state
-  const storedUser = localStorage.getItem('mom_user');
-  const storedToken = localStorage.getItem('mom_token');
+  const storedUser = localStorage.getItem('disciplin_user');
+  const storedToken = localStorage.getItem('disciplin_token');
   
   return {
     activeDate: new Date().toISOString().split('T')[0],
@@ -90,13 +90,13 @@ export const useStore = create<UIState>((set) => {
     
     user: storedUser ? JSON.parse(storedUser) : null,
     token: storedToken || null,
-    theme: (typeof window !== 'undefined' ? localStorage.getItem('mom_theme') : 'light') as 'light' | 'dark' || 'light',
-    accentColor: (typeof window !== 'undefined' ? localStorage.getItem('mom_accent_color') : 'emerald') as any || 'emerald',
+    theme: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_theme') : 'light') as 'light' | 'dark' || 'light',
+    accentColor: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_accent_color') : 'emerald') as any || 'emerald',
     
     toggleTheme: () => set((state) => {
       const nextTheme = state.theme === 'light' ? 'dark' : 'light';
       if (typeof window !== 'undefined') {
-        localStorage.setItem('mom_theme', nextTheme);
+        localStorage.setItem('disciplin_theme', nextTheme);
         if (nextTheme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
@@ -108,7 +108,7 @@ export const useStore = create<UIState>((set) => {
     
     setAccentColor: (color) => set(() => {
       if (typeof window !== 'undefined') {
-        localStorage.setItem('mom_accent_color', color);
+        localStorage.setItem('disciplin_accent_color', color);
         applyAccentColor(color);
       }
       return { accentColor: color };
@@ -125,17 +125,17 @@ export const useStore = create<UIState>((set) => {
     
     setAuth: (user, token) => {
       if (user && token) {
-        localStorage.setItem('mom_user', JSON.stringify(user));
-        localStorage.setItem('mom_token', token);
+        localStorage.setItem('disciplin_user', JSON.stringify(user));
+        localStorage.setItem('disciplin_token', token);
       } else {
-        localStorage.removeItem('mom_user');
-        localStorage.removeItem('mom_token');
+        localStorage.removeItem('disciplin_user');
+        localStorage.removeItem('disciplin_token');
       }
       set({ user, token });
     },
     logout: () => {
-      localStorage.removeItem('mom_user');
-      localStorage.removeItem('mom_token');
+      localStorage.removeItem('disciplin_user');
+      localStorage.removeItem('disciplin_token');
       set({ user: null, token: null });
     },
     notifications: [
@@ -185,8 +185,8 @@ export const useStore = create<UIState>((set) => {
 // Setup event listener to handle external logout
 if (typeof window !== 'undefined') {
   window.addEventListener('auth_change', () => {
-    const user = localStorage.getItem('mom_user');
-    const token = localStorage.getItem('mom_token');
+    const user = localStorage.getItem('disciplin_user');
+    const token = localStorage.getItem('disciplin_token');
     useStore.setState({ 
       user: user ? JSON.parse(user) : null, 
       token: token || null 
@@ -195,13 +195,13 @@ if (typeof window !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
-  const storedTheme = localStorage.getItem('mom_theme') || 'light';
+  const storedTheme = localStorage.getItem('disciplin_theme') || 'light';
   if (storedTheme === 'dark') {
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
   }
   
-  const storedAccent = localStorage.getItem('mom_accent_color') as any || 'emerald';
+  const storedAccent = localStorage.getItem('disciplin_accent_color') as any || 'emerald';
   applyAccentColor(storedAccent);
 }

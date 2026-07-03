@@ -78,7 +78,8 @@ function App() {
   const [loadingProgress, setLoadingProgress] = React.useState(0);
 
   React.useEffect(() => {
-    if (!localStorage.getItem('mom_dummy_cleaned_v2')) {
+    if (!localStorage.getItem('disciplin_dummy_cleaned_v2')) {
+      // Purge old mom_ keys from user local storage
       localStorage.removeItem('mom_habits');
       localStorage.removeItem('mom_timetable');
       localStorage.removeItem('mom_habit_logs');
@@ -86,7 +87,22 @@ function App() {
       localStorage.removeItem('mom_topics');
       localStorage.removeItem('mom_applications');
       localStorage.removeItem('mom_quotes');
-      localStorage.setItem('mom_dummy_cleaned_v2', 'true');
+      localStorage.removeItem('mom_dummy_cleaned_v2');
+      localStorage.removeItem('mom_token');
+      localStorage.removeItem('mom_user');
+      localStorage.removeItem('mom_theme');
+      localStorage.removeItem('mom_accent_color');
+
+      // Purge default mock keys for the new prefix to start empty
+      localStorage.removeItem('disciplin_habits');
+      localStorage.removeItem('disciplin_timetable');
+      localStorage.removeItem('disciplin_habit_logs');
+      localStorage.removeItem('disciplin_goals');
+      localStorage.removeItem('disciplin_topics');
+      localStorage.removeItem('disciplin_applications');
+      localStorage.removeItem('disciplin_quotes');
+
+      localStorage.setItem('disciplin_dummy_cleaned_v2', 'true');
       queryClient.clear();
     }
   }, []);

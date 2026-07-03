@@ -1,17 +1,34 @@
 import React from 'react';
+import { useStore } from '../../app/store';
 
 interface LogoProps {
   className?: string;
   showText?: boolean;
+  forceDark?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = '', showText = true }) => {
+export const Logo: React.FC<LogoProps> = ({ className = '', showText = true, forceDark = false }) => {
+  const theme = useStore(state => state.theme);
+  const isDark = forceDark || theme === 'dark';
+
+  if (showText) {
+    return (
+      <div className={`flex items-center select-none ${className}`}>
+        <img 
+          src={isDark ? "/disciplin-logo.svg" : "/disciplin-logo-light.svg"} 
+          alt="Disciplin Logo" 
+          className="h-10 md:h-12 w-auto object-contain" 
+        />
+      </div>
+    );
+  }
+
+  // If showText is false, render just the inline monogram icon (so we don't have text or tags)
   return (
-    <div className={`flex items-center gap-2 select-none ${className}`}>
-      {/* SVG Icon */}
+    <div className={`flex items-center select-none ${className}`}>
       <svg 
-        width="28" 
-        height="28" 
+        width="36" 
+        height="36" 
         viewBox="0 0 200 200" 
         xmlns="http://www.w3.org/2000/svg"
         className="flex-shrink-0"
@@ -37,13 +54,6 @@ export const Logo: React.FC<LogoProps> = ({ className = '', showText = true }) =
           className="text-gray-900 dark:text-white"
         />
       </svg>
-
-      {/* Brand Text */}
-      {showText && (
-        <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight leading-none">
-          Disciplin
-        </span>
-      )}
     </div>
   );
 };

@@ -23,6 +23,7 @@ import { addDays, subDays, startOfWeek, endOfWeek, format, parseISO } from 'date
 import { CalendarPicker } from '../components/ui/CalendarPicker';
 
 import { Logo } from '../components/ui/Logo';
+import { GoToTop } from '../components/ui/GoToTop';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -111,7 +112,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-canvas-bg flex flex-col pb-16 md:pb-0 pt-16">
       {/* Top Navbar */}
-      <header className="bg-white border-b border-gray-100/80 fixed top-0 left-0 right-0 z-30 select-none">
+      <header className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/40 fixed top-0 left-0 right-0 z-30 select-none transition-all duration-300">
+        {/* Glow underside line */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
+        
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           
           {/* Logo */}
@@ -126,14 +130,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) => `
-                  text-sm font-medium px-1.5 py-1 transition-all duration-200 border-b-2 hover:text-primary-blue
+                  relative py-2 text-sm font-semibold transition-colors duration-300 cursor-pointer group
                   ${isActive 
-                    ? 'text-primary-blue border-primary-blue font-semibold' 
-                    : 'text-gray-500 border-transparent hover:border-gray-200'
+                    ? 'text-emerald-600 dark:text-emerald-400 font-bold' 
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }
                 `}
               >
-                {item.name}
+                {({ isActive }) => (
+                  <>
+                    {item.name}
+                    <span className={`absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 transition-transform duration-300 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -338,6 +347,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </NavLink>
         ))}
       </nav>
+
+      {/* Go to Top Button */}
+      <GoToTop className="bottom-20 md:bottom-6 right-20" />
+
     </div>
   );
 };

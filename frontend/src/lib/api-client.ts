@@ -16,37 +16,37 @@ const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 // Seed initial data helper
 const seedLocalStorage = () => {
-  if (!localStorage.getItem('mom_user')) {
-    localStorage.setItem('mom_user', JSON.stringify({ id: 'u1', email: 'user@momentum.com', name: 'Vaishnavi' }));
-    localStorage.setItem('mom_token', 'mock_jwt_token_123');
+  if (!localStorage.getItem('disciplin_user')) {
+    localStorage.setItem('disciplin_user', JSON.stringify({ id: 'u1', email: 'user@momentum.com', name: 'Vaishnavi' }));
+    localStorage.setItem('disciplin_token', 'mock_jwt_token_123');
   }
 
-  if (!localStorage.getItem('mom_timetable')) {
-    localStorage.setItem('mom_timetable', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_timetable')) {
+    localStorage.setItem('disciplin_timetable', JSON.stringify([]));
   }
 
-  if (!localStorage.getItem('mom_habits')) {
-    localStorage.setItem('mom_habits', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_habits')) {
+    localStorage.setItem('disciplin_habits', JSON.stringify([]));
   }
 
-  if (!localStorage.getItem('mom_habit_logs')) {
-    localStorage.setItem('mom_habit_logs', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_habit_logs')) {
+    localStorage.setItem('disciplin_habit_logs', JSON.stringify([]));
   }
 
-  if (!localStorage.getItem('mom_goals')) {
-    localStorage.setItem('mom_goals', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_goals')) {
+    localStorage.setItem('disciplin_goals', JSON.stringify([]));
   }
 
-  if (!localStorage.getItem('mom_topics')) {
-    localStorage.setItem('mom_topics', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_topics')) {
+    localStorage.setItem('disciplin_topics', JSON.stringify([]));
   }
 
-  if (!localStorage.getItem('mom_applications')) {
-    localStorage.setItem('mom_applications', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_applications')) {
+    localStorage.setItem('disciplin_applications', JSON.stringify([]));
   }
 
-  if (!localStorage.getItem('mom_quotes')) {
-    localStorage.setItem('mom_quotes', JSON.stringify([]));
+  if (!localStorage.getItem('disciplin_quotes')) {
+    localStorage.setItem('disciplin_quotes', JSON.stringify([]));
   }
 };
 
@@ -82,7 +82,7 @@ async function request<T>(
   body?: any, 
   mockFallbackHandler?: () => any
 ): Promise<T> {
-  const token = localStorage.getItem('mom_token');
+  const token = localStorage.getItem('disciplin_token');
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -111,7 +111,7 @@ async function request<T>(
             const refreshJson = await refreshResponse.json();
             const newAccessToken = refreshJson.data?.token || refreshJson.token;
             if (newAccessToken) {
-              localStorage.setItem('mom_token', newAccessToken);
+              localStorage.setItem('disciplin_token', newAccessToken);
               const retryHeaders = { ...headers, 'Authorization': `Bearer ${newAccessToken}` };
               const retryResponse = await fetch(`${API_BASE_URL}${path}`, {
                 method,
@@ -130,13 +130,13 @@ async function request<T>(
         }
 
         // Refresh failed, logout user
-        localStorage.removeItem('mom_token');
-        localStorage.removeItem('mom_user');
+        localStorage.removeItem('disciplin_token');
+        localStorage.removeItem('disciplin_user');
         window.dispatchEvent(new Event('auth_change'));
         throw new Error('Session expired. Please log in again.');
       } else if (response.status === 401) {
-        localStorage.removeItem('mom_token');
-        localStorage.removeItem('mom_user');
+        localStorage.removeItem('disciplin_token');
+        localStorage.removeItem('disciplin_user');
         window.dispatchEvent(new Event('auth_change'));
       }
 
@@ -177,14 +177,14 @@ export const apiClient = {
   // Auth Operations
   auth: {
     me: () => request<User>('GET', '/auth/me', undefined, () => {
-      const user = localStorage.getItem('mom_user');
+      const user = localStorage.getItem('disciplin_user');
       if (!user) throw new Error('Unauthenticated');
       return JSON.parse(user);
     }),
     login: (body: any) => request<any>('POST', '/auth/login', body, () => {
       const user = { id: 'u1', email: body.email, name: body.email.split('@')[0] };
-      localStorage.setItem('mom_user', JSON.stringify(user));
-      localStorage.setItem('mom_token', 'mock_token_123');
+      localStorage.setItem('disciplin_user', JSON.stringify(user));
+      localStorage.setItem('disciplin_token', 'mock_token_123');
       window.dispatchEvent(new Event('auth_change'));
       return { token: 'mock_token_123', user };
     }).then(res => {
@@ -196,8 +196,8 @@ export const apiClient = {
     }),
     register: (body: any) => request<any>('POST', '/auth/register', body, () => {
       const user = { id: 'u1', email: body.email, name: body.name || body.email.split('@')[0] };
-      localStorage.setItem('mom_user', JSON.stringify(user));
-      localStorage.setItem('mom_token', 'mock_token_123');
+      localStorage.setItem('disciplin_user', JSON.stringify(user));
+      localStorage.setItem('disciplin_token', 'mock_token_123');
       window.dispatchEvent(new Event('auth_change'));
       return { token: 'mock_token_123', user };
     }).then(res => {
@@ -208,23 +208,23 @@ export const apiClient = {
       };
     }),
     logout: () => {
-      localStorage.removeItem('mom_token');
-      localStorage.removeItem('mom_user');
+      localStorage.removeItem('disciplin_token');
+      localStorage.removeItem('disciplin_user');
       window.dispatchEvent(new Event('auth_change'));
       return Promise.resolve();
     },
     updateProfile: (body: { name?: string; email?: string; password?: string }) => request<any>('PUT', '/auth/profile', body, () => {
-      const stored = localStorage.getItem('mom_user');
+      const stored = localStorage.getItem('disciplin_user');
       if (!stored) throw new Error('Unauthenticated');
       const user = JSON.parse(stored);
       if (body.name) user.name = body.name;
       if (body.email) user.email = body.email;
-      localStorage.setItem('mom_user', JSON.stringify(user));
+      localStorage.setItem('disciplin_user', JSON.stringify(user));
       window.dispatchEvent(new Event('auth_change'));
       return user;
     }).then(res => {
       const user = { id: res.id || res._id, name: res.name, email: res.email };
-      localStorage.setItem('mom_user', JSON.stringify(user));
+      localStorage.setItem('disciplin_user', JSON.stringify(user));
       return user;
     }),
     forgotPassword: (email: string) => request<any>('POST', '/auth/forgot-password', { email }, () => {
@@ -244,7 +244,7 @@ export const apiClient = {
   // Timetable Operations
   timetable: {
     list: (date: string) => request<any[]>('GET', `/timetable?date=${date}`, undefined, () => {
-      const blocks = getLocal<any>('mom_timetable');
+      const blocks = getLocal<any>('disciplin_timetable');
       return blocks.filter((b: any) => b.date === date).sort((a: any, b: any) => a.startTime.localeCompare(b.startTime));
     }).then(res => {
       return res.map((b: any) => ({
@@ -269,7 +269,7 @@ export const apiClient = {
         order: body.order || 0
       };
       return request<any>('POST', '/timetable', apiBody, () => {
-        const blocks = getLocal<any>('mom_timetable');
+        const blocks = getLocal<any>('disciplin_timetable');
         const newBlock: any = {
           _id: `tb_${Math.random().toString(36).substr(2, 9)}`,
           userId: 'u1',
@@ -282,7 +282,7 @@ export const apiClient = {
           date: body.date || new Date().toISOString().split('T')[0]
         };
         blocks.push(newBlock);
-        setLocal('mom_timetable', blocks);
+        setLocal('disciplin_timetable', blocks);
         return newBlock;
       }).then(b => ({
         _id: b._id,
@@ -301,11 +301,11 @@ export const apiClient = {
         apiBody.label = body.title;
       }
       return request<any>('PATCH', `/timetable/${id}`, apiBody, () => {
-        const blocks = getLocal<any>('mom_timetable');
+        const blocks = getLocal<any>('disciplin_timetable');
         const idx = blocks.findIndex((b: any) => b._id === id);
         if (idx !== -1) {
           blocks[idx] = { ...blocks[idx], ...body };
-          setLocal('mom_timetable', blocks);
+          setLocal('disciplin_timetable', blocks);
           return blocks[idx];
         }
         throw new Error('Not found');
@@ -321,18 +321,18 @@ export const apiClient = {
       }));
     },
     delete: (id: string) => request<void>('DELETE', `/timetable/${id}`, undefined, () => {
-      const blocks = getLocal<any>('mom_timetable');
-      setLocal('mom_timetable', blocks.filter((b: any) => b._id !== id));
+      const blocks = getLocal<any>('disciplin_timetable');
+      setLocal('disciplin_timetable', blocks.filter((b: any) => b._id !== id));
     })
   },
 
   // Habits Operations
   habits: {
     list: () => request<Habit[]>('GET', '/habits', undefined, () => {
-      return getLocal<Habit>('mom_habits');
+      return getLocal<Habit>('disciplin_habits');
     }),
     create: (body: any) => request<Habit>('POST', '/habits', body, () => {
-      const habits = getLocal<Habit>('mom_habits');
+      const habits = getLocal<Habit>('disciplin_habits');
       const newHabit: Habit = {
         _id: `h_${Math.random().toString(36).substr(2, 9)}`,
         userId: 'u1',
@@ -345,30 +345,30 @@ export const apiClient = {
         activeWeeks: 1
       };
       habits.push(newHabit);
-      setLocal('mom_habits', habits);
+      setLocal('disciplin_habits', habits);
       return newHabit;
     }),
     update: (id: string, body: any) => request<Habit>('PATCH', `/habits/${id}`, body, () => {
-      const habits = getLocal<Habit>('mom_habits');
+      const habits = getLocal<Habit>('disciplin_habits');
       const idx = habits.findIndex(h => h._id === id);
       if (idx === -1) throw new Error('Not found');
       habits[idx] = { ...habits[idx], ...body };
-      setLocal('mom_habits', habits);
+      setLocal('disciplin_habits', habits);
       return habits[idx];
     }),
     delete: (id: string) => request<void>('DELETE', `/habits/${id}`, undefined, () => {
-      const habits = getLocal<Habit>('mom_habits');
-      setLocal('mom_habits', habits.filter(h => h._id !== id));
+      const habits = getLocal<Habit>('disciplin_habits');
+      setLocal('disciplin_habits', habits.filter(h => h._id !== id));
       
-      const logs = getLocal<HabitLog>('mom_habit_logs');
-      setLocal('mom_habit_logs', logs.filter(l => l.habitId !== id));
+      const logs = getLocal<HabitLog>('disciplin_habit_logs');
+      setLocal('disciplin_habit_logs', logs.filter(l => l.habitId !== id));
     }),
     getLogs: (startDate: string, endDate: string) => request<HabitLog[]>('GET', `/habits/logs?startDate=${startDate}&endDate=${endDate}`, undefined, () => {
-      const logs = getLocal<HabitLog>('mom_habit_logs');
+      const logs = getLocal<HabitLog>('disciplin_habit_logs');
       return logs.filter(l => l.date >= startDate && l.date <= endDate);
     }),
     toggleLog: (body: { habitId: string; date: string; isDone: boolean }) => request<HabitLog>('POST', '/habits/logs', body, () => {
-      const logs = getLocal<HabitLog>('mom_habit_logs');
+      const logs = getLocal<HabitLog>('disciplin_habit_logs');
       const idx = logs.findIndex(l => l.habitId === body.habitId && l.date === body.date);
       
       if (idx > -1) {
@@ -376,12 +376,12 @@ export const apiClient = {
           // delete
           const res = logs[idx];
           logs.splice(idx, 1);
-          setLocal('mom_habit_logs', logs);
+          setLocal('disciplin_habit_logs', logs);
           recalculateStreaks();
           return res;
         } else {
           logs[idx].isDone = true;
-          setLocal('mom_habit_logs', logs);
+          setLocal('disciplin_habit_logs', logs);
           recalculateStreaks();
           return logs[idx];
         }
@@ -394,7 +394,7 @@ export const apiClient = {
           isDone: body.isDone
         };
         logs.push(newLog);
-        setLocal('mom_habit_logs', logs);
+        setLocal('disciplin_habit_logs', logs);
         recalculateStreaks();
         return newLog;
       }
@@ -404,11 +404,11 @@ export const apiClient = {
   // Goals Operations
   goals: {
     list: (week: string) => request<WeeklyGoal[]>('GET', `/goals?week=${week}`, undefined, () => {
-      const goals = getLocal<WeeklyGoal>('mom_goals');
+      const goals = getLocal<WeeklyGoal>('disciplin_goals');
       return goals.filter(g => g.weekStartDate === week);
     }),
     create: (body: any) => request<WeeklyGoal>('POST', '/goals', body, () => {
-      const goals = getLocal<WeeklyGoal>('mom_goals');
+      const goals = getLocal<WeeklyGoal>('disciplin_goals');
       const newGoal: WeeklyGoal = {
         _id: `g_${Math.random().toString(36).substr(2, 9)}`,
         userId: 'u1',
@@ -418,35 +418,35 @@ export const apiClient = {
         isDone: false
       };
       goals.push(newGoal);
-      setLocal('mom_goals', goals);
+      setLocal('disciplin_goals', goals);
       return newGoal;
     }),
     update: (id: string, body: any) => request<WeeklyGoal>('PATCH', `/goals/${id}`, body, () => {
-      const goals = getLocal<WeeklyGoal>('mom_goals');
+      const goals = getLocal<WeeklyGoal>('disciplin_goals');
       const idx = goals.findIndex(g => g._id === id);
       if (idx === -1) throw new Error('Not found');
       goals[idx] = { ...goals[idx], ...body };
-      setLocal('mom_goals', goals);
+      setLocal('disciplin_goals', goals);
       return goals[idx];
     }),
     delete: (id: string) => request<void>('DELETE', `/goals/${id}`, undefined, () => {
-      const goals = getLocal<WeeklyGoal>('mom_goals');
-      setLocal('mom_goals', goals.filter(g => g._id !== id));
+      const goals = getLocal<WeeklyGoal>('disciplin_goals');
+      setLocal('disciplin_goals', goals.filter(g => g._id !== id));
     }),
     // History
     history: () => request<WeeklyGoal[]>('GET', '/goals/history', undefined, () => {
       // Return all goals
-      return getLocal<WeeklyGoal>('mom_goals');
+      return getLocal<WeeklyGoal>('disciplin_goals');
     })
   },
 
   // Topics Operations
   topics: {
     list: () => request<Topic[]>('GET', '/topics', undefined, () => {
-      return getLocal<Topic>('mom_topics');
+      return getLocal<Topic>('disciplin_topics');
     }),
     create: (body: any) => request<Topic>('POST', '/topics', body, () => {
-      const topics = getLocal<Topic>('mom_topics');
+      const topics = getLocal<Topic>('disciplin_topics');
       const newTopic: Topic = {
         _id: `t_${Math.random().toString(36).substr(2, 9)}`,
         userId: 'u1',
@@ -456,11 +456,11 @@ export const apiClient = {
         subTopics: body.subTopics ? body.subTopics.map((s: any) => ({ title: s.title, isDone: false })) : []
       };
       topics.push(newTopic);
-      setLocal('mom_topics', topics);
+      setLocal('disciplin_topics', topics);
       return newTopic;
     }),
     update: (id: string, body: any) => request<Topic>('PATCH', `/topics/${id}`, body, () => {
-      const topics = getLocal<Topic>('mom_topics');
+      const topics = getLocal<Topic>('disciplin_topics');
       const idx = topics.findIndex(t => t._id === id);
       if (idx === -1) throw new Error('Not found');
       
@@ -476,19 +476,19 @@ export const apiClient = {
         ...body,
         progressPercent: body.progressPercent !== undefined ? body.progressPercent : progressPercent
       };
-      setLocal('mom_topics', topics);
+      setLocal('disciplin_topics', topics);
       return topics[idx];
     }),
     delete: (id: string) => request<void>('DELETE', `/topics/${id}`, undefined, () => {
-      const topics = getLocal<Topic>('mom_topics');
-      setLocal('mom_topics', topics.filter(t => t._id !== id));
+      const topics = getLocal<Topic>('disciplin_topics');
+      setLocal('disciplin_topics', topics.filter(t => t._id !== id));
     })
   },
 
   // Applications Operations
   applications: {
     list: (params?: { date?: string; startDate?: string; endDate?: string }) => request<Application[]>('GET', '/applications', undefined, () => {
-      const apps = getLocal<Application>('mom_applications');
+      const apps = getLocal<Application>('disciplin_applications');
       if (params) {
         if (params.date) {
           return apps.filter(a => a.dateApplied === params.date);
@@ -501,7 +501,7 @@ export const apiClient = {
       return apps;
     }),
     create: (body: any) => request<Application>('POST', '/applications', body, () => {
-      const apps = getLocal<Application>('mom_applications');
+      const apps = getLocal<Application>('disciplin_applications');
       const newApp: Application = {
         _id: `a_${Math.random().toString(36).substr(2, 9)}`,
         userId: 'u1',
@@ -513,44 +513,44 @@ export const apiClient = {
         notes: body.notes
       };
       apps.unshift(newApp); // Keep it sorted descending
-      setLocal('mom_applications', apps);
+      setLocal('disciplin_applications', apps);
       return newApp;
     }),
     update: (id: string, body: any) => request<Application>('PATCH', `/applications/${id}`, body, () => {
-      const apps = getLocal<Application>('mom_applications');
+      const apps = getLocal<Application>('disciplin_applications');
       const idx = apps.findIndex(a => a._id === id);
       if (idx === -1) throw new Error('Not found');
       apps[idx] = { ...apps[idx], ...body };
-      setLocal('mom_applications', apps);
+      setLocal('disciplin_applications', apps);
       return apps[idx];
     }),
     delete: (id: string) => request<void>('DELETE', `/applications/${id}`, undefined, () => {
-      const apps = getLocal<Application>('mom_applications');
-      setLocal('mom_applications', apps.filter(a => a._id !== id));
+      const apps = getLocal<Application>('disciplin_applications');
+      setLocal('disciplin_applications', apps.filter(a => a._id !== id));
     })
   },
 
   // Quotes Operations
   quotes: {
     today: () => request<Quote>('GET', '/quotes/today', undefined, () => {
-      const quotes = getLocal<Quote>('mom_quotes');
+      const quotes = getLocal<Quote>('disciplin_quotes');
       // Simple hash index based on current day of month
       const day = new Date().getDate();
       const idx = day % quotes.length;
       return quotes[idx];
     }),
     favorite: (quoteText: string, isFavorite: boolean) => request<Quote>('POST', '/quotes/favorite', { quoteText, isFavorite }, () => {
-      const quotes = getLocal<Quote>('mom_quotes');
+      const quotes = getLocal<Quote>('disciplin_quotes');
       const idx = quotes.findIndex(q => q.text === quoteText);
       if (idx > -1) {
         quotes[idx].isFavorite = isFavorite;
-        setLocal('mom_quotes', quotes);
+        setLocal('disciplin_quotes', quotes);
         return quotes[idx];
       }
       throw new Error('Not found');
     }),
     create: (body: any) => request<Quote>('POST', '/quotes', body, () => {
-      const quotes = getLocal<Quote>('mom_quotes');
+      const quotes = getLocal<Quote>('disciplin_quotes');
       const newQuote: Quote = {
         text: body.text,
         author: body.author || 'Me',
@@ -558,7 +558,7 @@ export const apiClient = {
         isCustom: true
       };
       quotes.push(newQuote);
-      setLocal('mom_quotes', quotes);
+      setLocal('disciplin_quotes', quotes);
       return newQuote;
     })
   },
@@ -580,30 +580,30 @@ export const apiClient = {
       const weekEndStr = sunday.toISOString().split('T')[0];
 
       // 1. Timetable for selected day
-      const timetable = getLocal<TimetableBlock>('mom_timetable').filter(b => b.date === date);
+      const timetable = getLocal<TimetableBlock>('disciplin_timetable').filter(b => b.date === date);
       const totalToday = timetable.length;
       const doneToday = timetable.filter(b => b.isDone).length;
       const todayPercent = totalToday > 0 ? Math.round((doneToday / totalToday) * 100) : 0;
 
-      const yesterdayTimetable = getLocal<TimetableBlock>('mom_timetable').filter(b => b.date === yesterdayStr);
+      const yesterdayTimetable = getLocal<TimetableBlock>('disciplin_timetable').filter(b => b.date === yesterdayStr);
       const totalYesterday = yesterdayTimetable.length;
       const doneYesterday = yesterdayTimetable.filter(b => b.isDone).length;
       const yesterdayPercent = totalYesterday > 0 ? Math.round((doneYesterday / totalYesterday) * 100) : 0;
 
       // 3. Habits & Logs for the week
-      const habits = getLocal<Habit>('mom_habits');
-      const logs = getLocal<HabitLog>('mom_habit_logs').filter(l => l.date >= weekStartStr && l.date <= weekEndStr);
+      const habits = getLocal<Habit>('disciplin_habits');
+      const logs = getLocal<HabitLog>('disciplin_habit_logs').filter(l => l.date >= weekStartStr && l.date <= weekEndStr);
 
       // 4. Weekly Goals for current week
-      const weeklyGoals = getLocal<WeeklyGoal>('mom_goals').filter(g => g.weekStartDate === weekStartStr);
+      const weeklyGoals = getLocal<WeeklyGoal>('disciplin_goals').filter(g => g.weekStartDate === weekStartStr);
 
       // 5. Top 3 incomplete topics
-      const topics = getLocal<Topic>('mom_topics')
+      const topics = getLocal<Topic>('disciplin_topics')
         .filter(t => t.progressPercent < 100)
         .slice(0, 3);
 
       // 6. Job Applications
-      const apps = getLocal<Application>('mom_applications');
+      const apps = getLocal<Application>('disciplin_applications');
       const todayApps = apps.filter(a => a.dateApplied === date);
       const weekApps = apps.filter(a => a.dateApplied >= weekStartStr && a.dateApplied <= weekEndStr);
       
@@ -621,7 +621,7 @@ export const apiClient = {
       });
 
       // 7. Today's Quote
-      const quotes = getLocal<Quote>('mom_quotes');
+      const quotes = getLocal<Quote>('disciplin_quotes');
       const hash = Math.abs(date.split('-').reduce((acc, char) => acc + char.charCodeAt(0), 0));
       const quote = quotes[hash % quotes.length] || { text: 'Carpe Diem', author: 'Horace', isFavorite: false, isCustom: false };
 
@@ -666,8 +666,8 @@ export const apiClient = {
 
 // Helper: recalculate streaks based on logs
 const recalculateStreaks = () => {
-  const habits = getLocal<Habit>('mom_habits');
-  const logs = getLocal<HabitLog>('mom_habit_logs').filter(l => l.isDone);
+  const habits = getLocal<Habit>('disciplin_habits');
+  const logs = getLocal<HabitLog>('disciplin_habit_logs').filter(l => l.isDone);
   
   const updatedHabits = habits.map(h => {
     const habitLogs = logs
@@ -717,5 +717,6 @@ const recalculateStreaks = () => {
     return { ...h, currentStreak, longestStreak };
   });
 
-  setLocal('mom_habits', updatedHabits);
+  setLocal('disciplin_habits', updatedHabits);
 };
+

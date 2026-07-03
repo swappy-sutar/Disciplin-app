@@ -3,7 +3,7 @@ import { Logo } from './Logo';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-50/50 dark:bg-slate-950 border-t border-slate-200/60 dark:border-slate-800/80 py-16 select-none text-xs text-slate-500 dark:text-slate-400 font-semibold relative z-10 w-full">
+    <footer className="bg-slate-50/50 dark:bg-slate-950 border-t border-slate-200/60 dark:border-slate-800/80 pt-16 pb-8 select-none text-xs text-slate-500 dark:text-slate-400 font-semibold relative z-10 w-full">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 border-b border-slate-200/60 dark:border-slate-800/60 pb-12">
 
         {/* Column 1: Logo, description, and social icons */}
