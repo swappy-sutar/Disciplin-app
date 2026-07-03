@@ -1,7 +1,12 @@
-import { beforeAll, afterAll, beforeEach } from 'vitest';
+import { beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
+
+// Globally mock the sendEmail utility to avoid internet/SMTP timeouts
+vi.mock('../src/utils/email', () => ({
+  sendEmail: vi.fn().mockResolvedValue(undefined),
+}));
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
