@@ -1,11 +1,11 @@
-import type { 
-  User, 
-  TimetableBlock, 
-  WeeklyGoal, 
-  Habit, 
-  HabitLog, 
-  Topic, 
-  Application, 
+import type {
+  User,
+  TimetableBlock,
+  WeeklyGoal,
+  Habit,
+  HabitLog,
+  Topic,
+  Application,
   Quote,
   ApplicationStatus
 } from '../types';
@@ -72,9 +72,9 @@ const setLocal = <T>(key: string, data: T[]) => localStorage.setItem(key, JSON.s
 
 // Base HTTP requester
 async function request<T>(
-  method: string, 
-  path: string, 
-  body?: any, 
+  method: string,
+  path: string,
+  body?: any,
   mockFallbackHandler?: () => any
 ): Promise<T> {
   const token = localStorage.getItem('disciplin_token');
@@ -237,6 +237,7 @@ export const apiClient = {
       console.log(`✉️ Mock forgot password sent for: ${email}`);
       return { success: true, message: 'Password reset link sent to your email' };
     }),
+
     resetPassword: (body: { token: string; password?: string }) => request<any>('POST', '/auth/reset-password', body, () => {
       console.log(`🔑 Mock reset password processed for token: ${body.token}`);
       return { success: true, message: 'Password updated successfully' };
@@ -365,7 +366,7 @@ export const apiClient = {
     delete: (id: string) => request<void>('DELETE', `/habits/${id}`, undefined, () => {
       const habits = getLocal<Habit>('disciplin_habits');
       setLocal('disciplin_habits', habits.filter(h => h._id !== id));
-      
+
       const logs = getLocal<HabitLog>('disciplin_habit_logs');
       setLocal('disciplin_habit_logs', logs.filter(l => l.habitId !== id));
     }),
@@ -376,7 +377,7 @@ export const apiClient = {
     toggleLog: (body: { habitId: string; date: string; isDone: boolean }) => request<HabitLog>('POST', '/habits/logs', body, () => {
       const logs = getLocal<HabitLog>('disciplin_habit_logs');
       const idx = logs.findIndex(l => l.habitId === body.habitId && l.date === body.date);
-      
+
       if (idx > -1) {
         if (!body.isDone) {
           // delete
@@ -469,16 +470,16 @@ export const apiClient = {
       const topics = getLocal<Topic>('disciplin_topics');
       const idx = topics.findIndex(t => t._id === id);
       if (idx === -1) throw new Error('Not found');
-      
+
       // Calculate progress if subtopics were updated
       let progressPercent = topics[idx].progressPercent;
       if (body.subTopics) {
         const completed = body.subTopics.filter((s: any) => s.isDone).length;
         progressPercent = body.subTopics.length > 0 ? Math.round((completed / body.subTopics.length) * 100) : 100;
       }
-      
-      topics[idx] = { 
-        ...topics[idx], 
+
+      topics[idx] = {
+        ...topics[idx],
         ...body,
         progressPercent: body.progressPercent !== undefined ? body.progressPercent : progressPercent
       };
@@ -612,7 +613,7 @@ export const apiClient = {
       const apps = getLocal<Application>('disciplin_applications');
       const todayApps = apps.filter(a => a.dateApplied === date);
       const weekApps = apps.filter(a => a.dateApplied >= weekStartStr && a.dateApplied <= weekEndStr);
-      
+
       const statusDistribution: Record<ApplicationStatus, number> = {
         Applied: 0,
         OA: 0,
@@ -674,13 +675,13 @@ export const apiClient = {
 const recalculateStreaks = () => {
   const habits = getLocal<Habit>('disciplin_habits');
   const logs = getLocal<HabitLog>('disciplin_habit_logs').filter(l => l.isDone);
-  
+
   const updatedHabits = habits.map(h => {
     const habitLogs = logs
       .filter(l => l.habitId === h._id)
       .map(l => l.date)
       .sort((a, b) => b.localeCompare(a)); // Descending order (newest first)
-      
+
     if (habitLogs.length === 0) {
       return { ...h, currentStreak: 0 };
     }
@@ -688,7 +689,7 @@ const recalculateStreaks = () => {
     let currentStreak = 0;
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
-    
+
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split('T')[0];
@@ -702,13 +703,13 @@ const recalculateStreaks = () => {
       // Count backward
       currentStreak = 1;
       let checkDate = new Date(lastLog);
-      
+
       for (let i = 1; i < habitLogs.length; i++) {
         const nextLogDate = new Date(habitLogs[i]);
         // Difference in days
         const diffTime = Math.abs(checkDate.getTime() - nextLogDate.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 1) {
           currentStreak++;
           checkDate = nextLogDate;
