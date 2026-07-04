@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     const { name, email, password } = req.body;
     const { user, verificationToken } = await authService.registerUser(name, email, password);
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5174').replace(/\/+$/, '');
     const verifyUrl = `${frontendUrl}/verify-email?token=${verificationToken}`;
     
     const emailData = getVerificationEmail({
@@ -238,7 +238,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
     await user.save();
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5174').replace(/\/+$/, '');
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     const emailData = getResetPasswordEmail({
@@ -330,7 +330,7 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     await user.save();
 
     // Send Welcoming Email after verification
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5174').replace(/\/+$/, '');
     const welcomeMail = getWelcomeEmail({
       name: user.name,
       dashboardUrl: `${frontendUrl}/login`,
