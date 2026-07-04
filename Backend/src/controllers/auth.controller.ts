@@ -246,24 +246,31 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       resetUrl,
     });
 
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: emailData.subject,
-        message: emailData.text,
-        html: emailData.html,
-      });
+    // Send reset password email asynchronously in the background so response is instant
+    sendEmail({
+      email: user.email,
+      subject: emailData.subject,
+      message: emailData.text,
+      html: emailData.html,
+    }).catch(async (err) => {
+      console.error('Failed to send reset password email:', err);
+      // Clean up reset token in background if it fails
+      try {
+        const u = await User.findById(user._id);
+        if (u) {
+          u.passwordResetToken = undefined;
+          u.passwordResetExpires = undefined;
+          await u.save();
+        }
+      } catch (dbErr) {
+        console.error('Failed to clear reset token:', dbErr);
+      }
+    });
 
-      res.status(200).json({
-        success: true,
-        message: 'Password reset link sent to your email',
-      });
-    } catch (err) {
-      user.passwordResetToken = undefined;
-      user.passwordResetExpires = undefined;
-      await user.save();
-      throw new Error('Email could not be sent');
-    }
+    res.status(200).json({
+      success: true,
+      message: 'Password reset link sent to your email',
+    });
   } catch (error) {
     next(error);
   }
