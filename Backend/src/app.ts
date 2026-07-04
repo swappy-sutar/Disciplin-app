@@ -33,7 +33,7 @@ const apiLimiter = rateLimit({
 // Middlewares
 app.use(
   cors({
-    origin: true, // Allow all origins for development, adjust as needed in production
+    origin: env.NODE_ENV === 'production' ? env.FRONTEND_URL : true,
     credentials: true,
   })
 );

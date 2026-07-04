@@ -92,3 +92,17 @@ export const deleteGoal = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getGoalsHistory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.id!;
+    const goals = await WeeklyGoal.find({ userId }).sort({ weekStartDate: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: goals,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -56,7 +56,7 @@ Within [api-client.ts](file:///e:/SELF-PROJECTS/Disciplin-app/frontend/src/lib/a
 1. On boot, the client performs a silent GET request to `http://localhost:5000/health`.
 2. **Backend Online:** If the request responds successfully, the application interacts with the Express Server via REST and cookie-based JWT headers.
 3. **Backend Offline:** If the request fails, the application falls back to an interactive **Mock Database** running entirely in your browser's `localStorage`.
-   - *A mock user `user@momentum.com` is seeded automatically on fallback.*
+   - *Register a new account on the signup page to get started immediately.*
    - *All creations, updates, checks, and analytics changes are saved in `localStorage` in real-time, simulating network latency (150ms).*
 
 ---

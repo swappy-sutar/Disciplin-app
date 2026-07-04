@@ -295,8 +295,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)} />
                   <div className="absolute right-0 top-full mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-gray-100/80 dark:border-gray-800/85 py-1.5 min-w-[200px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
                     <div className="px-3.5 py-1 border-b border-gray-100 dark:border-gray-800 mb-1">
-                      <p className="text-xs font-semibold text-gray-750 dark:text-white truncate">{user?.name || 'Swapnil Sutar'}</p>
-                      <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{user?.email || 'user@momentum.com'}</p>
+                      <p className="text-xs font-semibold text-gray-750 dark:text-white truncate">{user?.name || ''}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{user?.email || ''}</p>
                     </div>
                     <Link
                       to="/profile"

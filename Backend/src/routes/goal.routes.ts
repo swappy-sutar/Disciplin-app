@@ -8,6 +8,7 @@ const router = Router();
 
 router.use(protect);
 
+router.get('/history', goalController.getGoalsHistory);
 router.get('/', validate(getGoalsSchema), goalController.getGoals);
 router.post('/', validate(createGoalSchema), goalController.createGoal);
 router.patch('/:id', validate(updateGoalSchema), goalController.updateGoal);

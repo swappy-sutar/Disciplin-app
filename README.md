@@ -79,7 +79,7 @@ Disciplin-app/
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/Disciplin-app.git
+   git clone https://github.com/swappy-sutar/Blog-App.git
    cd Disciplin-app
    ```
 
@@ -89,7 +89,7 @@ Disciplin-app/
    npm install
    npm run dev
    ```
-   *The client will start at `http://localhost:5173` (or check terminal output) in offline/localStorage mode. You can log in using `user@momentum.com` with any password.*
+   *The client will start at `http://localhost:5173` (or check terminal output) in offline/localStorage mode. You can register a new account on the sign-up page to get started.*
 
 3. **Backend Setup (Optional - for persistent cloud storage):**
    - Open a separate terminal.

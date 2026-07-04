@@ -12,15 +12,10 @@ import type {
 
 // Detect if we should use mock database or try backend.
 // By default, we will check if backend is running. If not, fallback to local storage database.
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
 // Seed initial data helper
 const seedLocalStorage = () => {
-  if (!localStorage.getItem('disciplin_user')) {
-    localStorage.setItem('disciplin_user', JSON.stringify({ id: 'u1', email: 'user@momentum.com', name: 'Vaishnavi' }));
-    localStorage.setItem('disciplin_token', 'mock_jwt_token_123');
-  }
-
   if (!localStorage.getItem('disciplin_timetable')) {
     localStorage.setItem('disciplin_timetable', JSON.stringify([]));
   }
