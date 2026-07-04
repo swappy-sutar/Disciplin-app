@@ -6,6 +6,9 @@ import { NotFoundError, UnauthorizedError, BadRequestError, ForbiddenError } fro
 import { env } from '../config/env';
 import crypto from 'crypto';
 import { sendEmail } from '../utils/email';
+import { getWelcomeEmail } from '../templates/mail/welcome.template';
+import { getVerificationEmail } from '../templates/mail/verification.template';
+import { getResetPasswordEmail } from '../templates/mail/reset-password.template';
 
 const setAuthCookie = (res: Response, token: string) => {
   res.cookie('jwt', token, {
@@ -32,24 +35,18 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
     const verifyUrl = `${frontendUrl}/verify-email?token=${verificationToken}`;
-    const message = `Please verify your email address by clicking the link below:\n\n${verifyUrl}`;
+    
+    const emailData = getVerificationEmail({
+      name: user.name,
+      verifyUrl,
+    });
 
     try {
       await sendEmail({
         email: user.email,
-        subject: 'Disciplin Email Verification ✉️',
-        message,
-        html: `<div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
-          <h2>Email Verification</h2>
-          <p>Thanks for signing up with Disciplin! Please click the button below to verify your email address and activate your account:</p>
-          <div style="margin: 24px 0;">
-            <a href="${verifyUrl}" style="background-color: #10b981; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Verify Email</a>
-          </div>
-          <p>If the button doesn't work, copy and paste this link into your browser:</p>
-          <p style="word-break: break-all; color: #3b82f6;"><a href="${verifyUrl}">${verifyUrl}</a></p>
-          <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-          <p style="font-size: 12px; color: #64748b;">This verification link is valid for 24 hours.</p>
-        </div>`
+        subject: emailData.subject,
+        message: emailData.text,
+        html: emailData.html,
       });
 
       res.status(201).json({
@@ -246,25 +243,17 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-    const message = `You are receiving this email because you (or someone else) have requested the reset of a password. Please click the link below or copy-paste it into your browser:\n\n${resetUrl}`;
+    const emailData = getResetPasswordEmail({
+      name: user.name,
+      resetUrl,
+    });
 
     try {
       await sendEmail({
         email: user.email,
-        subject: 'Disciplin Password Reset Request 🔑',
-        message,
-        html: `<div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
-          <h2>Password Reset Request</h2>
-          <p>You are receiving this email because you requested a password reset for your Disciplin account.</p>
-          <p>Please click the button below to choose a new password. This link is valid for 15 minutes.</p>
-          <div style="margin: 24px 0;">
-            <a href="${resetUrl}" style="background-color: #10b981; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Reset Password</a>
-          </div>
-          <p>If the button doesn't work, copy and paste this link into your browser:</p>
-          <p style="word-break: break-all; color: #3b82f6;"><a href="${resetUrl}">${resetUrl}</a></p>
-          <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-          <p style="font-size: 12px; color: #64748b;">If you did not request this, you can safely ignore this email.</p>
-        </div>`
+        subject: emailData.subject,
+        message: emailData.text,
+        html: emailData.html,
       });
 
       res.status(200).json({
@@ -341,6 +330,25 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     user.verificationExpires = undefined;
 
     await user.save();
+
+    // Send Welcoming Email after verification
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
+    const welcomeMail = getWelcomeEmail({
+      name: user.name,
+      dashboardUrl: `${frontendUrl}/login`,
+    });
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: welcomeMail.subject,
+        message: welcomeMail.text,
+        html: welcomeMail.html,
+      });
+    } catch (err) {
+      console.error('Failed to send welcome email:', err);
+      // Don't fail the verification process if welcome email fails
+    }
 
     res.status(200).json({
       success: true,
