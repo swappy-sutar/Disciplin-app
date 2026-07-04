@@ -79,7 +79,7 @@ Disciplin-app/
 
 1. **Clone the Repository:**
    ```bash
-   [git clone https://github.com/your-username/Disciplin-app.git](https://github.com/swappy-sutar/Disciplin-app.git)
+   git clone https://github.com/your-username/Disciplin-app.git
    cd Disciplin-app
    ```
 
