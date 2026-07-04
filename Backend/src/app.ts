@@ -11,6 +11,9 @@ import { env } from './config/env';
 
 const app = express();
 
+// Trust proxy (required for rate limiting behind reverse proxies like Render)
+app.set('trust proxy', 1);
+
 // Global Response Formatter Middleware
 app.use(responseFormatter);
 
