@@ -223,6 +223,17 @@ export const apiClient = {
       return user;
     }),
     forgotPassword: (email: string) => request<any>('POST', '/auth/forgot-password', { email }, () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        throw new Error('Invalid email address');
+      }
+
+      const storedUser = localStorage.getItem('disciplin_user');
+      const registeredUser = storedUser ? JSON.parse(storedUser) : null;
+      if (!registeredUser || registeredUser.email !== email) {
+        throw new Error('User with this email does not exist');
+      }
+
       console.log(`✉️ Mock forgot password sent for: ${email}`);
       return { success: true, message: 'Password reset link sent to your email' };
     }),
