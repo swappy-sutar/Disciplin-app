@@ -22,7 +22,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function Register() {
   const navigate = useNavigate();
-  const { setAuth, theme, toggleTheme } = useStore();
+  const { theme, toggleTheme } = useStore();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,9 +39,8 @@ export default function Register() {
     setErrorMsg(null);
     try {
       const res = await apiClient.auth.register(data);
-      setAuth(res.user, res.token);
-      toast.success(`Account created successfully! Welcome, ${res.user.name}.`);
-      navigate('/overview');
+      toast.success(res.message || 'Registration successful! Please check your email to verify your account.');
+      navigate('/login');
     } catch (e: any) {
       const err = e.message || 'Registration failed';
       setErrorMsg(err);
