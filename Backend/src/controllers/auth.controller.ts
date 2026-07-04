@@ -41,22 +41,20 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       verifyUrl,
     });
 
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: emailData.subject,
-        message: emailData.text,
-        html: emailData.html,
-      });
+    // Send email asynchronously in the background so registration response is instant
+    sendEmail({
+      email: user.email,
+      subject: emailData.subject,
+      message: emailData.text,
+      html: emailData.html,
+    }).catch(err => {
+      console.error('Background verification email failed to send:', err);
+    });
 
-      res.status(201).json({
-        success: true,
-        message: 'Registration successful! Please check your email to verify your account.',
-      });
-    } catch (err) {
-      await User.deleteOne({ _id: user._id });
-      throw new Error('Verification email could not be sent. Registration cancelled.');
-    }
+    res.status(201).json({
+      success: true,
+      message: 'Registration successful! Please check your email to verify your account.',
+    });
   } catch (error) {
     next(error);
   }
@@ -338,17 +336,15 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
       dashboardUrl: `${frontendUrl}/login`,
     });
 
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: welcomeMail.subject,
-        message: welcomeMail.text,
-        html: welcomeMail.html,
-      });
-    } catch (err) {
-      console.error('Failed to send welcome email:', err);
-      // Don't fail the verification process if welcome email fails
-    }
+    // Send welcome email asynchronously in the background so verification response is instant
+    sendEmail({
+      email: user.email,
+      subject: welcomeMail.subject,
+      message: welcomeMail.text,
+      html: welcomeMail.html,
+    }).catch(err => {
+      console.error('Failed to send welcome email in background:', err);
+    });
 
     res.status(200).json({
       success: true,
