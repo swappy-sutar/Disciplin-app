@@ -41,19 +41,26 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       verifyUrl,
     });
 
-    // Send email asynchronously in the background so registration response is instant
-    sendEmail({
-      email: user.email,
-      subject: emailData.subject,
-      message: emailData.text,
-      html: emailData.html,
-    }).catch(err => {
-      console.error('Background verification email failed to send:', err);
-    });
+    let emailError = false;
+    let responseMessage = 'Registration successful! Please check your email to verify your account.';
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: emailData.subject,
+        message: emailData.text,
+        html: emailData.html,
+      });
+    } catch (err: any) {
+      console.error('Failed to send verification email:', err);
+      emailError = true;
+      responseMessage = `User registered, but failed to send verification email. Error: ${err.message || err}`;
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Registration successful! Please check your email to verify your account.',
+      emailError,
+      message: responseMessage,
     });
   } catch (error) {
     next(error);
@@ -246,30 +253,31 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       resetUrl,
     });
 
-    // Send reset password email asynchronously in the background so response is instant
-    sendEmail({
-      email: user.email,
-      subject: emailData.subject,
-      message: emailData.text,
-      html: emailData.html,
-    }).catch(async (err) => {
+    let emailError = false;
+    let responseMessage = 'Password reset link sent to your email';
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: emailData.subject,
+        message: emailData.text,
+        html: emailData.html,
+      });
+    } catch (err: any) {
       console.error('Failed to send reset password email:', err);
-      // Clean up reset token in background if it fails
-      try {
-        const u = await User.findById(user._id);
-        if (u) {
-          u.passwordResetToken = undefined;
-          u.passwordResetExpires = undefined;
-          await u.save();
-        }
-      } catch (dbErr) {
-        console.error('Failed to clear reset token:', dbErr);
-      }
-    });
+      emailError = true;
+      responseMessage = `Password reset requested, but failed to send email. Error: ${err.message || err}`;
+      
+      // Clean up reset token since email failed
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save();
+    }
 
     res.status(200).json({
       success: true,
-      message: 'Password reset link sent to your email',
+      emailError,
+      message: responseMessage,
     });
   } catch (error) {
     next(error);
@@ -343,19 +351,26 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
       dashboardUrl: `${frontendUrl}/login`,
     });
 
-    // Send welcome email asynchronously in the background so verification response is instant
-    sendEmail({
-      email: user.email,
-      subject: welcomeMail.subject,
-      message: welcomeMail.text,
-      html: welcomeMail.html,
-    }).catch(err => {
-      console.error('Failed to send welcome email in background:', err);
-    });
+    let emailError = false;
+    let responseMessage = 'Email verified successfully! You can now log in.';
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: welcomeMail.subject,
+        message: welcomeMail.text,
+        html: welcomeMail.html,
+      });
+    } catch (err: any) {
+      console.error('Failed to send welcome email:', err);
+      emailError = true;
+      responseMessage = `Email verified, but failed to send welcome email. Error: ${err.message || err}`;
+    }
 
     res.status(200).json({
       success: true,
-      message: 'Email verified successfully! You can now log in.',
+      emailError,
+      message: responseMessage,
     });
   } catch (error) {
     next(error);

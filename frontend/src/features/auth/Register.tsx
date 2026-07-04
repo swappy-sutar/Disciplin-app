@@ -39,7 +39,11 @@ export default function Register() {
     setErrorMsg(null);
     try {
       const res = await apiClient.auth.register(data);
-      toast.success(res.message || 'Registration successful! Please check your email to verify your account.');
+      if (res?.emailError) {
+        toast.error(res.message, { duration: 6000 });
+      } else {
+        toast.success(res.message || 'Registration successful! Please check your email to verify your account.');
+      }
       navigate('/login');
     } catch (e: any) {
       const err = e.message || 'Registration failed';

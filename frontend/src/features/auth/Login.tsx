@@ -33,8 +33,12 @@ export default function Login() {
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      await apiClient.auth.forgotPassword(forgotEmail);
-      toast.success('Password reset link sent! Check your inbox.');
+      const res = await apiClient.auth.forgotPassword(forgotEmail);
+      if (res?.emailError) {
+        toast.error(res.message, { duration: 6000 });
+      } else {
+        toast.success(res?.message || 'Password reset link sent! Check your inbox.');
+      }
       setIsForgotMode(false);
       setForgotEmail('');
     } catch (e: any) {
