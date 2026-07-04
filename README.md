@@ -4,8 +4,6 @@
 > 
 > A premium, modern personal productivity dashboard and job application tracking system designed to streamline your daily routines, habits, goals, learning path, and career search.
 
----
-
 ## 🚀 Overview
 
 **Disciplin** is a full-stack, typescript-based web application tailored for developers, students, and professionals seeking structure and growth. It combines a daily schedule planner, a robust habit builder with streak mechanics, a weekly goal tracker, a structured study topic manager, and a comprehensive job search dashboard.
