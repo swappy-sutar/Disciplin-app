@@ -33,7 +33,20 @@ const apiLimiter = rateLimit({
 // Middlewares
 app.use(
   cors({
-    origin: env.NODE_ENV === 'production' ? env.FRONTEND_URL : true,
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        env.FRONTEND_URL,
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:3000'
+      ].filter(Boolean);
+
+      if (!origin || allowedOrigins.includes(origin) || env.NODE_ENV !== 'production') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
