@@ -234,12 +234,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     const user = await User.findOne({ email });
 
     if (!user) {
-      // Security: Do not reveal if the email is registered or not (prevent user enumeration)
-      res.status(200).json({
-        success: true,
-        message: 'Password reset link sent! Check your inbox.',
-      });
-      return;
+      throw new NotFoundError('User with this email does not exist');
     }
 
     const resetToken = crypto.randomBytes(20).toString('hex');
