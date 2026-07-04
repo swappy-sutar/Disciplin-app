@@ -86,14 +86,20 @@ async function request<T>(
   }
 
   if (isBackendAvailable) {
+    let response: Response | undefined;
     try {
-      const response = await fetch(`${API_BASE_URL}${path}`, {
+      response = await fetch(`${API_BASE_URL}${path}`, {
         method,
         headers,
         body: body ? JSON.stringify(body) : undefined,
         credentials: 'include',
       });
+    } catch (e: any) {
+      console.warn(`Live API Call failed to connect: ${e.message}. Using Mock database.`);
+      // If server failed unexpectedly, slide into mock fallback
+    }
 
+    if (response) {
       if (response.status === 401 && path !== '/auth/refresh') {
         try {
           const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
@@ -142,9 +148,6 @@ async function request<T>(
 
       const resJson = await response.json();
       return resJson.data ?? resJson;
-    } catch (e: any) {
-      console.warn(`Live API Call failed: ${e.message}. Using Mock database.`);
-      // If server failed unexpectedly, slide into mock fallback
     }
   }
 
