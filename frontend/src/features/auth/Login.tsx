@@ -160,12 +160,11 @@ export default function Login() {
             {!isForgotMode ? (
               <>
                 {/* Brand logo inside card */}
-                <div className="flex justify-center mb-6">
-                  <Logo showText={true} />
+                <div className="text-center mb-8">
+                  <Logo showText={true} className="h-12 w-auto mx-auto justify-center mb-5" />
+                  <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign In</h2>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Track habits, achieve goals, and log job search applications</p>
                 </div>
-
-                <h2 className="text-lg font-extrabold text-gray-900 dark:text-white mb-1">Sign In</h2>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-6 font-semibold">Track habits, achieve goals, and log job search applications</p>
 
                 {/* Error & Resend — unified premium card when unverified, plain banner otherwise */}
                 {errorMsg && !showResend && (
@@ -318,12 +317,11 @@ export default function Login() {
             ) : (
               <>
                 {/* Brand logo inside card for forgot password */}
-                <div className="flex justify-center mb-6">
-                  <Logo showText={true} />
+                <div className="text-center mb-8">
+                  <Logo showText={true} className="h-12 w-auto mx-auto justify-center mb-5" />
+                  <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Reset Password</h2>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Enter your email and we'll send you a password reset link.</p>
                 </div>
-
-                <h2 className="text-lg font-extrabold text-gray-900 dark:text-white mb-1">Reset Password</h2>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-6 font-semibold">Enter your email and we'll send you a password reset link.</p>
 
                 {errorMsg && (
                   <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-105/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold">

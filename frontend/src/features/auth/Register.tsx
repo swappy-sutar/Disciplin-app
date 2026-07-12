@@ -108,12 +108,11 @@ export default function Register() {
           
           <Card className="p-6 md:p-8 bg-white/95 dark:bg-card-bg/95 backdrop-blur-md border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">
             {/* Brand logo inside card */}
-            <div className="flex justify-center mb-6">
-              <Logo showText={true} />
+            <div className="text-center mb-8">
+              <Logo showText={true} className="h-12 w-auto mx-auto justify-center mb-5" />
+              <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign Up</h2>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Start tracking habits and goals systematically</p>
             </div>
-
-            <h2 className="text-lg font-extrabold text-gray-900 dark:text-white mb-1">Sign Up</h2>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-6 font-semibold">Start tracking habits and goals systematically</p>
 
             {errorMsg && (
               <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-105/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold">
