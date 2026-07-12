@@ -40,13 +40,22 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         env.FRONTEND_URL,
-        "https://disciplin-app-backend.onrender.com"
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:3000',
       ].filter(Boolean);
 
-      if (!origin || allowedOrigins.includes(origin) || env.NODE_ENV !== 'production') {
+      // Automatically trust Render or Vercel client applications
+      const isAllowedRender = origin && (
+        origin.endsWith('.onrender.com') ||
+        origin.endsWith('.vercel.app')
+      );
+
+      if (!origin || allowedOrigins.includes(origin) || isAllowedRender || env.NODE_ENV !== 'production') {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        // Return false to reject rather than throwing an Error, preventing Express 500 preflight crashes
+        callback(null, false);
       }
     },
     credentials: true,

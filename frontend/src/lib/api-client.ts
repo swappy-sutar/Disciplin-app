@@ -8,7 +8,19 @@ import type {
   Quote
 } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+
+// Clean up trailing slash
+if (apiBase.endsWith('/')) {
+  apiBase = apiBase.slice(0, -1);
+}
+
+// Append API version prefix if missing in config
+if (!apiBase.includes('/api/v1')) {
+  apiBase = `${apiBase}/api/v1`;
+}
+
+const API_BASE_URL = apiBase;
 
 // Base HTTP requester
 async function request<T>(
