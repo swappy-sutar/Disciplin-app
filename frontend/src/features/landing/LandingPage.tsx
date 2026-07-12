@@ -622,16 +622,20 @@ export default function LandingPage() {
             }
           }}
         >
-          {features.map((item, idx) => (
-            <motion.div
-              key={idx}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 15 } }
-              }}
-              whileHover="hover"
-              className="h-full"
-            >
+          {features.map((item, idx) => {
+            const xInitial = idx % 3 === 0 ? -50 : idx % 3 === 2 ? 50 : 0;
+            const yInitial = idx % 3 === 1 ? 50 : 30;
+
+            return (
+              <motion.div
+                key={idx}
+                variants={{
+                  hidden: { opacity: 0, x: xInitial, y: yInitial },
+                  show: { opacity: 1, x: 0, y: 0, transition: { type: "spring", stiffness: 70, damping: 14 } }
+                }}
+                whileHover="hover"
+                className="h-full"
+              >
               <motion.div
                 variants={{
                   hover: { 
@@ -666,7 +670,8 @@ export default function LandingPage() {
                 </p>
               </motion.div>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </section>
 
