@@ -107,18 +107,13 @@ export default function Register() {
           <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-primary-blue/10 to-emerald-500/10 blur-xl opacity-60 dark:opacity-80 rounded-3xl" />
           
           <Card className="p-6 md:p-8 bg-white/95 dark:bg-card-bg/95 backdrop-blur-md border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">
-            {/* Brand header inside card */}
-            <div className="flex flex-col items-center text-center mb-6">
-              <motion.div 
-                animate={{ rotate: [0, 6, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="inline-flex p-3 rounded-2xl bg-gray-50 dark:bg-gray-950 shadow-inner border border-gray-100 dark:border-gray-800 mb-3"
-              >
-                <Logo showText={false} />
-              </motion.div>
-              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">Sign Up</h2>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold">Start tracking habits and goals systematically</p>
+            {/* Brand logo inside card */}
+            <div className="flex justify-center mb-6">
+              <Logo showText={true} />
             </div>
+
+            <h2 className="text-lg font-extrabold text-gray-900 dark:text-white mb-1">Sign Up</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-6 font-semibold">Start tracking habits and goals systematically</p>
 
             {errorMsg && (
               <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-105/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold">
