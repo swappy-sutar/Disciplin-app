@@ -29,10 +29,19 @@ export const errorHandler = (
     }));
   } else if (err.name === 'ValidationError') {
     statusCode = 400;
-    message = err.message;
+    message = 'Validation Error';
+    const mongooseErrors = (err as any).errors || {};
+    errors = Object.keys(mongooseErrors).map((key) => ({
+      field: key,
+      message: mongooseErrors[key].message || 'Invalid value',
+    }));
   } else if (err.name === 'CastError') {
     statusCode = 400;
-    message = `Invalid value for path: ${(err as any).path}`;
+    message = 'Invalid parameter or ID format';
+    errors = [{
+      field: (err as any).path,
+      message: 'Invalid data type or identifier format',
+    }];
   } else if ((err as any).code === 11000) {
     statusCode = 409;
     message = 'Resource already exists';
@@ -47,9 +56,11 @@ export const errorHandler = (
     response.errors = errors;
   }
 
-  if (env.NODE_ENV === 'development' && statusCode === 500) {
-    response.stack = err.stack;
+  if (statusCode === 500) {
     console.error('💥 Unexpected Server Error:', err);
+    if (env.NODE_ENV === 'development') {
+      response.stack = err.stack;
+    }
   }
 
   res.status(statusCode).json(response);
