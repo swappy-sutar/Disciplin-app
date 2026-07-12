@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dns from 'dns';
+import { env } from '../config/env';
 
 // Force DNS lookup to prefer IPv4, preventing ENETUNREACH errors on IPv6-disabled container networks
 dns.setDefaultResultOrder('ipv4first');
@@ -12,7 +13,7 @@ interface EmailOptions {
 }
 
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  const hasResendConfig = process.env.RESEND_API_KEY;
+  const hasResendConfig = env.RESEND_API_KEY;
   const hasSmtpConfig = process.env.SMTP_HOST && process.env.SMTP_USER;
 
   if (hasResendConfig) {
@@ -22,7 +23,7 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
         from: fromAddress,
