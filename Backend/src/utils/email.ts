@@ -17,7 +17,14 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
   const hasSmtpConfig = process.env.SMTP_HOST && process.env.SMTP_USER;
 
   if (hasResendConfig) {
-    const fromAddress = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+    let fromAddress = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+    
+    // Resend requires verified custom domains. Public domains (gmail, yahoo, etc.) cannot be verified and will throw a 403.
+    // If the from address uses a public domain, automatically fallback to Resend's sandbox domain.
+    const isPublicDomain = /@(gmail|yahoo|outlook|hotmail|icloud|mail)\.com/i.test(fromAddress);
+    if (isPublicDomain) {
+      fromAddress = '"Disciplin" <onboarding@resend.dev>';
+    }
     
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
