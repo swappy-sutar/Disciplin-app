@@ -21,9 +21,6 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
       },
-      connectionTimeout: 5000, // 5 seconds connection timeout
-      greetingTimeout: 5000,   // 5 seconds handshake timeout
-      socketTimeout: 5000,     // 5 seconds socket inactivity timeout
     });
   } else {
     // Development fallback: Log the email to console for easy testing
