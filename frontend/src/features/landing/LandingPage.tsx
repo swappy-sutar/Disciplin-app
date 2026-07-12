@@ -568,29 +568,51 @@ export default function LandingPage() {
       </section>
 
       {/* 3. Core Pillars / Values Section */}
-      <section className="bg-white dark:bg-card-bg border-y border-gray-100/60 dark:border-border-main py-10 select-none relative z-10">
+      <section className="bg-white dark:bg-card-bg border-y border-gray-100/60 dark:border-border-main py-10 select-none relative z-10 overflow-hidden">
         <div className="max-w-[1440px] mx-auto px-6 text-center space-y-6">
-          <p className="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
-            DESIGNED AROUND PURE MOMENTUM & PRODUCTIVITY PILLARS
-          </p>
-          <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center gap-3.5 md:gap-4 max-w-md md:max-w-none mx-auto text-xs font-bold tracking-wide text-slate-500 dark:text-slate-400 uppercase select-none">
-            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-violet-300 dark:hover:border-violet-900/60 hover:text-violet-600 dark:hover:text-violet-400 hover:shadow-[0_4px_20px_rgba(139,92,246,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
-              <Shield size={16} className="text-violet-500 group-hover:scale-110 transition-transform flex-shrink-0" />
-              <span className="truncate">Privacy First</span>
-            </span>
-            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-900/60 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-[0_4px_20px_rgba(59,130,246,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
-              <EyeOff size={16} className="text-blue-500 group-hover:scale-110 transition-transform flex-shrink-0" />
-              <span className="truncate">Zero Distractions</span>
-            </span>
-            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-orange-300 dark:hover:border-orange-900/60 hover:text-orange-600 dark:hover:text-orange-400 hover:shadow-[0_4px_20px_rgba(249,115,22,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
-              <Target size={16} className="text-orange-500 group-hover:scale-110 transition-transform flex-shrink-0" />
-              <span className="truncate">Deep Work Focused</span>
-            </span>
-            <span className="flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-emerald-300 dark:hover:border-emerald-900/60 hover:text-emerald-600 dark:hover:text-emerald-400 hover:shadow-[0_4px_20px_rgba(16,185,129,0.08)] transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs">
-              <Server size={16} className="text-emerald-500 group-hover:scale-110 transition-transform flex-shrink-0" />
-              <span className="truncate">Self-Hosted Friendly</span>
-            </span>
-          </div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]"
+          >
+            DESIGNED AROUND PURE MOMENTUM &amp; PRODUCTIVITY PILLARS
+          </motion.p>
+
+          <motion.div
+            className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center gap-3.5 md:gap-4 max-w-md md:max-w-none mx-auto text-xs font-bold tracking-wide text-slate-500 dark:text-slate-400 uppercase select-none"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.12 } }
+            }}
+          >
+            {[
+              { icon: Shield,  label: "Privacy First",       iconCls: "text-violet-500", hoverBorder: "hover:border-violet-300 dark:hover:border-violet-900/60 hover:text-violet-600 dark:hover:text-violet-400 hover:shadow-[0_4px_20px_rgba(139,92,246,0.08)]" },
+              { icon: EyeOff,  label: "Zero Distractions",   iconCls: "text-blue-500",   hoverBorder: "hover:border-blue-300 dark:hover:border-blue-900/60 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-[0_4px_20px_rgba(59,130,246,0.08)]" },
+              { icon: Target,  label: "Deep Work Focused",   iconCls: "text-orange-500", hoverBorder: "hover:border-orange-300 dark:hover:border-orange-900/60 hover:text-orange-600 dark:hover:text-orange-400 hover:shadow-[0_4px_20px_rgba(249,115,22,0.08)]" },
+              { icon: Server,  label: "Self-Hosted Friendly", iconCls: "text-emerald-500", hoverBorder: "hover:border-emerald-300 dark:hover:border-emerald-900/60 hover:text-emerald-600 dark:hover:text-emerald-400 hover:shadow-[0_4px_20px_rgba(16,185,129,0.08)]" },
+            ].map((pill, i) => (
+              <motion.span
+                key={i}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.7, y: 18 },
+                  show:   { opacity: 1, scale: 1,   y: 0,  transition: { type: "spring", stiffness: 200, damping: 16 } }
+                }}
+                whileHover={{ scale: 1.06, y: -3 }}
+                transition={{ type: "spring", stiffness: 300, damping: 18 }}
+                className={`flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 ${pill.hoverBorder} transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs`}
+              >
+                <pill.icon size={16} className={`${pill.iconCls} group-hover:scale-110 transition-transform flex-shrink-0`} />
+                <span className="truncate">{pill.label}</span>
+              </motion.span>
+            ))}
+          </motion.div>
+
         </div>
       </section>
 
