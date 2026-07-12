@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { useStore } from './app/store';
@@ -17,6 +17,7 @@ import LandingPage from './features/landing/LandingPage';
 import Profile from './features/profile/Profile';
 import ResetPassword from './features/auth/ResetPassword';
 import VerifyEmail from './features/auth/VerifyEmail';
+import NotFound from './components/NotFound';
 
 import { Logo } from './components/ui/Logo';
 
@@ -52,25 +53,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-// 404 Not Found Page
-const NotFound = () => {
-  return (
-    <div className="min-h-screen bg-canvas-bg flex flex-col items-center justify-center p-6 text-center select-none">
-      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-sm w-full">
-        <h1 className="text-6xl font-black text-primary-blue leading-none">404</h1>
-        <h2 className="text-lg font-semibold text-gray-800 mt-4">Page Not Found</h2>
-        <p className="text-sm text-gray-400 mt-2">
-          The page you are looking for doesn't exist or has been moved.
-        </p>
-        <Link to="/overview">
-          <button className="mt-6 bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-semibold px-6 py-2 rounded-full transition-colors cursor-pointer w-full">
-            Back to Dashboard
-          </button>
-        </Link>
-      </div>
-    </div>
-  );
-};
+// NotFound is imported from components
 
 function App() {
   const [isAppLoading, setAppLoading] = React.useState(true);
