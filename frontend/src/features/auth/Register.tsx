@@ -109,7 +109,7 @@ export default function Register() {
           <Card className="p-6 md:p-8 bg-white/95 dark:bg-card-bg/95 backdrop-blur-md border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">
             {/* Brand logo inside card */}
             <div className="text-center mb-8">
-              <Logo showText={true} className="h-12 w-auto mx-auto justify-center mb-5" />
+              <Logo showText={true} className="h-10 w-auto mx-auto justify-center mb-5 drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]" />
               <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign Up</h2>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Start tracking habits and goals systematically</p>
             </div>
@@ -125,18 +125,18 @@ export default function Register() {
               
               {/* Name Field */}
               <div>
-                <label className="block text-xs font-semibold text-gray-450 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[10px] font-bold text-gray-450 dark:text-slate-400 mb-1.5 uppercase tracking-widest select-none">
                   Full Name
                 </label>
                 <div className="relative group">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-primary-blue transition-colors pointer-events-none">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
                     <UserIcon size={16} />
                   </span>
                   <input
                     type="text"
                     placeholder="John Doe"
-                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all text-gray-800 dark:text-white
-                      ${errors.name ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-gray-800 focus:border-primary-blue'}
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
+                      ${errors.name ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-slate-800 focus:border-emerald-500'}
                     `}
                     {...register('name')}
                   />
@@ -148,18 +148,18 @@ export default function Register() {
 
               {/* Email Field */}
               <div>
-                <label className="block text-xs font-semibold text-gray-455 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[10px] font-bold text-gray-455 dark:text-slate-400 mb-1.5 uppercase tracking-widest select-none">
                   Email Address
                 </label>
                 <div className="relative group">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-primary-blue transition-colors pointer-events-none">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
                     <Mail size={16} />
                   </span>
                   <input
                     type="email"
                     placeholder="name@example.com"
-                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all text-gray-800 dark:text-white
-                      ${errors.email ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-gray-800 focus:border-primary-blue'}
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
+                      ${errors.email ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-slate-800 focus:border-emerald-500'}
                     `}
                     {...register('email')}
                   />
@@ -171,18 +171,18 @@ export default function Register() {
 
               {/* Password Field */}
               <div>
-                <label className="block text-xs font-semibold text-gray-455 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[10px] font-bold text-gray-455 dark:text-slate-400 mb-1.5 uppercase tracking-widest select-none">
                   Password
                 </label>
                 <div className="relative group">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-primary-blue transition-colors pointer-events-none">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
                     <Lock size={16} />
                   </span>
                   <input
                     type="password"
                     placeholder="••••••••"
-                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all text-gray-800 dark:text-white
-                      ${errors.password ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-gray-800 focus:border-primary-blue'}
+                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
+                      ${errors.password ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-slate-800 focus:border-emerald-500'}
                     `}
                     {...register('password')}
                   />
@@ -197,7 +197,7 @@ export default function Register() {
                 type="submit"
                 fullWidth
                 size="lg"
-                className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md shadow-emerald-500/10"
+                variant="gradient" className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md"
                 disabled={isLoading}
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
@@ -206,11 +206,11 @@ export default function Register() {
             </form>
 
             {/* Redirect link */}
-            <div className="text-center mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
+            <div className="text-center mt-6 pt-5 border-t border-gray-100 dark:border-gray-855">
               <span className="text-xs text-gray-450 dark:text-gray-500">Already have an account? </span>
               <Link 
                 to="/login" 
-                className="text-xs font-bold text-primary-blue hover:underline hover:text-primary-blue-hover transition-colors"
+                className="text-xs font-bold text-emerald-500 hover:text-emerald-450 hover:underline transition-colors"
               >
                 Sign In
               </Link>

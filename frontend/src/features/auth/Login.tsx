@@ -161,9 +161,9 @@ export default function Login() {
               <>
                 {/* Brand logo inside card */}
                 <div className="text-center mb-8">
-                  <Logo showText={true} className="h-12 w-auto mx-auto justify-center mb-5" />
+                  <Logo showText={true} className="h-10 w-auto mx-auto justify-center mb-5 drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]" />
                   <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign In</h2>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Track habits, achieve goals, and log job search applications</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-medium leading-relaxed max-w-xs mx-auto">Track habits, achieve goals, and log job search applications</p>
                 </div>
 
                 {/* Error & Resend — unified premium card when unverified, plain banner otherwise */}
@@ -234,18 +234,18 @@ export default function Login() {
                   
                   {/* Email Field */}
                   <div>
-                    <label className="block text-xs font-semibold text-gray-450 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
+                    <label className="block text-[10px] font-bold text-gray-450 dark:text-slate-400 mb-1.5 uppercase tracking-widest select-none">
                       Email Address
                     </label>
                     <div className="relative group">
-                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-primary-blue transition-colors pointer-events-none">
+                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
                         <Mail size={16} />
                       </span>
                       <input
                         type="email"
                         placeholder="name@example.com"
-                        className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all text-gray-800 dark:text-white
-                          ${errors.email ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-gray-800 focus:border-primary-blue'}
+                        className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
+                          ${errors.email ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-slate-800 focus:border-emerald-500'}
                         `}
                         {...register('email')} 
                       />
@@ -257,8 +257,8 @@ export default function Login() {
 
                   {/* Password Field */}
                   <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-xs font-semibold text-gray-455 dark:text-gray-500 uppercase tracking-wider">
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-[10px] font-bold text-gray-450 dark:text-slate-400 uppercase tracking-widest select-none">
                         Password
                       </label>
                       <button
@@ -267,20 +267,20 @@ export default function Login() {
                           setIsForgotMode(true);
                           setErrorMsg(null);
                         }}
-                        className="text-xs font-bold text-primary-blue hover:underline cursor-pointer focus:outline-none border-none bg-transparent"
+                        className="text-xs font-bold text-emerald-500 hover:text-emerald-450 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
                       >
                         Forgot?
                       </button>
                     </div>
                     <div className="relative group">
-                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-primary-blue transition-colors pointer-events-none">
+                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
                         <Lock size={16} />
                       </span>
                       <input
                         type="password"
                         placeholder="••••••••"
-                        className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all text-gray-800 dark:text-white
-                          ${errors.password ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-gray-800 focus:border-primary-blue'}
+                        className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
+                          ${errors.password ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-slate-800 focus:border-emerald-500'}
                         `}
                         {...register('password')}
                       />
@@ -293,9 +293,10 @@ export default function Login() {
                   {/* Submit Button */}
                   <Button
                     type="submit"
+                    variant="gradient"
                     fullWidth
                     size="lg"
-                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md shadow-emerald-500/10"
+                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Signing In...' : 'Sign In'}
@@ -304,11 +305,11 @@ export default function Login() {
                 </form>
 
                 {/* Redirect link */}
-                <div className="text-center mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
-                  <span className="text-xs text-gray-455 dark:text-gray-500">Don't have an account? </span>
+                <div className="text-center mt-6 pt-5 border-t border-gray-100 dark:border-gray-850">
+                  <span className="text-xs text-gray-450 dark:text-gray-500">Don't have an account? </span>
                   <Link 
                     to="/register" 
-                    className="text-xs font-bold text-primary-blue hover:underline hover:text-primary-blue-hover transition-colors"
+                    className="text-xs font-bold text-emerald-500 hover:text-emerald-450 hover:underline transition-colors"
                   >
                     Create Account
                   </Link>
@@ -318,9 +319,9 @@ export default function Login() {
               <>
                 {/* Brand logo inside card for forgot password */}
                 <div className="text-center mb-8">
-                  <Logo showText={true} className="h-12 w-auto mx-auto justify-center mb-5" />
+                  <Logo showText={true} className="h-10 w-auto mx-auto justify-center mb-5 drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]" />
                   <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Reset Password</h2>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Enter your email and we'll send you a password reset link.</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-medium leading-relaxed max-w-xs mx-auto">Enter your email and we'll send you a password reset link.</p>
                 </div>
 
                 {errorMsg && (
@@ -334,11 +335,11 @@ export default function Login() {
                   
                   {/* Email Field */}
                   <div>
-                    <label className="block text-xs font-semibold text-gray-450 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
+                    <label className="block text-[10px] font-bold text-gray-450 dark:text-slate-400 mb-1.5 uppercase tracking-widest select-none">
                       Email Address
                     </label>
                     <div className="relative group">
-                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-primary-blue transition-colors pointer-events-none">
+                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
                         <Mail size={16} />
                       </span>
                       <input
@@ -347,7 +348,7 @@ export default function Login() {
                         placeholder="name@example.com"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all border-gray-200 dark:border-gray-800 focus:border-primary-blue text-gray-800 dark:text-white"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all border-gray-200 dark:border-slate-800 focus:border-emerald-500 text-gray-800 dark:text-white"
                       />
                     </div>
                   </div>
@@ -355,9 +356,10 @@ export default function Login() {
                   {/* Submit Button */}
                   <Button
                     type="submit"
+                    variant="gradient"
                     fullWidth
                     size="lg"
-                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md shadow-emerald-500/10"
+                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Sending Link...' : 'Send Reset Link'}
@@ -369,7 +371,7 @@ export default function Login() {
                       setIsForgotMode(false);
                       setErrorMsg(null);
                     }}
-                    className="w-full text-center text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-650 dark:hover:text-gray-300 transition-colors pt-2 cursor-pointer focus:outline-none border-none bg-transparent"
+                    className="w-full text-center text-xs font-bold text-emerald-500 hover:text-emerald-450 transition-colors pt-2 cursor-pointer focus:outline-none border-none bg-transparent"
                   >
                     Back to Sign In
                   </button>

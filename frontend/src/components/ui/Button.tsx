@@ -3,7 +3,7 @@ import { motion, type HTMLMotionProps } from 'framer-motion';
 
 interface ButtonProps extends HTMLMotionProps<"button"> {
   children?: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   pill?: boolean;
@@ -28,6 +28,7 @@ export const Button: React.FC<ButtonProps> = ({
     outline: 'border border-gray-200 bg-transparent hover:bg-gray-50 text-gray-700 focus:ring-gray-250',
     ghost: 'bg-transparent hover:bg-gray-50 text-gray-600 focus:ring-gray-200',
     danger: 'bg-attention-pink hover:bg-attention-pink-hover text-white focus:ring-attention-pink shadow-sm shadow-pink-500/10',
+    gradient: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white focus:ring-emerald-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 border-none',
   };
 
   const sizes = {
