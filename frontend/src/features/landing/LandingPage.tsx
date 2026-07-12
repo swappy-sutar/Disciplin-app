@@ -430,82 +430,82 @@ export default function LandingPage() {
           <motion.div 
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-            className="w-full max-w-[560px] bg-white rounded-3xl p-3 shadow-xl border border-gray-100 relative overflow-hidden select-none"
+            className="w-full max-w-[560px] bg-white dark:bg-slate-950 p-3 shadow-xl border border-gray-100 dark:border-slate-900 relative overflow-hidden select-none"
           >
             {/* Top window dots */}
             <div className="flex items-center gap-1.5 mb-3 px-1">
               <div className="w-2.5 h-2.5 rounded-full bg-red-400/90" />
               <div className="w-2.5 h-2.5 rounded-full bg-amber-400/90" />
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/90" />
-              <div className="bg-gray-50 border border-gray-200/50 rounded-lg text-[9px] font-bold text-gray-400 px-3 py-0.5 ml-4 flex-1 text-center max-w-[280px]">
+              <div className="bg-gray-50 dark:bg-slate-900/60 border border-gray-200/50 dark:border-slate-800/80 rounded-lg text-[9px] font-bold text-gray-400 dark:text-slate-500 px-3 py-0.5 ml-4 flex-1 text-center max-w-[280px]">
                 disciplin.app/overview
               </div>
             </div>
             
             {/* Mock browser viewport */}
-            <div className="bg-canvas-bg rounded-2xl border border-gray-50 p-4 space-y-4 shadow-inner">
+            <div className="bg-canvas-bg rounded-2xl border border-gray-100/50 dark:border-slate-900/60 p-4 space-y-4 shadow-inner">
               
-              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-900 pb-3">
                 <div>
-                  <h4 className="text-xs font-black text-gray-900 leading-none">Today's Overview</h4>
+                  <h4 className="text-xs font-black text-gray-900 dark:text-white leading-none">Today's Overview</h4>
                   <span className="text-[8px] text-gray-400 mt-1 block select-none">Monday, Oct 16</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-14 h-4 bg-emerald-100 border border-emerald-200 text-emerald-600 rounded-full text-[8px] font-bold flex items-center justify-center">
                     +5% progress
                   </div>
-                  <div className="w-6 h-6 rounded-full bg-gray-200 border border-white shadow-sm flex items-center justify-center font-bold text-[8px] text-gray-600">
+                  <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-slate-800 border border-white dark:border-slate-900 shadow-sm flex items-center justify-center font-bold text-[8px] text-gray-600 dark:text-slate-400">
                     V
                   </div>
                 </div>
               </div>
               
               <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-2 bg-white rounded-xl border border-gray-100 p-3 space-y-2.5 shadow-sm">
-                  <div className="flex justify-between items-center border-b border-gray-55 pb-1.5">
-                    <span className="text-[9px] font-bold text-gray-800">Habit Tracker</span>
+                <div className="col-span-2 bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 space-y-2.5 shadow-sm">
+                  <div className="flex justify-between items-center border-b border-gray-100 dark:border-slate-800/60 pb-1.5">
+                    <span className="text-[9px] font-bold text-gray-800 dark:text-slate-200">Habit Tracker</span>
                     <span className="text-[8px] text-emerald-500 font-extrabold">12 Day Streak</span>
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 rounded-full bg-blue-500 flex items-center justify-center text-[7px] text-white">✓</div>
-                      <div className="w-20 h-2 bg-gray-100 rounded-full" />
+                      <div className="w-20 h-2 bg-gray-100 dark:bg-slate-800/80 rounded-full" />
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 flex items-center justify-center text-[7px] text-white">✓</div>
-                      <div className="w-16 h-2 bg-gray-100 rounded-full" />
+                      <div className="w-16 h-2 bg-gray-100 dark:bg-slate-800/80 rounded-full" />
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-white rounded-xl border border-gray-100 p-3 flex flex-col justify-center items-center gap-2 shadow-sm">
-                  <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-wider text-center">Day Progress</span>
-                  <div className="w-11 h-11 rounded-full border-4 border-primary-blue border-r-transparent flex items-center justify-center font-black text-[10px] text-gray-800">
+                <div className="bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 flex flex-col justify-center items-center gap-2 shadow-sm">
+                  <span className="text-[8px] font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">Day Progress</span>
+                  <div className="w-11 h-11 rounded-full border-4 border-primary-blue border-r-transparent flex items-center justify-center font-black text-[10px] text-gray-800 dark:text-slate-350">
                     68%
                   </div>
                 </div>
               </div>
 
               {/* Mini Timetable preview */}
-              <div className="bg-white rounded-xl border border-gray-100 p-3 space-y-2 shadow-sm">
-                <div className="flex justify-between items-center border-b border-gray-55 pb-1.5">
-                  <span className="text-[9px] font-bold text-gray-850">Today's Schedule</span>
+              <div className="bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 space-y-2 shadow-sm">
+                <div className="flex justify-between items-center border-b border-gray-100 dark:border-slate-800/60 pb-1.5">
+                  <span className="text-[9px] font-bold text-gray-800 dark:text-slate-200">Today's Schedule</span>
                   <span className="text-[8px] text-primary-blue font-extrabold">3 of 5 completed</span>
                 </div>
                 <div className="space-y-1.5 text-[8px] font-medium">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      <span className="text-gray-800 font-bold">Morning Routine</span>
+                      <span className="text-gray-800 dark:text-slate-300 font-bold">Morning Routine</span>
                     </div>
-                    <span className="text-gray-400 font-semibold">08:00 - 09:00</span>
+                    <span className="text-gray-400 dark:text-slate-500 font-semibold">08:00 - 09:00</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                      <span className="text-gray-800 font-bold">System Architecture Review</span>
+                      <span className="text-gray-800 dark:text-slate-300 font-bold">System Architecture Review</span>
                     </div>
-                    <span className="text-gray-400 font-semibold">09:30 - 11:30</span>
+                    <span className="text-gray-400 dark:text-slate-500 font-semibold">09:30 - 11:30</span>
                   </div>
                 </div>
               </div>
@@ -518,13 +518,13 @@ export default function LandingPage() {
               +12% Applications Lead
             </div>
             
-            <div className="absolute bottom-8 left-6 bg-white border border-gray-100 rounded-2xl p-2.5 shadow-lg flex items-center gap-2.5 select-none">
+            <div className="absolute bottom-8 left-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-850 rounded-2xl p-2.5 shadow-lg flex items-center gap-2.5 select-none">
               <div className="p-1.5 rounded-xl bg-orange-500 text-white shadow-sm shadow-orange-500/20">
                 <Flame size={14} fill="#FFFFFF" />
               </div>
               <div>
-                <p className="text-[9px] font-extrabold text-gray-900 leading-none">Today's Streak</p>
-                <p className="text-[8px] text-gray-400 mt-0.5">14 consecutive days</p>
+                <p className="text-[9px] font-extrabold text-gray-900 dark:text-white leading-none">Today's Streak</p>
+                <p className="text-[8px] text-gray-400 dark:text-slate-400 mt-0.5">14 consecutive days</p>
               </div>
             </div>
           </motion.div>
