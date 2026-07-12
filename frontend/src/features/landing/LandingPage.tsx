@@ -591,13 +591,23 @@ export default function LandingPage() {
             <motion.div
               key={idx}
               variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
+                hidden: { opacity: 0, y: 30 },
+                show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 15 } }
               }}
+              whileHover="hover"
+              className="h-full"
             >
-              <Card 
-                className="p-6 md:p-8 flex flex-col items-start text-left hoverable hover:border-gray-200 transition-all border border-gray-100/50 relative overflow-hidden group shadow-sm bg-white h-full"
-                hoverable
+              <motion.div
+                variants={{
+                  hover: { 
+                    y: -8, 
+                    scale: 1.02,
+                    boxShadow: `0 20px 40px -15px ${item.accent}30`,
+                    borderColor: item.accent
+                  }
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="p-6 md:p-8 flex flex-col items-start text-left bg-white dark:bg-slate-900 border border-gray-100/50 dark:border-slate-800/80 rounded-2xl relative overflow-hidden group shadow-sm h-full cursor-pointer select-none transition-colors duration-300"
               >
                 {/* Corner hover glow effect */}
                 <div 
@@ -606,13 +616,20 @@ export default function LandingPage() {
                 />
 
                 <div className={`flex items-center gap-3 w-full p-2.5 px-4 rounded-xl border ${item.color} mb-4 transition-all duration-300`}>
-                  <item.icon size={18} className="shrink-0" />
+                  <motion.div
+                    variants={{
+                      hover: { scale: 1.15, rotate: 8 }
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 12 }}
+                  >
+                    <item.icon size={18} className="shrink-0" />
+                  </motion.div>
                   <span className="font-extrabold text-sm tracking-tight">{item.title}</span>
                 </div>
-                <p className="text-xs md:text-sm text-gray-400 font-medium leading-relaxed leading-normal select-none">
+                <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-semibold leading-relaxed select-none">
                   {item.desc}
                 </p>
-              </Card>
+              </motion.div>
             </motion.div>
           ))}
         </motion.div>
