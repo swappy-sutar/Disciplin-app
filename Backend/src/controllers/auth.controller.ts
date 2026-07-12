@@ -377,6 +377,68 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+export const resendVerificationEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // Generic message to avoid user enumeration
+      return res.status(200).json({
+        success: true,
+        message: 'If that email is registered and unverified, a new link has been sent.',
+      });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: 'This email is already verified. You can log in now.',
+      });
+    }
+
+    // Generate fresh verification token
+    const rawToken = crypto.randomBytes(20).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    user.verificationToken = hashedToken;
+    user.verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    await user.save();
+
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5174').replace(/\/+$/, '');
+    const verifyUrl = `${frontendUrl}/verify-email?token=${rawToken}`;
+
+    const emailData = getVerificationEmail({
+      name: user.name,
+      verifyUrl,
+    });
+
+    let emailError = false;
+    let responseMessage = 'A new verification link has been sent to your email.';
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: emailData.subject,
+        message: emailData.text,
+        html: emailData.html,
+      });
+    } catch (err: any) {
+      console.error('Failed to resend verification email:', err);
+      emailError = true;
+      responseMessage = `Failed to send verification email. Error: ${err.message || err}`;
+    }
+
+    res.status(200).json({
+      success: true,
+      emailError,
+      message: responseMessage,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await User.find().select('-passwordHash');

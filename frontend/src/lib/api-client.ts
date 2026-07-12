@@ -38,7 +38,8 @@ async function request<T>(
     path !== '/auth/register' &&
     path !== '/auth/forgot-password' &&
     path !== '/auth/reset-password' &&
-    path !== '/auth/verify-email'
+    path !== '/auth/verify-email' &&
+    path !== '/auth/resend-verification'
   ) {
     try {
       const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
@@ -130,7 +131,8 @@ export const apiClient = {
     }),
     forgotPassword: (email: string) => request<any>('POST', '/auth/forgot-password', { email }),
     resetPassword: (body: { token: string; password?: string }) => request<any>('POST', '/auth/reset-password', body),
-    verifyEmail: (token: string) => request<any>('POST', '/auth/verify-email', { token })
+    verifyEmail: (token: string) => request<any>('POST', '/auth/verify-email', { token }),
+    resendVerification: (email: string) => request<any>('POST', '/auth/resend-verification', { email }),
   },
 
   // Timetable Operations

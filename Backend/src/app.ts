@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
 import routes from './routes';
 import { errorHandler } from './middlewares/error.middleware';
 import { responseFormatter } from './middlewares/response.middleware';
@@ -62,7 +63,13 @@ app.use('/api/v1', apiLimiter, routes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', environment: env.NODE_ENV });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'up' : 'down';
+  const status = dbStatus === 'up' ? 'ok' : 'error';
+  res.status(status === 'ok' ? 200 : 500).json({
+    status,
+    environment: env.NODE_ENV,
+    database: dbStatus,
+  });
 });
 
 // Catch 404

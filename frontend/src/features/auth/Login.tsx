@@ -26,6 +26,9 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [isForgotMode, setIsForgotMode] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
+  const [showResend, setShowResend] = useState(false);
+  const [resendEmail, setResendEmail] = useState('');
+  const [isResending, setIsResending] = useState(false);
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +53,26 @@ export default function Login() {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!resendEmail.trim() || isResending) return;
+    setIsResending(true);
+    try {
+      const res = await apiClient.auth.resendVerification(resendEmail);
+      if (res?.emailError) {
+        toast.error(res.message || 'Failed to send verification email.', { duration: 6000 });
+      } else {
+        toast.success(res?.message || 'Verification link sent! Check your inbox.');
+        setShowResend(false);
+        setResendEmail('');
+        setErrorMsg(null);
+      }
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to resend verification email.');
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -61,6 +84,7 @@ export default function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     setErrorMsg(null);
+    setShowResend(false);
     try {
       const res = await apiClient.auth.login(data);
       setAuth(res.user, res.token);
@@ -70,6 +94,11 @@ export default function Login() {
       const err = e.message || 'Invalid email or password';
       setErrorMsg(err);
       toast.error(err);
+      // Show resend option when email is unverified
+      if (err.toLowerCase().includes('verify')) {
+        setResendEmail(data.email);
+        setShowResend(true);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -145,12 +174,69 @@ export default function Login() {
               <>
                 <h2 className="text-lg font-extrabold text-gray-900 dark:text-white mb-6">Sign In</h2>
 
-                {errorMsg && (
-                  <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-105/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold">
+                {/* Error & Resend — unified premium card when unverified, plain banner otherwise */}
+                {errorMsg && !showResend && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                    className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-105/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold"
+                  >
                     <ShieldAlert size={16} className="flex-shrink-0" />
                     <span>{errorMsg}</span>
-                  </div>
+                  </motion.div>
                 )}
+
+                {/* Premium resend verification card — app theme */}
+                {showResend && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                    className="relative mb-4 overflow-hidden rounded-2xl"
+                  >
+                    {/* Emerald glow backdrop */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-blue/20 via-success-green/10 to-primary-blue/5 blur-sm" />
+                    <div className="relative flex items-center justify-between gap-3 px-4 py-3.5 rounded-2xl bg-card-bg/90 dark:bg-card-bg/90 backdrop-blur-md border border-primary-blue/25 shadow-lg shadow-success-green/10">
+                      {/* Left side */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        {/* Pulsing dot — emerald */}
+                        <span className="relative flex-shrink-0">
+                          <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-primary-blue opacity-50" />
+                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary-blue" />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-bold text-text-main leading-tight">Verify your email</p>
+                          <p className="text-[10px] text-primary-blue/70 font-medium mt-0.5 truncate">Check inbox or get a new link</p>
+                        </div>
+                      </div>
+
+                      {/* Resend button — emerald gradient */}
+                      <button
+                        type="button"
+                        onClick={handleResendVerification}
+                        disabled={isResending}
+                        className="group relative flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg overflow-hidden text-[11px] font-bold text-white transition-all disabled:opacity-50 cursor-pointer border-none focus:outline-none"
+                      >
+                        {/* Button bg with shimmer */}
+                        <span className="absolute inset-0 bg-gradient-to-r from-primary-blue to-success-green-hover group-hover:from-success-green-hover group-hover:to-primary-blue transition-all duration-300" />
+                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                        <span className="relative">
+                          {isResending ? (
+                            <span className="flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Sending…
+                            </span>
+                          ) : (
+                            'Resend Link'
+                          )}
+                        </span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   
