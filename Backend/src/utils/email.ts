@@ -12,9 +12,35 @@ interface EmailOptions {
 }
 
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  let transporter: nodemailer.Transporter;
-
+  const hasResendConfig = process.env.RESEND_API_KEY;
   const hasSmtpConfig = process.env.SMTP_HOST && process.env.SMTP_USER;
+
+  if (hasResendConfig) {
+    const fromAddress = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+    
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: options.email,
+        subject: options.subject,
+        text: options.message,
+        html: options.html || `<p>${options.message}</p>`,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Resend API error: ${errText}`);
+    }
+    return;
+  }
+
+  let transporter: nodemailer.Transporter;
 
   if (hasSmtpConfig) {
     transporter = nodemailer.createTransport({
