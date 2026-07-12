@@ -31,7 +31,12 @@ import {
   BookOpen,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Calendar,
+  CheckCircle,
+  Target,
+  Activity,
+  Briefcase
 } from 'lucide-react';
 
 export default function Overview() {
@@ -340,6 +345,8 @@ export default function Overview() {
           {/* Daily Timetable */}
           <Card 
             title="Daily Timetable" 
+            icon={Calendar}
+            iconColor="text-blue-500 bg-blue-500/10 border-blue-500/20"
             showMenu 
             headerAction={
               <button 
@@ -486,6 +493,8 @@ export default function Overview() {
           {/* Habit Tracker */}
           <Card 
             title="Habit Tracker" 
+            icon={CheckCircle}
+            iconColor="text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
             subtitle="Today's habit compliance"
             headerAction={
               <Link to="/habits" className="text-xs font-bold text-primary-blue hover:underline">
@@ -556,6 +565,8 @@ export default function Overview() {
           {/* Application Tracker */}
           <Card 
             title="Application Tracker"
+            icon={Briefcase}
+            iconColor="text-slate-650 bg-slate-600/10 border-slate-650/20 dark:text-slate-400 dark:bg-slate-900/30 dark:border-slate-800/80"
             headerAction={
               <button 
                 onClick={() => setAddAppOpen(true)}
@@ -630,7 +641,11 @@ export default function Overview() {
         <div className="space-y-6">
           
           {/* Day Progress Tracker */}
-          <Card title="Day Progress">
+          <Card 
+            title="Day Progress"
+            icon={Activity}
+            iconColor="text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+          >
             <div className="flex flex-col items-center py-2">
               <RadialProgress 
                 percentage={progress.todayPercent} 
@@ -651,6 +666,8 @@ export default function Overview() {
           {/* Weekly Goals */}
           <Card 
             title="Weekly Goals" 
+            icon={Target}
+            iconColor="text-pink-500 bg-pink-500/10 border-pink-500/20"
             headerAction={
               <button 
                 onClick={() => setAddGoalOpen(true)}
@@ -730,6 +747,8 @@ export default function Overview() {
           {/* Topics card */}
           <Card 
             title="Topics to Finish"
+            icon={BookOpen}
+            iconColor="text-purple-500 bg-purple-500/10 border-purple-500/20"
             headerAction={
               <button 
                 onClick={() => setAddTopicOpen(true)}
