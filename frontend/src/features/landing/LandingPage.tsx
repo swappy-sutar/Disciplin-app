@@ -605,12 +605,10 @@ export default function LandingPage() {
                   style={{ backgroundColor: `${item.accent}15` }}
                 />
 
-                <div className={`p-3 rounded-2xl border ${item.color} mb-5 transition-transform duration-300 group-hover:scale-110`}>
-                  <item.icon size={22} />
+                <div className={`flex items-center gap-3 w-full p-2.5 px-4 rounded-xl border ${item.color} mb-4 transition-all duration-300`}>
+                  <item.icon size={18} className="shrink-0" />
+                  <span className="font-extrabold text-sm tracking-tight">{item.title}</span>
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2 select-none group-hover:text-primary-blue transition-colors">
-                  {item.title}
-                </h3>
                 <p className="text-xs md:text-sm text-gray-400 font-medium leading-relaxed leading-normal select-none">
                   {item.desc}
                 </p>
