@@ -266,7 +266,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     } catch (err: any) {
       console.error('Failed to send reset password email:', err);
       emailError = true;
-      responseMessage = `Password reset requested, but failed to send email. Error: ${err.message || err}`;
+      responseMessage = `Failed to send password reset email. Error: ${err.message || err}`;
       
       // Clean up reset token since email failed
       user.passwordResetToken = undefined;
@@ -274,9 +274,16 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       await user.save();
     }
 
+    if (emailError) {
+      return res.status(500).json({
+        success: false,
+        message: responseMessage,
+        data: { emailError: true },
+      });
+    }
+
     res.status(200).json({
       success: true,
-      emailError,
       message: responseMessage,
     });
   } catch (error) {
@@ -429,9 +436,16 @@ export const resendVerificationEmail = async (req: Request, res: Response, next:
       responseMessage = `Failed to send verification email. Error: ${err.message || err}`;
     }
 
+    if (emailError) {
+      return res.status(500).json({
+        success: false,
+        message: responseMessage,
+        data: { emailError: true },
+      });
+    }
+
     res.status(200).json({
       success: true,
-      emailError,
       message: responseMessage,
     });
   } catch (error) {
