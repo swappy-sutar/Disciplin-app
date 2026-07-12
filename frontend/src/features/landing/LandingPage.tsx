@@ -390,11 +390,21 @@ export default function LandingPage() {
             </motion.span>
           </h1>
           
-          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 font-medium max-w-lg leading-relaxed select-none">
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="text-base md:text-lg text-gray-600 dark:text-gray-300 font-medium max-w-lg leading-relaxed select-none"
+          >
             The all-in-one career dashboard designed for high-performance job seekers. Organize your hunt, tracks learning goals, and follow habits with clinical precision.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-wrap gap-4 pt-2 select-none">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            className="flex flex-wrap gap-4 pt-2 select-none"
+          >
             {token ? (
               <Link to="/overview">
                 <Button size="lg" className="font-semibold shadow-md shadow-blue-500/10 hover:scale-[1.02] active:scale-95 transition-transform">
@@ -413,7 +423,7 @@ export default function LandingPage() {
                 See how it works
               </Button>
             </a>
-          </div>
+          </motion.div>
         </motion.div>
         
         {/* Right floating mockup display */}
@@ -461,7 +471,12 @@ export default function LandingPage() {
               </div>
               
               <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-2 bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 space-y-2.5 shadow-sm">
+                <motion.div 
+                  initial={{ opacity: 0, x: -25 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ type: "spring", stiffness: 80, damping: 14, delay: 0.6 }}
+                  className="col-span-2 bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 space-y-2.5 shadow-sm"
+                >
                   <div className="flex justify-between items-center border-b border-gray-100 dark:border-slate-800/60 pb-1.5">
                     <span className="text-[9px] font-bold text-gray-800 dark:text-slate-200">Habit Tracker</span>
                     <span className="text-[8px] text-emerald-500 font-extrabold">12 Day Streak</span>
@@ -476,18 +491,28 @@ export default function LandingPage() {
                       <div className="w-16 h-2 bg-gray-100 dark:bg-slate-800/80 rounded-full" />
                     </div>
                   </div>
-                </div>
+                </motion.div>
                 
-                <div className="bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 flex flex-col justify-center items-center gap-2 shadow-sm">
+                <motion.div 
+                  initial={{ opacity: 0, x: 25 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ type: "spring", stiffness: 80, damping: 14, delay: 0.8 }}
+                  className="bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 flex flex-col justify-center items-center gap-2 shadow-sm"
+                >
                   <span className="text-[8px] font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">Day Progress</span>
                   <div className="w-11 h-11 rounded-full border-4 border-primary-blue border-r-transparent flex items-center justify-center font-black text-[10px] text-gray-800 dark:text-slate-350">
                     68%
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {/* Mini Timetable preview */}
-              <div className="bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 space-y-2 shadow-sm">
+              <motion.div 
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 80, damping: 14, delay: 1.0 }}
+                className="bg-white dark:bg-slate-900/80 rounded-xl border border-gray-100 dark:border-slate-800/80 p-3 space-y-2 shadow-sm"
+              >
                 <div className="flex justify-between items-center border-b border-gray-100 dark:border-slate-800/60 pb-1.5">
                   <span className="text-[9px] font-bold text-gray-800 dark:text-slate-200">Today's Schedule</span>
                   <span className="text-[8px] text-primary-blue font-extrabold">3 of 5 completed</span>
@@ -508,17 +533,27 @@ export default function LandingPage() {
                     <span className="text-gray-400 dark:text-slate-500 font-semibold">09:30 - 11:30</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
             </div>
             
             {/* Floats badges around mockup */}
-            <div className="absolute top-10 right-6 bg-emerald-500 text-white rounded-full px-3 py-1 text-[10px] font-extrabold border border-emerald-400 shadow-lg flex items-center gap-1 animate-pulse select-none">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.4, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 10, delay: 1.2 }}
+              className="absolute top-10 right-6 bg-emerald-500 text-white rounded-full px-3 py-1 text-[10px] font-extrabold border border-emerald-400 shadow-lg flex items-center gap-1 select-none"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
               +12% Applications Lead
-            </div>
+            </motion.div>
             
-            <div className="absolute bottom-8 left-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-850 rounded-2xl p-2.5 shadow-lg flex items-center gap-2.5 select-none">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.4, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 10, delay: 1.4 }}
+              className="absolute bottom-8 left-6 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-850 rounded-2xl p-2.5 shadow-lg flex items-center gap-2.5 select-none"
+            >
               <div className="p-1.5 rounded-xl bg-orange-500 text-white shadow-sm shadow-orange-500/20">
                 <Flame size={14} fill="#FFFFFF" />
               </div>
@@ -526,7 +561,7 @@ export default function LandingPage() {
                 <p className="text-[9px] font-extrabold text-gray-900 dark:text-white leading-none">Today's Streak</p>
                 <p className="text-[8px] text-gray-400 dark:text-slate-400 mt-0.5">14 consecutive days</p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
 
