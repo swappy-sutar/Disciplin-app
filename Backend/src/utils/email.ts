@@ -1,4 +1,8 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+
+// Force DNS lookup to prefer IPv4, preventing ENETUNREACH errors on IPv6-disabled container networks
+dns.setDefaultResultOrder('ipv4first');
 
 interface EmailOptions {
   email: string;
