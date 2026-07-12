@@ -57,11 +57,11 @@ describe('Auth Endpoints', () => {
         email: testUser.email,
         password: testUser.password,
       });
-    const cookie = loginRes.headers['set-cookie'];
+    const token = loginRes.body.data.token;
 
     const res = await request(app)
       .get('/api/v1/auth/me')
-      .set('Cookie', cookie);
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);

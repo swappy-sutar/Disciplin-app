@@ -8,7 +8,7 @@ export interface TokenPayload {
 }
 
 const getRefreshSecret = () => {
-  return process.env.JWT_REFRESH_SECRET || (env.JWT_SECRET + "_refresh");
+  return env.JWT_REFRESH_SECRET;
 };
 
 export const generateAccessToken = (userId: string | Types.ObjectId, role: string): string => {

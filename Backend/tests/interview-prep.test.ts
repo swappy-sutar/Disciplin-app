@@ -16,24 +16,24 @@ describe('Interview Prep Module', () => {
     password: 'password123',
   };
 
-  const getCookieForUser = async (userData: typeof userA) => {
+  const getTokenForUser = async (userData: typeof userA) => {
     await request(app).post('/api/v1/auth/register').send(userData);
     await User.updateOne({ email: userData.email }, { isVerified: true });
     
     const loginRes = await request(app)
       .post('/api/v1/auth/login')
       .send({ email: userData.email, password: userData.password });
-    return loginRes.headers['set-cookie'];
+    return loginRes.body.data.token;
   };
 
   it('should verify CRUD on prep module & ownership authorization (403)', async () => {
-    const cookieA = await getCookieForUser(userA);
-    const cookieB = await getCookieForUser(userB);
+    const tokenA = await getTokenForUser(userA);
+    const tokenB = await getTokenForUser(userB);
 
     // 1. Create a Topic for User A
     const topicRes = await request(app)
       .post('/api/v1/topics')
-      .set('Cookie', cookieA)
+      .set('Authorization', `Bearer ${tokenA}`)
       .send({
         title: 'Node.js Core',
         category: 'Backend',
@@ -46,7 +46,7 @@ describe('Interview Prep Module', () => {
     // 2. User B tries to post a note to User A's topic -> returns 403
     const forbiddenRes = await request(app)
       .post(`/api/v1/topics/${topicId}/notes`)
-      .set('Cookie', cookieB)
+      .set('Authorization', `Bearer ${tokenB}`)
       .send({
         title: 'Unauthorized Note',
         bodyMarkdown: 'This note is unauthorized',
@@ -56,7 +56,7 @@ describe('Interview Prep Module', () => {
     // 3. User A successfully posts a note
     const noteRes = await request(app)
       .post(`/api/v1/topics/${topicId}/notes`)
-      .set('Cookie', cookieA)
+      .set('Authorization', `Bearer ${tokenA}`)
       .send({
         title: 'Event Loop Deep Dive',
         bodyMarkdown: 'The loop has phases...',
@@ -68,14 +68,14 @@ describe('Interview Prep Module', () => {
     // 4. User B tries to update User A's note -> returns 403
     const forbiddenUpdateRes = await request(app)
       .patch(`/api/v1/notes/${noteId}`)
-      .set('Cookie', cookieB)
+      .set('Authorization', `Bearer ${tokenB}`)
       .send({ title: 'Hacked Title' });
     expect(forbiddenUpdateRes.status).toBe(403);
 
     // 5. User A updates the note successfully
     const updateRes = await request(app)
       .patch(`/api/v1/notes/${noteId}`)
-      .set('Cookie', cookieA)
+      .set('Authorization', `Bearer ${tokenA}`)
       .send({ title: 'Event Loop Mastery' });
     expect(updateRes.status).toBe(200);
     expect(updateRes.body.data.title).toBe('Event Loop Mastery');
@@ -83,7 +83,7 @@ describe('Interview Prep Module', () => {
     // 6. User A posts a QA item and a Coding question
     const qaRes = await request(app)
       .post(`/api/v1/topics/${topicId}/qa`)
-      .set('Cookie', cookieA)
+      .set('Authorization', `Bearer ${tokenA}`)
       .send({
         question: 'What is process.nextTick?',
         answerMarkdown: 'It schedules a callback...',
@@ -95,7 +95,7 @@ describe('Interview Prep Module', () => {
 
     const codingRes = await request(app)
       .post(`/api/v1/topics/${topicId}/coding`)
-      .set('Cookie', cookieA)
+      .set('Authorization', `Bearer ${tokenA}`)
       .send({
         title: 'Reverse Linked List',
         problemMarkdown: 'Given a list...',
@@ -110,7 +110,7 @@ describe('Interview Prep Module', () => {
     // 7. Get topic detail aggregate for User A
     const detailRes = await request(app)
       .get(`/api/v1/topics/${topicId}/detail`)
-      .set('Cookie', cookieA);
+      .set('Authorization', `Bearer ${tokenA}`);
     expect(detailRes.status).toBe(200);
     expect(detailRes.body.data.topic.title).toBe('Node.js Core');
     expect(detailRes.body.data.notes.length).toBe(1);
@@ -120,14 +120,14 @@ describe('Interview Prep Module', () => {
     // User B tries to fetch User A's detail -> returns 403
     const forbiddenDetailRes = await request(app)
       .get(`/api/v1/topics/${topicId}/detail`)
-      .set('Cookie', cookieB);
+      .set('Authorization', `Bearer ${tokenB}`);
     expect(forbiddenDetailRes.status).toBe(403);
 
     // 8. Get review lists
     // Post one more ok/strong QAItem to test filtering
     await request(app)
       .post(`/api/v1/topics/${topicId}/qa`)
-      .set('Cookie', cookieA)
+      .set('Authorization', `Bearer ${tokenA}`)
       .send({
         question: 'What is setImmediate?',
         answerMarkdown: 'Runs check phase...',
@@ -138,7 +138,7 @@ describe('Interview Prep Module', () => {
     // Review all
     const reviewAllRes = await request(app)
       .get(`/api/v1/topics/${topicId}/review`)
-      .set('Cookie', cookieA);
+      .set('Authorization', `Bearer ${tokenA}`);
     expect(reviewAllRes.status).toBe(200);
     // Combined list: 2 QA + 1 Coding = 3 items
     expect(reviewAllRes.body.data.length).toBe(3);
@@ -149,7 +149,7 @@ describe('Interview Prep Module', () => {
     // Review weak only
     const reviewWeakRes = await request(app)
       .get(`/api/v1/topics/${topicId}/review?filter=weak`)
-      .set('Cookie', cookieA);
+      .set('Authorization', `Bearer ${tokenA}`);
     expect(reviewWeakRes.status).toBe(200);
     // Filtered list: 1 QA (weak) + 1 Coding (weak) = 2 items
     expect(reviewWeakRes.body.data.length).toBe(2);
@@ -160,7 +160,7 @@ describe('Interview Prep Module', () => {
     // 9. Clean up / delete note
     const deleteRes = await request(app)
       .delete(`/api/v1/notes/${noteId}`)
-      .set('Cookie', cookieA);
+      .set('Authorization', `Bearer ${tokenA}`);
     expect(deleteRes.status).toBe(200);
   });
 });
