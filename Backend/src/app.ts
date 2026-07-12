@@ -40,9 +40,7 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         env.FRONTEND_URL,
-        'http://localhost:5173',
-        'http://localhost:5174',
-        'http://localhost:3000'
+        "https://disciplin-app-backend.onrender.com"
       ].filter(Boolean);
 
       if (!origin || allowedOrigins.includes(origin) || env.NODE_ENV !== 'production') {
