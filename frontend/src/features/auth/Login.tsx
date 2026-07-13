@@ -11,6 +11,7 @@ import { Mail, Lock, ShieldAlert, Sun, Moon } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Logo } from '../../components/ui/Logo';
+import { Navbar } from '../../components/ui/Navbar';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -107,35 +108,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-canvas-bg flex flex-col items-center justify-center p-4 pt-20 select-none relative overflow-hidden">
       {/* Public Header */}
-      <header className="bg-white/70 dark:bg-card-bg/70 backdrop-blur-md border-b border-gray-100/80 dark:border-border-main fixed top-0 left-0 right-0 z-50 select-none">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
-          <Link to="/" className="hover:opacity-90 transition-opacity">
-            <Logo />
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-500">
-            <Link to="/#features" className="hover:text-primary-blue transition-colors">Features</Link>
-            <Link to="/#demo" className="hover:text-primary-blue transition-colors">Solutions</Link>
-            <Link to="/#pricing" className="hover:text-primary-blue transition-colors">Pricing</Link>
-            <Link to="/#testimonials" className="hover:text-primary-blue transition-colors">Testimonials</Link>
-          </nav>
-          
-          <div className="flex items-center gap-4">
-            {/* Theme Toggle Button */}
-            <button 
-              onClick={toggleTheme}
-              className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-              aria-label="Toggle Theme Mode"
-            >
-              {theme === 'dark' ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} />}
-            </button>
-
-            <Link to="/register">
-              <Button size="sm" className="px-5 py-2 font-semibold shadow-sm">Get started</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Decorative dot-mesh background */}
       <div className="absolute inset-0 bg-[radial-gradient(#E5E7EB_1px,transparent_1px)] dark:bg-[radial-gradient(#27314A_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />

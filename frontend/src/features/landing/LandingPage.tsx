@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -24,10 +24,64 @@ import { useStore } from '../../app/store';
 import { Logo } from '../../components/ui/Logo';
 import { Footer } from '../../components/ui/Footer';
 import { GoToTop } from '../../components/ui/GoToTop';
+import { Navbar } from '../../components/ui/Navbar';
+
+// ─── CountUp: animates a number when it scrolls into view ───────────────────
+function CountUp({
+  to,
+  suffix = '',
+  duration = 1800,
+  formatter,
+}: {
+  to: number;
+  suffix?: string;
+  duration?: number;
+  formatter?: (n: number) => string;
+}) {
+  const [value, setValue] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          const startTime = performance.now();
+          const tick = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setValue(Math.round(eased * to));
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [to, duration]);
+
+  const display = formatter ? formatter(value) : value.toLocaleString();
+  return <span ref={ref}>{display}{suffix}</span>;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   const { token, theme, toggleTheme } = useStore();
   const [activeFeature, setActiveFeature] = useState(0);
+
+  // Always start from the top when the page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const features = [
     {
@@ -281,75 +335,14 @@ export default function LandingPage() {
       <div className="absolute inset-0 bg-[radial-gradient(#E5E7EB_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
 
       {/* 1. Header/Navigation */}
-      <header className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/40 fixed top-0 left-0 right-0 z-50 select-none transition-all duration-300">
-        {/* Glow underside line */}
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
-        
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
-          <Link to="/" className="hover:opacity-90 transition-opacity">
-            <Logo />
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold">
-            <a 
-              href="#features" 
-              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
-            >
-              Features
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
-            </a>
-            <a 
-              href="#demo" 
-              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
-            >
-              Solutions
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
-            </a>
-            <a 
-              href="#pricing" 
-              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
-            >
-              Pricing
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
-            </a>
-            <a 
-              href="#testimonials" 
-              className="relative py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 cursor-pointer group"
-            >
-              Testimonials
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
-            </a>
-          </nav>
-          
-          <div className="flex items-center gap-4">
-
-            {/* Theme Toggle Button */}
-            <button 
-              onClick={toggleTheme}
-              className="p-2.5 text-slate-450 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100/60 dark:hover:bg-slate-800/50 border border-transparent hover:border-slate-200/50 dark:hover:border-slate-800/50 transition-all duration-300 cursor-pointer"
-              aria-label="Toggle Theme Mode"
-            >
-              {theme === 'dark' ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} />}
-            </button>
-
-            {token ? (
-              <Link to="/overview">
-                <Button size="sm" className="px-5 py-2 font-bold shadow-md hover:shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-300">
-                  Go to Dashboard →
-                </Button>
-              </Link>
-            ) : (
-              <Link to="/register">
-                <Button size="sm" className="px-5 py-2 font-bold shadow-md hover:shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-300">Get started</Button>
-              </Link>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* 2. Hero Section */}
-      <section className="max-w-[1440px] mx-auto px-6 md:px-12 pt-16 pb-20 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-        
+      <section className="w-full min-h-[calc(100vh-64px)] flex flex-col justify-between relative z-10">
+
+        {/* ── Hero grid (vertically centered in remaining space) ── */}
+        <div className="flex-1 max-w-[1440px] mx-auto w-full px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-10">
+
         {/* Left main text details */}
         <motion.div 
           initial={{ opacity: 0, y: 25 }}
@@ -379,14 +372,6 @@ export default function LandingPage() {
               className="block"
             >
               Build your habits.
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
-              className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 dark:from-blue-400 dark:via-indigo-300 dark:to-cyan-400 bg-clip-text text-transparent block"
-            >
-              Land your job.
             </motion.span>
           </h1>
           
@@ -564,56 +549,40 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
         </motion.div>
+        </div>{/* end hero grid */}
 
-      </section>
-
-      {/* 3. Core Pillars / Values Section */}
-      <section className="bg-white dark:bg-card-bg border-y border-gray-100/60 dark:border-border-main py-10 select-none relative z-10 overflow-hidden">
-        <div className="max-w-[1440px] mx-auto px-6 text-center space-y-6">
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]"
-          >
+        {/* ── Pillars strip pinned to bottom of full-screen hero ── */}
+        <div className="w-full border-t border-white/10 py-6 text-center space-y-4 bg-slate-900/60 backdrop-blur-sm">
+          <p className="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
             DESIGNED AROUND PURE MOMENTUM &amp; PRODUCTIVITY PILLARS
-          </motion.p>
-
+          </p>
           <motion.div
-            className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center gap-3.5 md:gap-4 max-w-md md:max-w-none mx-auto text-xs font-bold tracking-wide text-slate-500 dark:text-slate-400 uppercase select-none"
+            className="flex flex-wrap justify-center gap-3.5 md:gap-4 text-xs font-bold tracking-wide text-slate-500 dark:text-slate-400 uppercase select-none"
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={{
-              hidden: {},
-              show: { transition: { staggerChildren: 0.12 } }
-            }}
+            viewport={{ once: true }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
           >
             {[
-              { icon: Shield,  label: "Privacy First",       iconCls: "text-violet-500", hoverBorder: "hover:border-violet-300 dark:hover:border-violet-900/60 hover:text-violet-600 dark:hover:text-violet-400 hover:shadow-[0_4px_20px_rgba(139,92,246,0.08)]" },
-              { icon: EyeOff,  label: "Zero Distractions",   iconCls: "text-blue-500",   hoverBorder: "hover:border-blue-300 dark:hover:border-blue-900/60 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-[0_4px_20px_rgba(59,130,246,0.08)]" },
-              { icon: Target,  label: "Deep Work Focused",   iconCls: "text-orange-500", hoverBorder: "hover:border-orange-300 dark:hover:border-orange-900/60 hover:text-orange-600 dark:hover:text-orange-400 hover:shadow-[0_4px_20px_rgba(249,115,22,0.08)]" },
-              { icon: Server,  label: "Self-Hosted Friendly", iconCls: "text-emerald-500", hoverBorder: "hover:border-emerald-300 dark:hover:border-emerald-900/60 hover:text-emerald-600 dark:hover:text-emerald-400 hover:shadow-[0_4px_20px_rgba(16,185,129,0.08)]" },
+              { icon: Shield,  label: 'Privacy First',        iconCls: 'text-violet-500', hoverBorder: 'hover:border-violet-300 dark:hover:border-violet-900/60 hover:text-violet-600 dark:hover:text-violet-400' },
+              { icon: EyeOff,  label: 'Zero Distractions',    iconCls: 'text-blue-500',   hoverBorder: 'hover:border-blue-300 dark:hover:border-blue-900/60 hover:text-blue-600 dark:hover:text-blue-400' },
+              { icon: Target,  label: 'Deep Work Focused',    iconCls: 'text-orange-500', hoverBorder: 'hover:border-orange-300 dark:hover:border-orange-900/60 hover:text-orange-600 dark:hover:text-orange-400' },
+              { icon: Server,  label: 'Self-Hosted Friendly', iconCls: 'text-emerald-500', hoverBorder: 'hover:border-emerald-300 dark:hover:border-emerald-900/60 hover:text-emerald-600 dark:hover:text-emerald-400' },
             ].map((pill, i) => (
               <motion.span
                 key={i}
-                variants={{
-                  hidden: { opacity: 0, scale: 0.7, y: 18 },
-                  show:   { opacity: 1, scale: 1,   y: 0,  transition: { type: "spring", stiffness: 200, damping: 16 } }
-                }}
-                whileHover={{ scale: 1.06, y: -3 }}
-                transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                className={`flex items-center gap-2.5 px-3 py-2.5 md:px-5 md:py-2.5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 ${pill.hoverBorder} transition-all duration-300 cursor-default group justify-center text-[10px] md:text-xs`}
+                variants={{ hidden: { opacity: 0, scale: 0.7, y: 14 }, show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 16 } } }}
+                whileHover={{ scale: 1.06, y: -2 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 ${pill.hoverBorder} transition-all duration-300 cursor-default group text-[10px] md:text-xs`}
               >
-                <pill.icon size={16} className={`${pill.iconCls} group-hover:scale-110 transition-transform flex-shrink-0`} />
-                <span className="truncate">{pill.label}</span>
+                <pill.icon size={15} className={`${pill.iconCls} group-hover:scale-110 transition-transform flex-shrink-0`} />
+                <span>{pill.label}</span>
               </motion.span>
             ))}
           </motion.div>
-
         </div>
+
       </section>
 
       {/* 4. Features Grid Section */}
@@ -860,15 +829,21 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
             <div className="space-y-1">
-              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">10,000+</span>
+              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                <CountUp to={10000} suffix="+" duration={2000} />
+              </span>
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 select-none">TASKS COMPLETED</p>
             </div>
             <div className="space-y-1 border-y md:border-y-0 md:border-x border-gray-800/80 py-6 md:py-0">
-              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">2,500+</span>
+              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                <CountUp to={2500} suffix="+" duration={1800} />
+              </span>
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 select-none">JOBS LANDED</p>
             </div>
             <div className="space-y-1">
-              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">98%</span>
+              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                <CountUp to={98} suffix="%" duration={1600} />
+              </span>
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 select-none">CONSISTENCY RATING</p>
             </div>
           </div>
