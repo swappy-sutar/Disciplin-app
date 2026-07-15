@@ -34,16 +34,21 @@ export const Card: React.FC<CardProps> = ({
       {...props}
     >
       {(title || headerAction || showMenu) && (
-        <div className="flex items-center justify-between mb-4 gap-3">
+        <div className="flex items-center justify-between mb-5 gap-3 border-b border-gray-100 pb-3.5 select-none">
           {Icon ? (
-            <div className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border ${iconColor || 'text-gray-500 bg-gray-50 border-gray-100'} flex-1`}>
-              <Icon size={16} className="shrink-0" />
-              <span className="font-extrabold text-[13px] tracking-tight">{title}</span>
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 flex items-center justify-center rounded-xl border shrink-0 ${iconColor || 'text-gray-500 bg-gray-50 border-gray-100'}`}>
+                <Icon size={18} />
+              </div>
+              <div>
+                {title && <h3 className="text-sm md:text-base font-extrabold text-gray-900 dark:text-white tracking-tight">{title}</h3>}
+                {subtitle && <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 mt-0.5">{subtitle}</p>}
+              </div>
             </div>
           ) : (
             <div>
-              {title && <h3 className="text-[15px] md:text-[16px] font-semibold text-gray-900 tracking-tight">{title}</h3>}
-              {subtitle && <p className="text-[12px] text-gray-400 mt-0.5">{subtitle}</p>}
+              {title && <h3 className="text-[15px] md:text-[16px] font-bold text-gray-900 dark:text-white tracking-tight">{title}</h3>}
+              {subtitle && <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-0.5">{subtitle}</p>}
             </div>
           )}
           <div className="flex items-center gap-1.5 shrink-0">

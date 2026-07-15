@@ -74,6 +74,12 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background: #D1D5DB;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: #27314A;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
 
 /* Smooth active route outline transition */
 .nav-link-transition {

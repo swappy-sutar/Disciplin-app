@@ -66,7 +66,7 @@ export default function Overview() {
   const { updateBlock, createBlock, deleteBlock } = useTimetable(activeDate);
   const { toggleFavorite, addQuote } = useQuote();
   const { createTopic } = useTopics();
-  const { createApplication } = useApplications();
+  const { createApplication, applications: dailyApps } = useApplications({ date: activeDate });
 
   // Modals Local State
   const [isAddTimetableOpen, setAddTimetableOpen] = useState(false);
@@ -290,17 +290,16 @@ export default function Overview() {
 
   return (
     <div className="space-y-6 md:space-y-8 select-none">
-      
-      {/* Title Header */}
+           {/* Title Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-none">
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
             Today's Overview
           </h1>
-          <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
+          <div className="flex items-center gap-1 mt-1.5 text-sm text-gray-500 dark:text-slate-400">
             <button 
               onClick={handlePrevDay}
-              className="md:hidden p-1 -ml-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              className="md:hidden p-1 -ml-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-850 text-gray-400 hover:text-gray-655 transition-colors cursor-pointer"
               aria-label="Previous day"
             >
               <ChevronLeft size={16} />
@@ -308,7 +307,7 @@ export default function Overview() {
             <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
             <button 
               onClick={handleNextDay}
-              className="md:hidden p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              className="md:hidden p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-855 text-gray-400 hover:text-gray-655 transition-colors cursor-pointer"
               aria-label="Next day"
             >
               <ChevronRight size={16} />
@@ -317,14 +316,14 @@ export default function Overview() {
         </div>
         
         {/* Toggle Comparison mode */}
-        <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-full px-4 py-2 shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-full px-4 py-2.5 shadow-sm transition-all">
+          <span className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
             Compare to Yesterday
           </span>
           <button
             onClick={() => setCompareMode(!compareMode)}
             className={`w-11 h-6 rounded-full relative transition-all duration-300 focus:outline-none cursor-pointer
-              ${compareMode ? 'bg-primary-blue' : 'bg-gray-200'}
+              ${compareMode ? 'bg-primary-blue shadow-sm shadow-emerald-500/10' : 'bg-gray-200 dark:bg-slate-800'}
             `}
           >
             <div 
@@ -337,10 +336,10 @@ export default function Overview() {
       </div>
 
       {/* 3-Column Responsive Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
         
         {/* ================= COLUMN 1 ================= */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           
           {/* Daily Timetable */}
           <Card 
@@ -359,11 +358,12 @@ export default function Overview() {
             }
           >
             {timetable.length === 0 ? (
-              <div className="py-8 text-center text-gray-400 select-none text-xs">
-                No events scheduled for today. Add one above!
+              <div className="py-6 flex flex-col items-center justify-center text-center select-none">
+                <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">Schedule is empty</span>
+                <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Use the + button to plan your day</span>
               </div>
             ) : (
-              <div className="relative border-l-2 border-gray-100 pl-4 ml-2.5 py-1 space-y-5">
+              <div className="relative border-l border-slate-100 dark:border-slate-800/60 pl-4 ml-2 py-1.5 space-y-6">
                 {timetable.map((block) => {
                   const hasTag = block.title.includes('[') && block.title.includes(']');
                   let cleanTitle = block.title;
@@ -383,23 +383,25 @@ export default function Overview() {
                   const colorClass = tagColors[tag] || 'bg-gray-100 text-gray-600';
 
                   return (
-                    <div key={block._id} className="relative group flex items-start justify-between gap-4">
+                    <div key={block._id} className="relative group flex items-start justify-between gap-4 p-2.5 -m-2.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300">
                       {/* Circle Dot Marker */}
                       <div 
-                        className={`absolute -left-[23px] top-1.5 w-3 h-3 rounded-full border-2 bg-white transition-colors duration-200
-                          ${block.isDone ? 'border-primary-blue bg-primary-blue' : 'border-gray-300'}
+                        className={`absolute -left-[23px] top-[15px] w-3.5 h-3.5 rounded-full border-2 bg-white dark:bg-slate-900 transition-all duration-300 flex items-center justify-center z-10
+                          ${block.isDone ? 'border-primary-blue bg-primary-blue scale-110 shadow-sm shadow-primary-blue/30' : 'border-gray-300 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-500'}
                         `}
-                      />
+                      >
+                        {block.isDone && <div className="w-1.5 h-1.5 rounded-full bg-white animate-scale-up" />}
+                      </div>
 
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold text-gray-400 select-none">{block.startTime}</span>
-                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${colorClass}`}>
+                          <span className="text-xs font-bold text-gray-400 dark:text-slate-550 select-none">{block.startTime}</span>
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${colorClass}`}>
                             {tag}
                           </span>
                         </div>
-                        <p className={`text-sm font-medium mt-1 select-none transition-colors
-                          ${block.isDone ? 'text-gray-400 line-through' : 'text-gray-700'}
+                        <p className={`text-xs md:text-sm font-bold mt-1 select-none transition-colors truncate
+                          ${block.isDone ? 'text-gray-400 dark:text-slate-500 line-through' : 'text-gray-700 dark:text-slate-200'}
                         `}>
                           {cleanTitle}
                         </p>
@@ -433,7 +435,7 @@ export default function Overview() {
                             message: `Are you sure you want to delete the schedule block "${block.title}"? This action cannot be undone.`,
                             onConfirm: () => deleteBlock(block._id)
                           })}
-                          className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                          className="text-gray-300 hover:text-red-500 dark:text-gray-650 dark:hover:text-red-400 transition-colors p-1 cursor-pointer"
                           aria-label="Delete slot"
                         >
                           <Trash2 size={14} />
@@ -447,13 +449,56 @@ export default function Overview() {
             )}
           </Card>
 
+          {/* Topics card */}
+          <Card 
+            title="Topics to Finish"
+            icon={BookOpen}
+            iconColor="text-purple-500 bg-purple-500/10 border-purple-500/20"
+            headerAction={
+              <button 
+                onClick={() => setAddTopicOpen(true)}
+                className="text-xs font-bold text-primary-blue hover:underline cursor-pointer"
+              >
+                + Add Topic
+              </button>
+            }
+          >
+            {topics.length === 0 ? (
+              <div className="py-6 flex flex-col items-center justify-center text-center select-none">
+                <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">No study topics</span>
+                <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Track your learning in the Topics tab</span>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {topics.map((topic) => (
+                  <div key={topic._id} className="p-2 -m-2 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300 space-y-1.5 border-b border-gray-100/50 dark:border-slate-800/30 pb-3 last:border-0 last:pb-0">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-gray-700 dark:text-slate-205 truncate select-none">{topic.title}</span>
+                      <PillBadge variant="orange" className="text-[10px] select-none uppercase tracking-wider scale-90">
+                        {topic.category}
+                      </PillBadge>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <ProgressBar value={topic.progressPercent} color="pink" className="flex-1" />
+                      <span className="text-[10px] font-bold text-gray-400 select-none">{topic.progressPercent}%</span>
+                    </div>
+                  </div>
+                ))}
+                
+                <Link to="/topics" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900/50 dark:hover:bg-slate-850 text-gray-650 dark:text-slate-350 text-xs font-bold py-2 rounded-xl transition-all border border-gray-100/50 dark:border-slate-800/50 shadow-sm">
+                  Manage Topics
+                </Link>
+              </div>
+            )}
+          </Card>
+
           {/* Motivation Quote Card */}
           <div 
-            className="rounded-2xl p-6 text-white select-none relative overflow-hidden shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)' }}
+            className="rounded-2xl p-6 text-white select-none relative overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-[2px] transition-all duration-300 group"
+            style={{ background: 'linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #EC4899 100%)' }}
           >
             {/* Absolute vector quote indicator */}
-            <div className="absolute right-4 bottom-0 text-white/10 text-[120px] font-bold pointer-events-none font-serif leading-none select-none">
+            <div className="absolute right-4 bottom-0 text-white/10 text-[120px] font-bold pointer-events-none font-serif leading-none select-none transition-transform duration-550 group-hover:scale-110 group-hover:rotate-12">
               ”
             </div>
             
@@ -488,7 +533,7 @@ export default function Overview() {
         </div>
 
         {/* ================= COLUMN 2 ================= */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           
           {/* Habit Tracker */}
           <Card 
@@ -514,13 +559,14 @@ export default function Overview() {
             </div>
 
             {habits.list.length === 0 ? (
-              <div className="py-8 text-center text-gray-400 select-none text-xs">
-                No active habits. Create some in the Habits tab!
+              <div className="py-6 flex flex-col items-center justify-center text-center select-none">
+                <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">No active habits</span>
+                <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Build consistency in the Habits tab</span>
               </div>
             ) : (
               <div className="space-y-4">
                 {/* Header days */}
-                <div className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 text-center font-bold text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100 dark:border-slate-850/60 pb-2">
+                <div className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 text-center font-bold text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100/50 dark:border-slate-800/40 pb-2">
                   <div className="text-left font-medium select-none">Habit</div>
                   {weekdayShortNames.map((day, idx) => (
                     <div key={idx}>{day}</div>
@@ -529,8 +575,8 @@ export default function Overview() {
                 
                 {/* Habits list */}
                 {habits.list.slice(0, 3).map((habit: any) => (
-                  <div key={habit._id} className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 items-center">
-                    <span className="text-xs font-semibold text-gray-700 dark:text-slate-300 truncate select-none">{habit.name}</span>
+                  <div key={habit._id} className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 items-center p-1.5 -mx-1.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300">
+                    <span className="text-xs font-bold text-gray-700 dark:text-slate-300 truncate select-none">{habit.name}</span>
                     {weekDayDates.map((dateStr, idx) => {
                       const isLogged = (habits.logs || []).some(l => l.habitId === habit._id && l.date === dateStr && l.isDone);
                       return (
@@ -599,36 +645,44 @@ export default function Overview() {
               </span>
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  <tr className="border-b border-gray-100/50 dark:border-slate-800/40 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                     <th className="pb-1.5 font-semibold">Company</th>
                     <th className="pb-1.5 font-semibold">Role</th>
                     <th className="pb-1.5 font-semibold text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50/50">
-                  {summary.applications.todayCount === 0 ? (
+                <tbody className="divide-y divide-gray-100/30 dark:divide-slate-800/20">
+                  {!dailyApps || dailyApps.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="text-center py-4 text-gray-400 text-xs select-none">
-                        No applications submitted today. Start logging!
+                      <td colSpan={3} className="text-center py-5 select-none">
+                        <div className="flex flex-col items-center justify-center text-center">
+                          <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">No applications logged</span>
+                          <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Keep record of your job applications</span>
+                        </div>
                       </td>
                     </tr>
                   ) : (
-                    // Display mock items
-                    [
-                      { company: 'TechFlow', role: 'Frontend Dev', status: 'Interview', color: 'blue' },
-                      { company: 'GlobalSaaS', role: 'Product Mgr', status: 'Offer', color: 'green' },
-                      { company: 'MetaPixel', role: 'UI Designer', status: 'Applied', color: 'gray' },
-                    ].slice(0, summary.applications.todayCount).map((app, idx) => (
-                      <tr key={idx} className="text-xs text-gray-700">
-                        <td className="py-2.5 font-bold select-none">{app.company}</td>
-                        <td className="py-2.5 font-medium text-gray-500 select-none">{app.role}</td>
-                        <td className="py-2.5 text-right select-none">
-                          <PillBadge variant={app.color as any}>
-                            {app.status}
-                          </PillBadge>
-                        </td>
-                      </tr>
-                    ))
+                    dailyApps.map((app, idx) => {
+                      const statusColorMap: Record<string, string> = {
+                        Applied: 'gray',
+                        OA: 'orange',
+                        Interview: 'blue',
+                        Offer: 'green',
+                        Rejected: 'red'
+                      };
+                      const color = statusColorMap[app.status] || 'gray';
+                      return (
+                        <tr key={app._id || idx} className="text-xs text-gray-750 dark:text-slate-305 hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors">
+                          <td className="py-2.5 font-bold select-none">{app.company}</td>
+                          <td className="py-2.5 font-medium text-gray-500 select-none">{app.role}</td>
+                          <td className="py-2.5 text-right select-none">
+                            <PillBadge variant={color as any}>
+                              {app.status}
+                            </PillBadge>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
@@ -638,7 +692,7 @@ export default function Overview() {
         </div>
 
         {/* ================= COLUMN 3 ================= */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           
           {/* Day Progress Tracker */}
           <Card 
@@ -678,24 +732,25 @@ export default function Overview() {
             }
           >
             {weeklyGoals.length === 0 ? (
-              <div className="py-8 text-center text-gray-400 select-none text-xs">
-                No goals listed for this week. Add one above!
+              <div className="py-6 flex flex-col items-center justify-center text-center select-none">
+                <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">No weekly goals</span>
+                <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Set targets using the Add Goal button</span>
               </div>
             ) : (
               <div className="space-y-4">
                 
                 {/* Completed Fraction Badge */}
                 <div className="flex justify-between items-center select-none">
-                  <span className="text-xs text-gray-400 font-medium">Goal Status</span>
+                  <span className="text-xs text-gray-400 font-bold">Goal Status</span>
                   <PillBadge variant="blue">
                     {weeklyGoals.filter(g => g.isDone).length}/{weeklyGoals.length} Done
                   </PillBadge>
                 </div>
                 
                 {/* Goals Checklist list */}
-                <div className="space-y-3.5 pt-1 border-t border-gray-50">
+                <div className="space-y-3 pt-3 border-t border-gray-100/50 dark:border-slate-800/40">
                   {weeklyGoals.map((goal) => (
-                    <div key={goal._id} className="flex items-start gap-3 justify-between">
+                    <div key={goal._id} className="p-2 -m-2 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300 flex items-start gap-3 justify-between">
                       <div className="flex items-start gap-2.5">
                          <Checkbox 
                            checked={goal.isDone} 
@@ -713,13 +768,13 @@ export default function Overview() {
                            size={17}
                          />
                         <div>
-                          <p className={`text-xs font-semibold leading-normal select-none transition-colors
-                            ${goal.isDone ? 'text-gray-400 line-through' : 'text-gray-700'}
+                          <p className={`text-xs font-bold leading-normal select-none transition-colors
+                            ${goal.isDone ? 'text-gray-400 dark:text-slate-500 line-through' : 'text-gray-700 dark:text-slate-200'}
                           `}>
                             {goal.title}
                           </p>
                           {goal.dueDay && (
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-pink-500 mt-0.5 block select-none">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-pink-500 dark:text-pink-400 mt-0.5 block select-none">
                               Due {goal.dueDay}
                             </span>
                           )}
@@ -730,7 +785,7 @@ export default function Overview() {
                 </div>
 
                 {/* Progress bar */}
-                <div className="pt-4 border-t border-gray-100">
+                <div className="pt-4 border-t border-gray-100/50 dark:border-slate-800/40">
                   <ProgressBar 
                     value={weeklyGoals.filter(g => g.isDone).length} 
                     max={weeklyGoals.length} 
@@ -740,48 +795,6 @@ export default function Overview() {
                   />
                 </div>
 
-              </div>
-            )}
-          </Card>
-
-          {/* Topics card */}
-          <Card 
-            title="Topics to Finish"
-            icon={BookOpen}
-            iconColor="text-purple-500 bg-purple-500/10 border-purple-500/20"
-            headerAction={
-              <button 
-                onClick={() => setAddTopicOpen(true)}
-                className="text-xs font-bold text-primary-blue hover:underline cursor-pointer"
-              >
-                + Add Topic
-              </button>
-            }
-          >
-            {topics.length === 0 ? (
-              <div className="py-8 text-center text-gray-400 select-none text-xs">
-                No active topics. Add one above!
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {topics.map((topic) => (
-                  <div key={topic._id} className="space-y-1.5 border-b border-gray-50/50 pb-3 last:border-0 last:pb-0">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-gray-700 truncate select-none">{topic.title}</span>
-                      <PillBadge variant="orange" className="text-[10px] select-none uppercase tracking-wider scale-90">
-                        {topic.category}
-                      </PillBadge>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <ProgressBar value={topic.progressPercent} color="pink" className="flex-1" />
-                      <span className="text-[10px] font-semibold text-gray-400 select-none">{topic.progressPercent}%</span>
-                    </div>
-                  </div>
-                ))}
-                
-                <Link to="/topics" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-semibold py-2 rounded-xl transition-colors border border-gray-100/50">
-                  Manage Topics
-                </Link>
               </div>
             )}
           </Card>

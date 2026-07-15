@@ -4,9 +4,11 @@ import { apiClient } from '../../lib/api-client';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { toast } from 'react-hot-toast';
-import { User as UserIcon, Mail, Lock } from 'lucide-react';
+import { User as UserIcon, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
+  const navigate = useNavigate();
   const { user, token, setAuth } = useStore();
   const [name, setName] = useState(user?.name || '');
   const email = user?.email || '';
@@ -55,13 +57,22 @@ export default function Profile() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 md:space-y-8 select-none py-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-          Account Settings
-        </h1>
-        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1.5 font-semibold">
-          Manage your personal details and account credentials.
-        </p>
+      <div className="space-y-3">
+        <button 
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 cursor-pointer transition-colors"
+        >
+          <ArrowLeft size={14} />
+          <span>Go Back</span>
+        </button>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
+            Account Settings
+          </h1>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1.5 font-semibold">
+            Manage your personal details and account credentials.
+          </p>
+        </div>
       </div>
 
       <Card className="p-6 md:p-8 bg-white/95 dark:bg-card-bg/95 border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">

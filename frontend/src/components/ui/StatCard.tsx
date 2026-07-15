@@ -32,7 +32,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       <div className="flex items-start justify-between">
         <div className="flex flex-col">
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider select-none">{label}</span>
-          <span className="text-[28px] md:text-[32px] font-bold text-gray-900 mt-1 select-none leading-none tracking-tight">
+          <span className="text-[28px] md:text-[32px] font-bold text-gray-900 dark:text-white mt-1 select-none leading-none tracking-tight">
             {value}
           </span>
         </div>

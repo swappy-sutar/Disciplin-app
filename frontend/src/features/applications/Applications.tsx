@@ -82,6 +82,27 @@ export default function Applications() {
   const weekStartStr = weekStart.toISOString().split('T')[0];
   const weeklyCount = applications.filter(a => a.dateApplied >= weekStartStr).length;
 
+  // Yesterday's apps comparison
+  const yesterday = new Date(activeDate);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+  const yesterdayApps = applications.filter(a => a.dateApplied === yesterdayStr);
+  const todayDiff = todayApps.length - yesterdayApps.length;
+  
+  let todayTrendText = 'Same as yesterday';
+  let todayTrendDirection: 'up' | 'down' | 'none' = 'none';
+  if (todayDiff > 0) {
+    todayTrendText = `+${todayDiff} vs yesterday`;
+    todayTrendDirection = 'up';
+  } else if (todayDiff < 0) {
+    todayTrendText = `${todayDiff} vs yesterday`;
+    todayTrendDirection = 'down';
+  }
+
+  // Active tracks total
+  const activeAppsCount = applications.filter(a => ['Applied', 'OA', 'Interview'].includes(a.status)).length;
+  const activeTrendText = `${activeAppsCount} active tracks total`;
+
   const targetCount = 20;
 
   const statusVariantMap: Record<ApplicationStatus, 'blue' | 'orange' | 'green' | 'pink' | 'gray'> = {
@@ -200,14 +221,16 @@ export default function Applications() {
           label="Today's Logged Total" 
           value={`${todayApps.length} Job Apps`} 
           icon={<Briefcase size={20} />} 
-          iconBgColor="bg-blue-50 text-primary-blue"
+          iconBgColor="bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30"
+          trendText={todayTrendText}
+          trendDirection={todayTrendDirection}
         />
         
         <StatCard 
           label="Weekly Submitted" 
           value={`${weeklyCount} Job Apps`} 
           icon={<CheckCircle size={20} />} 
-          iconBgColor="bg-emerald-50 text-emerald-500 animate-pulse"
+          iconBgColor="bg-emerald-50 text-emerald-500 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30"
           trendText="+34 vs last week"
           trendDirection="up"
         />
@@ -216,7 +239,9 @@ export default function Applications() {
           label="Active Interview Tracks" 
           value={`${applications.filter(a => a.status === 'Interview').length} Scheduled`} 
           icon={<Edit2 size={20} />} 
-          iconBgColor="bg-purple-50 text-purple-500"
+          iconBgColor="bg-purple-50 text-purple-500 dark:bg-purple-950/20 dark:text-purple-400 border border-purple-100/50 dark:border-purple-900/30"
+          trendText={activeTrendText}
+          trendDirection="none"
         />
       </div>
 
