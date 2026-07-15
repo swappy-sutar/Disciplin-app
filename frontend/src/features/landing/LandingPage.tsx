@@ -8,7 +8,6 @@ import {
   BookOpen, 
   Briefcase, 
   Sun, 
-  Moon,
   Flame,
   ArrowRight,
   Star,
@@ -21,7 +20,6 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useStore } from '../../app/store';
-import { Logo } from '../../components/ui/Logo';
 import { Footer } from '../../components/ui/Footer';
 import { GoToTop } from '../../components/ui/GoToTop';
 import { Navbar } from '../../components/ui/Navbar';
@@ -75,7 +73,7 @@ function CountUp({
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
-  const { token, theme, toggleTheme } = useStore();
+  const { token } = useStore();
   const [activeFeature, setActiveFeature] = useState(0);
 
   // Always start from the top when the page loads

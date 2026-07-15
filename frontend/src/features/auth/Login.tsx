@@ -7,7 +7,7 @@ import { useStore } from '../../app/store';
 import { apiClient } from '../../lib/api-client';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Mail, Lock, ShieldAlert, Sun, Moon } from 'lucide-react';
+import { Mail, Lock, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Logo } from '../../components/ui/Logo';
@@ -22,7 +22,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setAuth, theme, toggleTheme } = useStore();
+  const { setAuth } = useStore();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isForgotMode, setIsForgotMode] = useState(false);
@@ -30,6 +30,7 @@ export default function Login() {
   const [showResend, setShowResend] = useState(false);
   const [resendEmail, setResendEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +82,13 @@ export default function Login() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+
+  const onInvalid = (formErrors: any) => {
+    const firstError = Object.values(formErrors)[0] as any;
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  };
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
@@ -202,8 +210,7 @@ export default function Login() {
                   </motion.div>
                 )}
 
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
                   
                   {/* Email Field */}
                   <div>
@@ -250,13 +257,21 @@ export default function Login() {
                         <Lock size={16} />
                       </span>
                       <input
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
-                        className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
+                        className={`w-full pl-10 pr-10 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-slate-950/20 text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-gray-800 dark:text-white
                           ${errors.password ? 'border-red-300 dark:border-red-900 focus:border-red-550 focus:ring-red-200' : 'border-gray-200 dark:border-slate-800 focus:border-emerald-500'}
                         `}
                         {...register('password')}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
                     </div>
                     {errors.password && (
                       <p className="text-xs text-red-500 mt-1 select-none font-semibold">{errors.password.message}</p>

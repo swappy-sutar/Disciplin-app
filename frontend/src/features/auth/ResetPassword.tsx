@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../lib/api-client';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Lock, ShieldAlert, Sun, Moon } from 'lucide-react';
+import { Lock, ShieldAlert, Sun, Moon, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Logo } from '../../components/ui/Logo';
@@ -19,6 +19,8 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,13 +125,21 @@ export default function ResetPassword() {
                         <Lock size={16} />
                       </span>
                       <input
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         required
                         placeholder="Min 6 characters"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all border-gray-200 dark:border-gray-800 focus:border-primary-blue text-gray-800 dark:text-white"
+                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all border-gray-200 dark:border-gray-800 focus:border-primary-blue text-gray-800 dark:text-white"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
                     </div>
                   </div>
 
@@ -143,13 +153,21 @@ export default function ResetPassword() {
                         <Lock size={16} />
                       </span>
                       <input
-                        type="password"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         required
                         placeholder="Repeat new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all border-gray-200 dark:border-gray-800 focus:border-primary-blue text-gray-800 dark:text-white"
+                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border bg-gray-50/50 dark:bg-gray-950/20 text-sm focus:bg-white dark:focus:bg-card-bg focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all border-gray-200 dark:border-gray-800 focus:border-primary-blue text-gray-800 dark:text-white"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
                     </div>
                   </div>
 
