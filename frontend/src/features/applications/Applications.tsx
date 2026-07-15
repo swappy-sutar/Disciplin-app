@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DotGrid } from '../../components/ui/DotGrid';
 import { Modal } from '../../components/ui/Modal';
+import { LoadingScreen } from '../../components/ui/LoadingScreen';
 import { StatCard } from '../../components/ui/StatCard';
 import { format, parseISO } from 'date-fns';
 import { 
@@ -55,7 +56,7 @@ export default function Applications() {
   const { applications, isLoading, createApplication, updateApplication, deleteApplication } = useApplications();
 
   if (isLoading) {
-    return <div className="p-8 text-center text-gray-500 animate-pulse select-none">Loading job logs...</div>;
+    return <LoadingScreen message="Loading your applications" subtext="Fetching job applications and status logs..." />;
   }
 
   // Filter application items

@@ -8,6 +8,7 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
 import { Modal } from '../../components/ui/Modal';
+import { LoadingScreen } from '../../components/ui/LoadingScreen';
 import { BarChart } from '../../components/charts/BarChart';
 import { StepChart } from '../../components/charts/StepChart';
 import { format, parseISO, addDays, endOfWeek } from 'date-fns';
@@ -52,7 +53,7 @@ export default function Habits() {
   ];
 
   if (isLoading) {
-    return <div className="p-8 text-center text-gray-500 select-none animate-pulse">Loading habits tracker...</div>;
+    return <LoadingScreen message="Loading your habits" subtext="Fetching habit logs and weekly streaks..." />;
   }
 
   // Calculate days offset list

@@ -8,6 +8,7 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
 import { Modal } from '../../components/ui/Modal';
+import { LoadingScreen } from '../../components/ui/LoadingScreen';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DonutChart } from '../../components/charts/DonutChart';
 import { 
@@ -183,7 +184,7 @@ export default function Topics() {
   }, [isQuizOpen, quizRevealed, quizIndex, qnasList]);
 
   if (isLoading) {
-    return <div className="p-8 text-center text-gray-500 animate-pulse select-none font-semibold">Loading topics curriculum...</div>;
+    return <LoadingScreen message="Loading your topics" subtext="Fetching curriculum topics and progress..." />;
   }
 
   // Toggle Accordion helper for main list

@@ -8,6 +8,7 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
 import { Modal } from '../../components/ui/Modal';
+import { LoadingScreen } from '../../components/ui/LoadingScreen';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { BarChart } from '../../components/charts/BarChart';
 import { format, parseISO, addDays, endOfWeek, subDays } from 'date-fns';
@@ -44,7 +45,7 @@ export default function Goals() {
   const { goals, history, isLoading, createGoal, updateGoal, deleteGoal } = useGoals(activeWeekStart);
 
   if (isLoading) {
-    return <div className="p-8 text-center text-gray-500 animate-pulse select-none">Loading goals board...</div>;
+    return <LoadingScreen message="Loading your goals" subtext="Fetching weekly goals and progress data..." />;
   }
 
   // Calculate dates
