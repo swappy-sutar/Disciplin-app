@@ -435,7 +435,7 @@ export default function Overview() {
                             message: `Are you sure you want to delete the schedule block "${block.title}"? This action cannot be undone.`,
                             onConfirm: () => deleteBlock(block._id)
                           })}
-                          className="text-gray-300 hover:text-red-500 dark:text-gray-650 dark:hover:text-red-400 transition-colors p-1 cursor-pointer"
+                          className="text-gray-300 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors p-1 cursor-pointer"
                           aria-label="Delete slot"
                         >
                           <Trash2 size={14} />
@@ -485,7 +485,7 @@ export default function Overview() {
                   </div>
                 ))}
                 
-                <Link to="/topics" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900/50 dark:hover:bg-slate-850 text-gray-650 dark:text-slate-350 text-xs font-bold py-2 rounded-xl transition-all border border-gray-100/50 dark:border-slate-800/50 shadow-sm">
+                <Link to="/topics" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900/50 dark:hover:bg-slate-855 text-gray-600 dark:text-slate-300 text-xs font-bold py-2 rounded-xl transition-all border border-gray-100/50 dark:border-slate-800/50 shadow-sm">
                   Manage Topics
                 </Link>
               </div>
@@ -612,7 +612,7 @@ export default function Overview() {
           <Card 
             title="Application Tracker"
             icon={Briefcase}
-            iconColor="text-slate-650 bg-slate-600/10 border-slate-650/20 dark:text-slate-400 dark:bg-slate-900/30 dark:border-slate-800/80"
+            iconColor="text-gray-600 bg-gray-500/10 border-gray-500/20 dark:text-slate-400 dark:bg-slate-900/30 dark:border-slate-800/80"
             headerAction={
               <button 
                 onClick={() => setAddAppOpen(true)}

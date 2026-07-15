@@ -8,6 +8,7 @@ interface RadialProgressProps {
   customColorHex?: string;
   trend?: string; // trend badge or text e.g. "+5% vs yesterday"
   subtext?: string; // label at bottom
+  showLabel?: boolean;
 }
 
 export const RadialProgress: React.FC<RadialProgressProps> = ({
@@ -18,6 +19,7 @@ export const RadialProgress: React.FC<RadialProgressProps> = ({
   customColorHex,
   trend,
   subtext,
+  showLabel = true,
 }) => {
   const r = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * r;
@@ -31,7 +33,17 @@ export const RadialProgress: React.FC<RadialProgressProps> = ({
     custom: '',
   };
 
-  const ringColor = color === 'custom' && customColorHex ? customColorHex : undefined;
+  const ringColor = color === 'custom' && customColorHex 
+    ? customColorHex 
+    : color === 'green'
+      ? '#10B981'
+      : color === 'blue'
+        ? '#3B82F6'
+        : color === 'pink'
+          ? '#EC4899'
+          : color === 'orange'
+            ? '#F59E0B'
+            : undefined;
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -42,7 +54,7 @@ export const RadialProgress: React.FC<RadialProgressProps> = ({
             cx={size / 2}
             cy={size / 2}
             r={r}
-            className="stroke-gray-100 fill-transparent"
+            className="stroke-gray-100 dark:stroke-slate-800/60 fill-transparent"
             strokeWidth={strokeWidth}
           />
           {/* Foreground progress circle */}
@@ -55,21 +67,23 @@ export const RadialProgress: React.FC<RadialProgressProps> = ({
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
-            style={ringColor ? { stroke: ringColor } : undefined}
+            style={ringColor ? { stroke: ringColor, filter: `drop-shadow(0 0 3px ${ringColor}66)` } : undefined}
           />
         </svg>
         
         {/* Center label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center select-none text-center p-2">
-          <span className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight leading-none">
-            {percentage}%
-          </span>
-          {trend && (
-            <span className="text-[10px] md:text-[11px] font-semibold text-emerald-500 flex items-center mt-1">
-              {trend}
+        {showLabel && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center select-none text-center p-2">
+            <span className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight leading-none">
+              {percentage}%
             </span>
-          )}
-        </div>
+            {trend && (
+              <span className="text-[10px] md:text-[11px] font-semibold text-emerald-500 flex items-center mt-1">
+                {trend}
+              </span>
+            )}
+          </div>
+        )}
       </div>
       {subtext && (
         <span className="text-xs text-gray-500 mt-2 font-medium">{subtext}</span>

@@ -42,11 +42,12 @@ export const DonutChart: React.FC<DonutChartProps> = ({
           </Pie>
           <Tooltip
             contentStyle={{
-              background: '#FFFFFF',
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
+              background: 'rgba(21, 27, 44, 0.9)',
+              border: '1px solid rgba(229, 231, 235, 0.1)',
+              borderRadius: '12px',
               fontSize: '12px',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+              color: '#FFFFFF',
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)'
             }}
           />
         </PieChart>
@@ -54,10 +55,10 @@ export const DonutChart: React.FC<DonutChartProps> = ({
 
       {/* Middle center label */}
       <div className="absolute inset-0 flex flex-col items-center justify-center select-none text-center pointer-events-none">
-        <span className="text-2xl font-bold text-gray-900 tracking-tight leading-none">
+        <span className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight leading-none">
           {displayVal}
         </span>
-        <span className="text-[10px] font-semibold text-gray-400 uppercase mt-1 tracking-wider">
+        <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 uppercase mt-1 tracking-wider">
           {centerLabel}
         </span>
       </div>

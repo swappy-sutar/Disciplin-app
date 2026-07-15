@@ -34,7 +34,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     custom: '',
   };
 
-  const trackBg = 'bg-gray-100/80';
+  const trackBg = 'bg-gray-100/80 dark:bg-slate-800/80';
 
   const fillStyle = color === 'custom' && customColorHex 
     ? { backgroundColor: customColorHex, width: `${percentage}%` } 

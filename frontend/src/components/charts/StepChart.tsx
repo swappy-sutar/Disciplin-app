@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -18,19 +18,25 @@ interface StepChartProps {
 export const StepChart: React.FC<StepChartProps> = ({
   data,
   height = 200,
-  color = '#3B82F6',
+  color = '#10B981', // default success green accent
 }) => {
   return (
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
+        <AreaChart
           data={data}
           margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
         >
+          <defs>
+            <linearGradient id="colorConsistency" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={color} stopOpacity={0} />
+            </linearGradient>
+          </defs>
           <CartesianGrid 
             strokeDasharray="3 3" 
             vertical={false} 
-            stroke="#F3F4F6"
+            stroke="rgba(229, 231, 235, 0.05)"
           />
           <XAxis 
             dataKey="label" 
@@ -50,23 +56,26 @@ export const StepChart: React.FC<StepChartProps> = ({
           />
           <Tooltip
             contentStyle={{
-              background: '#FFFFFF',
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
+              background: 'rgba(21, 27, 44, 0.9)',
+              border: '1px solid rgba(229, 231, 235, 0.1)',
+              borderRadius: '12px',
               fontSize: '12px',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+              color: '#FFFFFF',
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)'
             }}
             formatter={(value: any) => [`${value}%`, 'Consistency']}
           />
-          <Line
-            type="stepAfter"
+          <Area
+            type="monotone"
             dataKey="value"
             stroke={color}
             strokeWidth={3}
-            dot={{ r: 4, strokeWidth: 1, fill: '#FFFFFF' }}
-            activeDot={{ r: 6 }}
+            fillOpacity={1}
+            fill="url(#colorConsistency)"
+            dot={{ r: 4, strokeWidth: 1.5, fill: '#FFFFFF', stroke: color }}
+            activeDot={{ r: 6, strokeWidth: 2, fill: color, stroke: '#FFFFFF' }}
           />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );

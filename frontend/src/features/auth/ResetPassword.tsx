@@ -108,7 +108,7 @@ export default function ResetPassword() {
             ) : (
               <>
                 {errorMsg && (
-                  <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-105/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold">
+                  <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200/50 dark:border-red-900/30 flex items-center gap-2.5 text-xs font-semibold">
                     <ShieldAlert size={16} className="flex-shrink-0" />
                     <span>{errorMsg}</span>
                   </div>
@@ -135,7 +135,7 @@ export default function ResetPassword() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -163,7 +163,7 @@ export default function ResetPassword() {
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-305 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
                         aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                       >
                         {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}

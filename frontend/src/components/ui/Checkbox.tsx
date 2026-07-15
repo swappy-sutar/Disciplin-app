@@ -41,15 +41,16 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       tabIndex={disabled ? -1 : 0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`relative flex items-center justify-center rounded-full border-2 transition-all duration-200 outline-none
-        ${checked ? '' : 'border-gray-250 dark:border-slate-800'}
-        ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:border-gray-350 dark:hover:border-slate-700'}
+      className={`relative flex items-center justify-center rounded-full border-2 transition-all duration-300 outline-none
+        ${checked ? '' : 'border-gray-200 dark:border-slate-700/65'}
+        ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:border-gray-300 dark:hover:border-slate-500'}
       `}
       style={{
         width: size,
         height: size,
         borderColor: checked ? color : undefined,
         backgroundColor: checked ? color : 'transparent',
+        boxShadow: checked ? `0 0 6px ${color}55` : undefined,
       }}
     >
       {checked && (

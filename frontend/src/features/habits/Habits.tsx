@@ -7,7 +7,6 @@ import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
-import { StatCard } from '../../components/ui/StatCard';
 import { Modal } from '../../components/ui/Modal';
 import { BarChart } from '../../components/charts/BarChart';
 import { StepChart } from '../../components/charts/StepChart';
@@ -77,6 +76,11 @@ export default function Habits() {
   // Calculate Today's completion %
   const todayLogs = logs.filter(l => l.date === activeDate && l.isDone).length;
   const todayProgress = activeCount > 0 ? Math.round((todayLogs / activeCount) * 100) : 0;
+
+  // Calculate Weekly Average Completion
+  const totalPossible = activeCount * 7;
+  const thisWeekLogs = logs.filter(l => l.isDone).length;
+  const weeklyAverage = totalPossible > 0 ? Math.round((thisWeekLogs / totalPossible) * 100) : 0;
 
   // Calculate Weekly Bar Chart data (habit completion rate % per day)
   const barChartData = weekDays.map(day => {
@@ -159,35 +163,63 @@ export default function Habits() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 select-none">
         
         {/* Today's Progress Radial */}
-        <Card className="p-5 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Today's Progress</span>
-            <span className="text-[28px] font-bold text-gray-900 mt-1 select-none leading-none tracking-tight">{todayProgress}%</span>
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Today's Progress</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{todayProgress}%</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                {todayLogs} of {activeCount} completed
+              </span>
+            </div>
+            <div className="relative flex items-center justify-center">
+              {/* Soft backdrop glow */}
+              <div className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 blur-md rounded-full" />
+              <RadialProgress percentage={todayProgress} size={58} strokeWidth={5.5} showLabel={false} color="green" />
+            </div>
           </div>
-          <RadialProgress percentage={todayProgress} size={64} strokeWidth={6} />
         </Card>
 
         {/* Longest streak */}
-        <StatCard 
-          label="Longest Streak" 
-          value={`${longestStreak} Days`} 
-          icon={<Flame size={20} />} 
-          iconBgColor="bg-orange-50 text-orange-500 animate-pulse"
-        />
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Longest Streak</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{longestStreak} Days</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                Best personal record
+              </span>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500 shadow-sm">
+              <Flame size={20} fill="currentColor" className="animate-pulse" />
+            </div>
+          </div>
+        </Card>
 
-        {/* Active tracking */}
-        <StatCard 
-          label="Active Habits" 
-          value={`${activeCount} Tracker`} 
-          icon={<CheckSquare size={20} />} 
-          iconBgColor="bg-blue-50 text-primary-blue"
-        />
+        {/* Active habits */}
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Active Habits</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{activeCount} Tracker</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                Habits in progress
+              </span>
+            </div>
+            <div className="p-3 rounded-2xl bg-primary-blue/10 text-primary-blue shadow-sm">
+              <CheckSquare size={20} />
+            </div>
+          </div>
+        </Card>
 
         {/* Weekly Bar Chart Mini */}
-        <Card className="p-5 flex flex-col justify-between">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">This Week</span>
-          <div className="h-10 w-full">
-            <BarChart data={barChartData} height={50} color="#3B82F6" />
+        <Card className="p-5 flex flex-col justify-between bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex justify-between items-center w-full mb-1">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">This Week</span>
+            <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full select-none">{weeklyAverage}% avg</span>
+          </div>
+          <div className="w-full mt-2">
+            <BarChart data={barChartData} height={60} color="#10B981" showYAxis={false} showXAxis={true} />
           </div>
         </Card>
 
@@ -197,17 +229,17 @@ export default function Habits() {
       <Card 
         title="Weekly Consistency"
         headerAction={
-          <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-full px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-slate-350 shadow-sm select-none">
+          <div className="flex items-center gap-2.5 bg-gray-50 dark:bg-slate-900/60 border border-gray-150/70 dark:border-slate-800 rounded-full px-3 py-1 text-xs font-semibold text-gray-600 dark:text-slate-350 shadow-inner select-none">
             <button 
               onClick={handlePrevWeek}
-              className="p-1 rounded-full hover:bg-white dark:hover:bg-slate-800 text-gray-500 dark:text-slate-400 transition-colors cursor-pointer"
+              className="p-1 rounded-full hover:bg-white dark:hover:bg-slate-850 hover:shadow-sm text-gray-500 dark:text-slate-400 hover:text-emerald-500 transition-all cursor-pointer border-none bg-transparent"
             >
               <ChevronLeft size={14} />
             </button>
-            <span className="font-semibold px-1">{weekRangeLabel}</span>
+            <span className="font-bold px-1 text-gray-800 dark:text-slate-200">{weekRangeLabel}</span>
             <button 
               onClick={handleNextWeek}
-              className="p-1 rounded-full hover:bg-white dark:hover:bg-slate-800 text-gray-500 dark:text-slate-400 transition-colors cursor-pointer"
+              className="p-1 rounded-full hover:bg-white dark:hover:bg-slate-850 hover:shadow-sm text-gray-500 dark:text-slate-400 hover:text-emerald-500 transition-all cursor-pointer border-none bg-transparent"
             >
               <ChevronRight size={14} />
             </button>
@@ -217,46 +249,60 @@ export default function Habits() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-slate-800/80 text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">
-                <th className="pb-3 text-left font-semibold">Habit Name</th>
+              <tr className="border-b border-gray-100 dark:border-slate-800/80 text-[10px] font-bold uppercase tracking-wider">
+                <th className="pb-3 text-left font-bold text-gray-400 dark:text-slate-500 pl-2">Habit Name</th>
                 {weekDays.map((day, idx) => (
                   <th 
                     key={idx} 
-                    className={`pb-3 text-center font-semibold 
-                      ${day.isToday ? 'bg-emerald-500/5 dark:bg-emerald-500/10 rounded-t-2xl text-emerald-600 dark:text-emerald-400 font-bold px-2' : ''}
+                    className={`pb-3 text-center font-bold px-2
+                      ${day.isToday 
+                        ? 'bg-emerald-500/[0.06] dark:bg-emerald-400/[0.06] border-x border-t border-emerald-500/20 dark:border-emerald-400/20 text-emerald-600 dark:text-emerald-400 font-extrabold' 
+                        : 'text-gray-400 dark:text-slate-500'
+                      }
                     `}
                   >
-                    {day.label}
+                    {day.isToday ? (
+                      <span className="inline-block py-0.5 px-2 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-wider border border-emerald-500/20 dark:border-emerald-400/20 select-none shadow-sm animate-pulse">
+                        {day.label}
+                      </span>
+                    ) : (
+                      day.label
+                    )}
                   </th>
                 ))}
-                <th className="pb-3 text-right font-semibold pr-2">Streak</th>
+                <th className="pb-3 text-right font-bold text-gray-400 dark:text-slate-500 pr-2">Streak</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-slate-800/40">
               {habits.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-8 text-gray-400 text-xs select-none">
+                  <td colSpan={9} className="text-center py-8 text-gray-400 text-xs select-none font-medium">
                     No habits logged. Click "Add Habit" to get started!
                   </td>
                 </tr>
               ) : (
                 habits.map((habit, hIdx) => (
                   <tr key={habit._id} className="text-xs text-gray-700 dark:text-slate-350 hover:bg-gray-50/20 dark:hover:bg-slate-800/25 transition-colors group">
-                    <td className="py-3.5 font-bold flex items-center justify-between select-none">
-                      <span>{habit.name}</span>
-                      <button 
-                        onClick={() => setConfirmModal({
-                          type: 'delete',
-                          id: habit._id,
-                          title: 'Confirm Deletion',
-                          message: `Are you sure you want to delete the habit "${habit.name}"? This action cannot be undone.`,
-                          onConfirm: () => deleteHabit(habit._id)
-                        })}
-                        className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
-                        aria-label={`Delete ${habit.name}`}
-                      >
-                        <Trash2 size={13} />
-                      </button>
+                    <td className="py-3.5 font-bold select-none">
+                      <div className="flex items-center justify-between group-hover:translate-x-0.5 transition-transform duration-200 pl-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: habit.color }} />
+                          <span className="font-bold text-gray-900 dark:text-slate-200">{habit.name}</span>
+                        </div>
+                        <button 
+                          onClick={() => setConfirmModal({
+                            type: 'delete',
+                            id: habit._id,
+                            title: 'Confirm Deletion',
+                            message: `Are you sure you want to delete the habit "${habit.name}"? This action cannot be undone.`,
+                            onConfirm: () => deleteHabit(habit._id)
+                          })}
+                          className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1 cursor-pointer border-none bg-transparent"
+                          aria-label={`Delete ${habit.name}`}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </td>
                     
                     {weekDays.map((day, idx) => {
@@ -265,8 +311,11 @@ export default function Habits() {
                       return (
                         <td 
                           key={idx} 
-                          className={`py-3.5 text-center 
-                            ${day.isToday ? `bg-emerald-500/5 dark:bg-emerald-500/10 px-2 ${isLastRow ? 'rounded-b-2xl' : ''}` : ''}
+                          className={`py-3.5 text-center transition-colors duration-200
+                            ${day.isToday 
+                              ? `bg-emerald-500/[0.06] dark:bg-emerald-400/[0.06] border-x border-emerald-500/20 dark:border-emerald-400/20 px-2 ${isLastRow ? 'border-b border-emerald-500/20 dark:border-emerald-400/20 rounded-b-xl' : ''}` 
+                              : ''
+                            }
                           `}
                         >
                           <div className="flex justify-center">
@@ -293,23 +342,29 @@ export default function Habits() {
                       );
                     })}
 
-                    <td className={`py-3.5 text-right font-bold text-gray-700 dark:text-slate-350 pr-2 select-none flex items-center justify-end gap-1.5`}>
-                      {/* Streak flame count */}
-                      {habit.currentStreak > 0 && (
-                        <div className="flex items-center text-orange-500 gap-0.5 scale-90">
-                          <Flame size={14} fill="#F59E0B" />
-                          <span>{habit.currentStreak}</span>
+                    <td className="py-3.5 text-right font-bold text-gray-700 dark:text-slate-350 pr-2 select-none flex items-center justify-end gap-2.5">
+                      {/* Streak flame count pill badge */}
+                      {habit.currentStreak > 0 ? (
+                        <div className="flex items-center gap-1 bg-orange-500/10 text-orange-500 dark:bg-orange-500/20 px-2 py-0.5 rounded-full text-[10px] font-extrabold select-none shadow-sm shrink-0 border border-orange-500/10">
+                          <Flame size={11} fill="currentColor" className="animate-pulse" />
+                          <span>{habit.currentStreak} d</span>
                         </div>
+                      ) : (
+                        <div className="text-[10px] font-bold text-gray-300 dark:text-slate-600 select-none mr-2">-</div>
                       )}
                       
                       {/* Mini sparkline indicator */}
-                      <svg className="w-10 h-4 text-gray-300" viewBox="0 0 40 16">
+                      <svg className="w-12 h-6 text-gray-300 opacity-80" viewBox="0 0 40 16">
                         <path
-                          d={`M 0 ${16 - habit.currentStreak * 0.5} Q 10 ${10 - habit.currentStreak} 20 8 T 40 ${16 - (isLoggedToday(logs, habit._id, activeDate) ? 14 : 2)}`}
+                          d={habit.currentStreak > 0 
+                            ? `M 0 14 Q 10 ${14 - Math.min(12, habit.currentStreak * 2)} 20 ${8 - Math.min(6, habit.currentStreak)} T 40 ${isLoggedToday(logs, habit._id, activeDate) ? 2 : 14}`
+                            : `M 0 14 Q 10 14 20 14 T 40 14`
+                          }
                           fill="none"
                           stroke={habit.color}
-                          strokeWidth="1.5"
+                          strokeWidth="2"
                           strokeLinecap="round"
+                          style={{ filter: `drop-shadow(0 0 3px ${habit.color}66)` }}
                         />
                       </svg>
                     </td>
@@ -325,13 +380,16 @@ export default function Habits() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start select-none">
         
         {/* Habit Breakdown list */}
-        <Card title="Habit Breakdown">
+        <Card title="Habit Breakdown" subtitle="Completion rate for current week">
           <div className="space-y-4">
             {habitBreakdown.map((item, idx) => (
-              <div key={idx} className="space-y-1.5">
-                <div className="flex justify-between items-center text-xs font-semibold text-gray-700">
-                  <span>{item.name}</span>
-                  <span>{item.value}%</span>
+              <div key={idx} className="space-y-2">
+                <div className="flex justify-between items-center text-xs font-semibold text-gray-700 dark:text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="font-bold">{item.name}</span>
+                  </div>
+                  <span className="font-bold text-gray-900 dark:text-white">{item.value}%</span>
                 </div>
                 <ProgressBar value={item.value} color="custom" customColorHex={item.color} />
               </div>
@@ -342,7 +400,7 @@ export default function Habits() {
         {/* Consistency trend */}
         <Card title="Consistency Trend" subtitle="Rolling 6 weeks habit completion">
           <div className="pt-2">
-            <StepChart data={consistencyTrendData} height={200} color="#3B82F6" />
+            <StepChart data={consistencyTrendData} height={200} color="#8B5CF6" />
           </div>
         </Card>
 

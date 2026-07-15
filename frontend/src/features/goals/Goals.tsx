@@ -7,7 +7,6 @@ import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
-import { StatCard } from '../../components/ui/StatCard';
 import { Modal } from '../../components/ui/Modal';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { BarChart } from '../../components/charts/BarChart';
@@ -167,30 +166,53 @@ export default function Goals() {
 
       {/* Summary strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
-        <StatCard 
-          label="Goals This Week" 
-          value={`${totalGoals} Active`} 
-          icon={<Flag size={20} />} 
-          iconBgColor="bg-blue-50 text-primary-blue"
-        />
-        
-        <StatCard 
-          label="Completed" 
-          value={`${doneGoals} Goals`} 
-          icon={<Award size={20} />} 
-          iconBgColor="bg-emerald-50 text-emerald-500 animate-bounce"
-          trendText="+15% vs last week"
-          trendDirection="up"
-        />
-
-        <Card className="p-5 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Completion Rate</span>
-            <span className="text-[28px] font-bold text-gray-900 mt-1 select-none leading-none tracking-tight">
-              {completionRate}%
-            </span>
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Goals This Week</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{totalGoals} Active</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                {totalGoals - doneGoals} remaining this week
+              </span>
+            </div>
+            <div className="p-3 rounded-2xl bg-primary-blue/10 text-primary-blue shadow-sm animate-pulse">
+              <Flag size={20} />
+            </div>
           </div>
-          <RadialProgress percentage={completionRate} size={64} strokeWidth={6} />
+        </Card>
+        
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Completed</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{doneGoals} Goals</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                {doneGoals} of {totalGoals} completed
+              </span>
+            </div>
+            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500 shadow-sm">
+              <Award size={20} className="animate-bounce" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Completion Rate</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">
+                {completionRate}%
+              </span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                Weekly target progress
+              </span>
+            </div>
+            <div className="relative flex items-center justify-center">
+              {/* Soft backdrop glow */}
+              <div className="absolute inset-0 bg-primary-blue/5 dark:bg-primary-blue/10 blur-md rounded-full" />
+              <RadialProgress percentage={completionRate} size={58} strokeWidth={5.5} showLabel={false} color="blue" />
+            </div>
+          </div>
         </Card>
       </div>
 
@@ -295,11 +317,12 @@ export default function Goals() {
 
               {/* Daily Activity Chart */}
               <div className="pt-4 border-t border-gray-100">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-3 select-none">
-                  Daily Activity
-                </span>
-                <div className="h-28">
-                  <BarChart data={dailyActivityData} height={100} color="#3B82F6" />
+                <div className="flex justify-between items-center w-full mb-3 select-none">
+                  <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Daily Activity</span>
+                  <span className="text-[10px] font-extrabold text-primary-blue bg-primary-blue/10 px-2 py-0.5 rounded-full select-none">{completionRate}% rate</span>
+                </div>
+                <div className="w-full mt-2">
+                  <BarChart data={dailyActivityData} height={80} color="#3B82F6" showYAxis={false} showXAxis={true} />
                 </div>
               </div>
             </div>

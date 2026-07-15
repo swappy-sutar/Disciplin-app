@@ -7,7 +7,6 @@ import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
-import { StatCard } from '../../components/ui/StatCard';
 import { Modal } from '../../components/ui/Modal';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DonutChart } from '../../components/charts/DonutChart';
@@ -805,7 +804,7 @@ export default function Topics() {
 
                         {/* Collapsible Answer panel */}
                         {isExpanded && (
-                          <div className="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800/60 text-xs font-semibold text-slate-650 dark:text-slate-355 leading-relaxed bg-slate-50/50 dark:bg-slate-900/40 p-3 rounded-xl animate-scale-up">
+                          <div className="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800/60 text-xs font-semibold text-gray-600 dark:text-slate-300 leading-relaxed bg-slate-50/50 dark:bg-slate-900/40 p-3 rounded-xl animate-scale-up">
                             {q.answer}
                           </div>
                         )}
@@ -1087,30 +1086,53 @@ export default function Topics() {
 
       {/* Stats strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
-        <StatCard 
-          label="Total Topics" 
-          value={totalTopicsCount} 
-          icon={<BookOpen size={20} />} 
-          iconBgColor="bg-emerald-500/10 text-emerald-600 dark:text-emerald-450"
-        />
-        
-        <StatCard 
-          label="Completed" 
-          value={`${completedTopicsCount} Topics`} 
-          icon={<CheckCircle size={20} />} 
-          iconBgColor="bg-emerald-500/10 text-emerald-600 dark:text-emerald-450"
-          trendText="+4 this week"
-          trendDirection="up"
-        />
-
-        <Card className="p-5 flex items-center justify-between border-slate-200/60 dark:border-slate-800/80 shadow-sm">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-slate-450 dark:text-slate-500 uppercase tracking-wider">Overall Progress</span>
-            <span className="text-[28px] font-bold text-gray-900 dark:text-white mt-1 select-none leading-none tracking-tight">
-              {overallProgressPercent}%
-            </span>
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Total Topics</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{totalTopicsCount}</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                Curriculum target modules
+              </span>
+            </div>
+            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 shadow-sm animate-pulse">
+              <BookOpen size={20} />
+            </div>
           </div>
-          <RadialProgress percentage={overallProgressPercent} size={64} strokeWidth={6} color="green" />
+        </Card>
+        
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Completed</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{completedTopicsCount} Topics</span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                {totalTopicsCount - completedTopicsCount} remaining to learn
+              </span>
+            </div>
+            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 shadow-sm">
+              <CheckCircle size={20} className="animate-bounce" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Overall Progress</span>
+              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">
+                {overallProgressPercent}%
+              </span>
+              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
+                Curriculum coverage rate
+              </span>
+            </div>
+            <div className="relative flex items-center justify-center">
+              {/* Soft backdrop glow */}
+              <div className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 blur-md rounded-full" />
+              <RadialProgress percentage={overallProgressPercent} size={58} strokeWidth={5.5} showLabel={false} color="green" />
+            </div>
+          </div>
         </Card>
       </div>
 
@@ -1139,7 +1161,7 @@ export default function Topics() {
           <select
             value={categoryFilter}
             onChange={e => setCategoryFilter(e.target.value)}
-            className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-955 text-sm focus:outline-none focus:border-emerald-500 shadow-sm font-semibold text-slate-650 dark:text-slate-350 cursor-pointer appearance-none"
+            className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-955 text-sm focus:outline-none focus:border-emerald-500 shadow-sm font-semibold text-gray-600 dark:text-slate-300 cursor-pointer appearance-none"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>{cat === 'All' ? 'All Categories' : cat}</option>
@@ -1234,7 +1256,7 @@ export default function Topics() {
                       {/* Accordion checkbox fallback checklist */}
                       <button
                         onClick={() => toggleAccordion(topic._id)}
-                        className="w-full flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-slate-650 cursor-pointer pt-1"
+                        className="w-full flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider hover:text-gray-900 dark:hover:text-white cursor-pointer pt-1"
                       >
                         <span>Checkbox Checklist ({topic.subTopics.filter(s => s.isDone).length}/{topic.subTopics.length})</span>
                         {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -1289,7 +1311,7 @@ export default function Topics() {
                 {/* Custom list legends */}
                 <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800/60">
                   {donutData.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-xs font-medium text-slate-650 dark:text-slate-400">
+                    <div key={idx} className="flex items-center justify-between text-xs font-medium text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                         <span>{item.name}</span>
@@ -1376,7 +1398,7 @@ export default function Topics() {
         title={confirmModal?.title || 'Confirm Action'}
       >
         <div className="space-y-5 py-1">
-          <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed font-semibold">
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-semibold">
             {confirmModal?.message}
           </p>
           <div className="flex justify-end gap-3 pt-2">
