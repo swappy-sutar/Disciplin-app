@@ -871,7 +871,7 @@ export default function LandingPage() {
           ].map((item) => (
             <motion.div
               key={item.step}
-              className="flex items-start gap-4 relative group"
+              className="flex items-center gap-4 relative group"
               variants={{
                 hidden: { opacity: 0, x: -15 },
                 show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
@@ -883,7 +883,7 @@ export default function LandingPage() {
                   {item.step}
                 </div>
                 {item.step !== '3' && (
-                  <div className="absolute top-12 bottom-[-30px] w-[3.5px] bg-gradient-to-b from-emerald-500 via-teal-500 to-emerald-500/10 dark:from-emerald-450 dark:via-teal-500/50 dark:to-emerald-500/5 rounded-full z-0" />
+                  <div className="absolute top-12 bottom-[-75px] w-[3.5px] bg-gradient-to-b from-emerald-500 via-teal-500 to-emerald-500/10 dark:from-emerald-450 dark:via-teal-500/50 dark:to-emerald-500/5 rounded-full z-0" />
                 )}
               </div>
 
