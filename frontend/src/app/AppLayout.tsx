@@ -299,17 +299,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {isUserMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)} />
-                  <div className="absolute right-0 top-full mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-gray-100/80 dark:border-gray-800/85 py-1.5 min-w-[200px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
-                    <div className="px-3.5 py-1 border-b border-gray-100 dark:border-gray-800 mb-1">
-                      <p className="text-xs font-semibold text-gray-750 dark:text-white truncate">{user?.name || ''}</p>
-                      <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{user?.email || ''}</p>
+                  <div className="absolute right-0 top-full mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100/80 dark:border-slate-800/80 p-2 min-w-[220px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
+                    <div className="px-3 py-2.5 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl mb-1.5 border border-slate-100/30 dark:border-slate-800/20">
+                      <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate">{user?.name || ''}</p>
+                      <p className="text-[10px] text-gray-450 dark:text-slate-450 font-semibold truncate mt-0.5">{user?.email || ''}</p>
                     </div>
                     <Link
                       to="/profile"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="w-full text-left px-3.5 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 cursor-pointer transition-colors block"
+                      className="w-full text-left px-3 py-2 text-xs font-bold text-gray-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
                     >
-                      <UserIcon size={13} className="text-gray-400 dark:text-gray-500" />
+                      <UserIcon size={14} className="text-gray-400 dark:text-slate-450" />
                       {t.accountSettings}
                     </Link>
                     <button
@@ -317,9 +317,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         setIsUserMenuOpen(false);
                         handleLogout();
                       }}
-                      className="w-full text-left px-3.5 py-1.5 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 cursor-pointer transition-colors"
+                      className="w-full text-left px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors mt-0.5"
                     >
-                      <LogOut size={13} />
+                      <LogOut size={14} />
                       {t.signOut}
                     </button>
                   </div>
