@@ -359,10 +359,14 @@ export default function Login() {
                   <motion.div 
                     whileHover={{ scale: 1.015 }}
                     whileTap={{ scale: 0.985 }}
-                    className="w-[240px] h-[40px] relative flex items-center justify-center bg-[#f2f2f2] hover:bg-[#e8e8e8] dark:bg-slate-900/80 dark:hover:bg-slate-850 rounded-full shadow-sm border border-[#e0e0e0]/60 dark:border-slate-800/80 transition-all cursor-pointer overflow-hidden"
+                    className={`w-[240px] h-[40px] relative flex items-center justify-center rounded-full shadow-sm border transition-all cursor-pointer overflow-hidden ${
+                      theme === 'dark'
+                        ? 'bg-slate-900 hover:bg-slate-850 border-slate-800 text-slate-200'
+                        : 'bg-[#f2f2f2] hover:bg-[#e8e8e8] border-[#e0e0e0]/60 text-gray-700'
+                    }`}
                   >
                     {/* Visual Custom Google Button */}
-                    <div className="flex items-center gap-3 font-semibold text-gray-700 dark:text-slate-200 select-none">
+                    <div className="flex items-center gap-3 font-semibold select-none">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" className="select-none pointer-events-none">
                         <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.48 14.98 0 12 0 7.35 0 3.37 2.67 1.42 6.56l3.89 3.02c.9-2.72 3.44-4.54 6.69-4.54z"/>
                         <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.35H12v4.51h6.48c-.29 1.48-1.14 2.73-2.42 3.57v2.99h3.89c2.28-2.1 3.54-5.19 3.54-8.72z"/>
