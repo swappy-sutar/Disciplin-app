@@ -43,7 +43,14 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`Resend API error: ${errText}`);
+      let cleanMessage = errText;
+      try {
+        const parsed = JSON.parse(errText);
+        if (parsed.message) {
+          cleanMessage = parsed.message;
+        }
+      } catch (_) {}
+      throw new Error(cleanMessage);
     }
     return;
   }

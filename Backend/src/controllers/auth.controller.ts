@@ -53,6 +53,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       });
     } catch (err: any) {
       console.error('Failed to send verification email:', err);
+      console.log(`\n[DEBUG] Verification link for ${user.email}:\n${verifyUrl}\n`);
       emailError = true;
       responseMessage = `User registered, but failed to send verification email. Error: ${err.message || err}`;
     }
@@ -265,6 +266,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       });
     } catch (err: any) {
       console.error('Failed to send reset password email:', err);
+      console.log(`\n[DEBUG] Password reset link for ${user.email}:\n${resetUrl}\n`);
       emailError = true;
       responseMessage = `Failed to send password reset email. Error: ${err.message || err}`;
       
@@ -432,6 +434,7 @@ export const resendVerificationEmail = async (req: Request, res: Response, next:
       });
     } catch (err: any) {
       console.error('Failed to resend verification email:', err);
+      console.log(`\n[DEBUG] Resent Verification link for ${user.email}:\n${verifyUrl}\n`);
       emailError = true;
       responseMessage = `Failed to send verification email. Error: ${err.message || err}`;
     }

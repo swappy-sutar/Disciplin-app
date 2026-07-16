@@ -86,7 +86,41 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+        <Toaster 
+          position="top-right" 
+          toastOptions={{ 
+            duration: 5000,
+            style: {
+              background: 'var(--card-bg, #0b0c10)',
+              color: 'var(--text-main, #f3f4f6)',
+              borderRadius: '16px',
+              border: '1px solid rgba(16, 185, 129, 0.15)',
+              fontSize: '13px',
+              fontWeight: 600,
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3)',
+              padding: '12px 18px',
+              maxWidth: '420px',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10B981',
+                secondary: '#ffffff',
+              },
+              style: {
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+              }
+            },
+            error: {
+              iconTheme: {
+                primary: '#EF4444',
+                secondary: '#ffffff',
+              },
+              style: {
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+              }
+            }
+          }} 
+        />
         
         {/* Hardware-Accelerated Fade-Out Splash Screen */}
         {!isAppUnmounted && (
