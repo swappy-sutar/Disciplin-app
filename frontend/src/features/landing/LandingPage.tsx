@@ -589,14 +589,14 @@ export default function LandingPage() {
 
       {/* 4. Features Grid Section */}
       <section id="features" className="max-w-[1440px] mx-auto px-6 md:px-12 py-24 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex p-2 rounded-xl bg-blue-50 text-primary-blue text-xs font-extrabold uppercase tracking-wider select-none border border-blue-100/50">
+        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
             Feature Set
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-950 tracking-tight leading-none">
-            Everything you need to stay focused
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
+            Everything you need to <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 bg-clip-text text-transparent">stay focused</span>
           </h2>
-          <p className="text-sm md:text-base text-gray-400 font-semibold max-w-lg mx-auto leading-relaxed">
+          <p className="text-sm md:text-base text-slate-400 dark:text-slate-500 font-semibold max-w-lg mx-auto leading-relaxed">
             One cockpit dashboard to replace your messy spreadsheets, checklists, calendar dates, and notes.
           </p>
         </div>
@@ -673,17 +673,17 @@ export default function LandingPage() {
       </section>
 
       {/* 5. Product Mockup / Interactive Feature Selector */}
-      <section id="demo" className="bg-white border-y border-gray-100 py-24 select-none relative z-10">
+      <section id="demo" className="bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-slate-900 py-24 select-none relative z-10">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 space-y-12">
 
           <div className="text-center max-w-2xl mx-auto space-y-4">
-            <div className="inline-flex p-2 rounded-xl bg-purple-50 text-purple-600 text-xs font-extrabold uppercase tracking-wider select-none border border-purple-100/50">
+            <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-405 border border-blue-500/15 dark:border-blue-500/30 shadow-sm inline-flex select-none">
               Interactive Preview
             </div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-none">
-              See Disciplin in action
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
+              See <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 bg-clip-text text-transparent">Disciplin</span> in action
             </h2>
-            <p className="text-sm text-gray-400 font-semibold leading-relaxed">
+            <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold leading-relaxed">
               Explore each modular segment. Switch controls to watch how widgets recalculate percentages in real-time.
             </p>
           </div>
@@ -788,14 +788,14 @@ export default function LandingPage() {
 
       {/* 6. Workflow Section */}
       <section className="max-w-[1440px] mx-auto px-6 md:px-12 py-24 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex p-2 rounded-xl bg-emerald-50 text-emerald-600 text-xs font-extrabold uppercase tracking-wider select-none border border-emerald-100/50">
+        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-405 border border-indigo-500/15 dark:border-indigo-500/30 shadow-sm inline-flex select-none">
             Process Method
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-950 tracking-tight leading-none">
-            Master your momentum
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
+            Master <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">your momentum</span>
           </h2>
-          <p className="text-sm text-gray-400 font-semibold max-w-sm mx-auto leading-relaxed">
+          <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold max-w-sm mx-auto leading-relaxed">
             Three simple procedural stages to organize your routine and outline progress.
           </p>
         </div>
@@ -927,7 +927,19 @@ export default function LandingPage() {
       </section>
 
       {/* 8. Testimonials Section */}
-      <section id="testimonials" className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 text-center select-none relative z-10">
+      <section id="testimonials" className="max-w-[1440px] mx-auto px-6 md:px-12 py-24 text-center select-none relative z-10">
+        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-pink-500/10 dark:bg-pink-500/20 text-pink-600 dark:text-pink-405 border border-pink-500/15 dark:border-pink-500/30 shadow-sm inline-flex select-none">
+            Social Proof
+          </div>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
+            Loved by <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">industry builders</span>
+          </h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold max-w-sm mx-auto leading-relaxed">
+            Here is what high-performing engineers and designers say about Disciplin.
+          </p>
+        </div>
+
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
           initial="hidden"
@@ -1007,14 +1019,14 @@ export default function LandingPage() {
 
       {/* 9. Pricing Section ("Choose your path") */}
       <section id="pricing" className="max-w-[1440px] mx-auto px-6 md:px-12 py-20 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex p-2 rounded-xl bg-blue-50 text-primary-blue text-xs font-extrabold uppercase tracking-wider select-none border border-blue-100/50">
+        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-405 border border-amber-500/15 dark:border-amber-500/30 shadow-sm inline-flex select-none">
             Pricing Plans
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-950 tracking-tight leading-none">
-            Choose your path
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
+            Choose <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">your path</span>
           </h2>
-          <p className="text-sm text-gray-400 font-semibold leading-relaxed">
+          <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold leading-relaxed">
             Get started for free or upgrade to executive access to unlock advanced AI logs.
           </p>
         </div>
