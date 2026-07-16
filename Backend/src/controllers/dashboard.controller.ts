@@ -6,6 +6,7 @@ import { Application } from '../models/Application';
 import { Quote } from '../models/Quote';
 import { HabitLog } from '../models/HabitLog';
 import * as habitService from '../services/habit.service';
+import { getOrCreateBlocks } from '../services/timetable.service';
 
 const parseDateStr = (dateStr: string): Date => {
   const [year, month, day] = dateStr.split('-').map(Number);
@@ -53,8 +54,8 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
     const yesterdayStr = getYesterdayDateStr(dateStr);
     const { start: weekStart, end: weekEnd } = getWeekStartAndEnd(dateStr);
 
-    // 1. Timetable Blocks for Today
-    const todayBlocks = await TimetableBlock.find({ userId, date: dateStr }).sort({ order: 1, startTime: 1 });
+    // 1. Timetable Blocks for Today (Pre-populate template automatically if unvisited)
+    const todayBlocks = await getOrCreateBlocks(userId, dateStr);
 
     // 2. Day Progress Calculation (Today and Yesterday)
     const completedBlocksCount = todayBlocks.filter((b) => b.isDone).length;

@@ -37,7 +37,8 @@ import {
   CheckCircle,
   Target,
   Activity,
-  Briefcase
+  Briefcase,
+  Edit2
 } from 'lucide-react';
 
 export default function Overview() {
@@ -91,6 +92,15 @@ export default function Overview() {
   const [newSlotStart, setNewSlotStart] = useState('09:00');
   const [newSlotEnd, setNewSlotEnd] = useState('10:00');
   const [newSlotCategory, setNewSlotCategory] = useState('Work');
+
+  // Edit Timetable states
+  const [isEditTimetableOpen, setEditTimetableOpen] = useState(false);
+  const [editingBlock, setEditingBlock] = useState<any>(null);
+  const [editSlotTitle, setEditSlotTitle] = useState('');
+  const [editSlotStart, setEditSlotStart] = useState('09:00');
+  const [editSlotEnd, setEditSlotEnd] = useState('10:00');
+  const [editSlotCategory, setEditSlotCategory] = useState('Work');
+  const [isUpdatingSlot, setUpdatingSlot] = useState(false);
 
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const [newGoalDueDay, setNewGoalDueDay] = useState('');
@@ -153,6 +163,48 @@ export default function Overview() {
       console.error(err);
     } finally {
       setSubmittingSlot(false);
+    }
+  };
+
+  const handleEditClick = (block: any) => {
+    setEditingBlock(block);
+    
+    // Parse tag/category and title
+    const hasTag = block.title.includes('[') && block.title.includes(']');
+    let cleanTitle = block.title;
+    let tag = 'Work';
+    if (hasTag) {
+      const match = block.title.match(/\[(.*?)\]/);
+      tag = match ? match[1] : 'Work';
+      cleanTitle = block.title.replace(/\[.*?\]/, '').trim();
+    }
+    
+    setEditSlotTitle(cleanTitle);
+    setEditSlotStart(block.startTime || '08:00');
+    setEditSlotEnd(block.endTime || '09:00');
+    setEditSlotCategory(tag);
+    setEditTimetableOpen(true);
+  };
+
+  const handleUpdateSlot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBlock || !editSlotTitle.trim()) return;
+    setUpdatingSlot(true);
+    try {
+      await updateBlock({
+        id: editingBlock._id,
+        body: {
+          title: `${editSlotTitle} [${editSlotCategory}]`,
+          startTime: editSlotStart,
+          endTime: editSlotEnd,
+        }
+      });
+      setEditTimetableOpen(false);
+      setEditingBlock(null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdatingSlot(false);
     }
   };
 
@@ -398,6 +450,13 @@ export default function Overview() {
                            })}
                            size={18}
                          />
+                        <button
+                          onClick={() => handleEditClick(block)}
+                          className="text-gray-300 hover:text-primary-blue dark:text-gray-450 dark:hover:text-primary-blue transition-colors p-1 cursor-pointer"
+                          aria-label="Edit slot"
+                        >
+                          <Edit2 size={13} />
+                        </button>
                         <button
                           onClick={() => setConfirmModal({
                             type: 'delete',
@@ -836,7 +895,7 @@ export default function Overview() {
               placeholder="e.g. Design Sync"
               value={newSlotTitle}
               onChange={e => setNewSlotTitle(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-250 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
               required
             />
           </div>
@@ -847,7 +906,7 @@ export default function Overview() {
                 type="time" 
                 value={newSlotStart}
                 onChange={e => setNewSlotStart(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-255 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
                 required
               />
             </div>
@@ -857,7 +916,7 @@ export default function Overview() {
                 type="time" 
                 value={newSlotEnd}
                 onChange={e => setNewSlotEnd(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-255 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
                 required
               />
             </div>
@@ -867,7 +926,7 @@ export default function Overview() {
             <select
               value={newSlotCategory}
               onChange={e => setNewSlotCategory(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-255 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
             >
               <option value="Work">Work</option>
               <option value="Health">Health</option>
@@ -877,6 +936,61 @@ export default function Overview() {
           </div>
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isSubmittingSlot}>
             {isSubmittingSlot ? 'Creating...' : 'Add Block'}
+          </Button>
+        </form>
+      </Modal>
+
+      {/* Edit Timetable Modal */}
+      <Modal isOpen={isEditTimetableOpen} onClose={() => setEditTimetableOpen(false)} title="Edit Timetable Block">
+        <form onSubmit={handleUpdateSlot} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Title</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Design Sync"
+              value={editSlotTitle}
+              onChange={e => setEditSlotTitle(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-250 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Start Time</label>
+              <input 
+                type="time" 
+                value={editSlotStart}
+                onChange={e => setEditSlotStart(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-255 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">End Time</label>
+              <input 
+                type="time" 
+                value={editSlotEnd}
+                onChange={e => setEditSlotEnd(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-255 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Category</label>
+            <select
+              value={editSlotCategory}
+              onChange={e => setEditSlotCategory(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-255 dark:border-slate-800 text-sm focus:outline-none focus:border-primary-blue bg-white dark:bg-slate-950 text-gray-900 dark:text-white"
+            >
+              <option value="Work">Work</option>
+              <option value="Health">Health</option>
+              <option value="Study">Study</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+          <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2" disabled={isUpdatingSlot}>
+            {isUpdatingSlot ? 'Updating...' : 'Save Changes'}
           </Button>
         </form>
       </Modal>

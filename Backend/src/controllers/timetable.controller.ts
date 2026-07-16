@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { TimetableBlock } from '../models/TimetableBlock';
 import { NotFoundError } from '../utils/custom-errors';
+import { getOrCreateBlocks, ensureMetaExists } from '../services/timetable.service';
 
 export const getBlocks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?.id;
-    const { date } = req.query;
+    const userId = req.user?.id!;
+    const date = req.query.date as string;
 
-    const blocks = await TimetableBlock.find({ userId, date }).sort({ order: 1, startTime: 1 });
+    const blocks = await getOrCreateBlocks(userId, date);
 
     res.status(200).json({
       success: true,
@@ -20,8 +21,10 @@ export const getBlocks = async (req: Request, res: Response, next: NextFunction)
 
 export const createBlock = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.id!;
     const { date, startTime, endTime, label, tag, order } = req.body;
+
+    await ensureMetaExists(userId, date);
 
     const block = new TimetableBlock({
       userId,
