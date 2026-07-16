@@ -688,10 +688,33 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-6">
+           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch pt-6">
 
-            {/* Tabs Selector columns */}
-            <div className="lg:col-span-4 flex flex-col justify-center gap-3">
+            {/* Mobile Tab Selector (Swipeable, visible only on < lg) */}
+            <div className="lg:hidden flex flex-row overflow-x-auto gap-2.5 pb-2 px-1 scrollbar-none snap-x snap-mandatory w-full max-w-full">
+              {demoFeatures.map((item, index) => {
+                const isActive = activeFeature === index;
+                const TabIcon = index === 0 ? Calendar : index === 1 ? CheckSquare : index === 2 ? Target : Briefcase;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveFeature(index)}
+                    className={`flex items-center gap-2 px-4.5 py-3 rounded-xl border text-[13px] font-bold whitespace-nowrap cursor-pointer transition-all duration-200 snap-center
+                      ${isActive
+                        ? 'bg-primary-blue text-white border-primary-blue shadow-md shadow-emerald-500/20'
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-450 border-slate-200/80 dark:border-slate-800/80'
+                      }`}
+                  >
+                    <TabIcon size={14} className={isActive ? "text-white" : "text-slate-400"} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Desktop Tabs Selector columns (hidden on mobile, visible on lg) */}
+            <div className="hidden lg:flex lg:col-span-4 flex-col justify-center gap-3">
               {demoFeatures.map((item, index) => {
                 const isActive = activeFeature === index;
                 return (
@@ -722,20 +745,20 @@ export default function LandingPage() {
             </div>
 
             {/* Mock Screen Display columns */}
-            <div className="lg:col-span-8 flex items-center justify-center bg-canvas-bg border border-gray-100 rounded-3xl p-6 md:p-8 shadow-inner relative overflow-hidden min-h-[300px]">
+            <div className="lg:col-span-8 flex items-center justify-center bg-canvas-bg dark:bg-slate-950/30 border border-gray-100 dark:border-slate-900/60 rounded-3xl p-4 sm:p-6 md:p-8 shadow-inner relative overflow-hidden min-h-[300px]">
               {/* Glow backdrop behind preview */}
-              <div className="absolute w-[60%] h-[60%] bg-blue-300/10 blur-[80px] rounded-full pointer-events-none" />
+              <div className="absolute w-[60%] h-[60%] bg-blue-300/10 dark:bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
 
               <div className="w-full max-w-[620px] relative z-10">
-                {/* Browser frame */}
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-xl relative overflow-hidden">
+                {/* Browser frame - Made theme aware */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-5 border border-gray-100 dark:border-slate-800/60 shadow-xl relative overflow-hidden">
 
                   {/* Browser Top Controls */}
-                  <div className="flex items-center gap-1.5 mb-4 border-b border-gray-100 pb-3">
+                  <div className="flex items-center gap-1.5 mb-4 border-b border-gray-100 dark:border-slate-800/65 pb-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                    <span className="text-[10px] font-extrabold text-gray-400 ml-4 uppercase tracking-wider">
+                    <span className="text-[10px] font-extrabold text-gray-400 dark:text-slate-500 ml-4 uppercase tracking-wider">
                       {demoFeatures[activeFeature].title}
                     </span>
                   </div>
