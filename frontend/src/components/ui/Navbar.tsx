@@ -167,24 +167,24 @@ export const Navbar: React.FC = () => {
                 {/* Divider */}
                 <div className="my-2.5 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
 
-                {/* Auth actions with reduced heights */}
+                {/* Auth actions in one row */}
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15, duration: 0.18 }}
-                  className="flex flex-col gap-2 pt-1"
+                  className="flex flex-row items-center gap-2.5 pt-1 w-full"
                 >
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-3 rounded-xl bg-primary-blue hover:bg-primary-blue-hover text-white text-[14.5px] font-bold shadow-md shadow-emerald-500/20 active:scale-[0.98] transition-all duration-150"
+                    className="flex-1 flex items-center justify-center py-3.5 rounded-xl bg-primary-blue hover:bg-primary-blue-hover text-white text-[14px] font-bold shadow-md shadow-emerald-500/20 active:scale-[0.98] transition-all duration-150 whitespace-nowrap"
                   >
-                    Get Started Free →
+                    Get Started
                   </Link>
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-3 rounded-xl border border-slate-200/85 dark:border-slate-805 text-slate-700 dark:text-slate-350 text-[14.5px] font-bold hover:bg-slate-50 dark:hover:bg-slate-850/60 active:scale-[0.98] transition-all duration-150 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md"
+                    className="flex-1 flex items-center justify-center py-3.5 rounded-xl border border-slate-200/85 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-[14px] font-bold hover:bg-slate-55 dark:hover:bg-slate-850/60 active:scale-[0.98] transition-all duration-150 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md whitespace-nowrap"
                   >
                     Sign In
                   </Link>
