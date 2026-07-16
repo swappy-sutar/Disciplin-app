@@ -97,11 +97,19 @@ export const useStore = create<UIState>((set) => {
       const nextTheme = state.theme === 'light' ? 'dark' : 'light';
       if (typeof window !== 'undefined') {
         localStorage.setItem('disciplin_theme', nextTheme);
+        
+        // Add temporary transition class for full dissolve color fade
+        document.documentElement.classList.add('theme-transitioning');
+        
         if (nextTheme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
         }
+        
+        setTimeout(() => {
+          document.documentElement.classList.remove('theme-transitioning');
+        }, 550);
       }
       return { theme: nextTheme };
     }),
