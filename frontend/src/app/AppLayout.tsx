@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -61,6 +61,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getInitials = (name?: string) => {
     if (!name) return 'S';
@@ -209,7 +227,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </button>
 
             {/* Notification Bell */}
-            <div className="relative">
+            <div className="relative" ref={notificationsRef}>
               <button 
                 onClick={handleToggleNotifications}
                 className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 relative transition-colors cursor-pointer"
@@ -223,10 +241,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
               {/* Notification Dropdown Box */}
               {isNotificationsOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsNotificationsOpen(false)} />
-                  
-                  <div className="absolute right-0 mt-2 bg-white dark:bg-slate-900 border border-gray-100/80 dark:border-gray-800/85 rounded-2xl shadow-xl p-4 w-[320px] md:w-[360px] z-50 animate-in fade-in slide-in-from-top-2 duration-205 select-none">
+                <div className="absolute right-0 mt-2 bg-white dark:bg-slate-900 border border-gray-100/80 dark:border-gray-800/85 rounded-2xl shadow-xl p-4 w-[320px] md:w-[360px] z-50 animate-in fade-in slide-in-from-top-2 duration-205 select-none">
                     <div className="flex justify-between items-center pb-2.5 mb-2 border-b border-gray-50 dark:border-gray-800">
                       <div className="flex items-center gap-1.5">
                         <h4 className="font-extrabold text-xs text-gray-900 dark:text-white uppercase tracking-wider">Notifications</h4>
@@ -290,14 +305,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           );
                         })
                       )}
-                    </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
 
             {/* User Avatar & Logout */}
-            <div className="relative">
+            <div className="relative" ref={userMenuRef}>
               <button 
                 onClick={handleToggleUserMenu}
                 className="flex items-center justify-center p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer focus:outline-none"
@@ -309,9 +323,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               
               {/* Dropdown Menu on Click */}
               {isUserMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)} />
-                  <div className="absolute right-0 top-full mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100/80 dark:border-slate-800/80 p-2 min-w-[220px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
+                <div className="absolute right-0 top-full mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100/80 dark:border-slate-800/80 p-2 min-w-[220px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
                     <div className="px-3 py-2.5 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl mb-1.5 border border-slate-100/30 dark:border-slate-800/20">
                       <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate">{user?.name || ''}</p>
                       <p className="text-[10px] text-gray-450 dark:text-slate-450 font-semibold truncate mt-0.5">{user?.email || ''}</p>
@@ -367,7 +379,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       {t.signOut}
                     </button>
                   </div>
-                </>
               )}
             </div>
 

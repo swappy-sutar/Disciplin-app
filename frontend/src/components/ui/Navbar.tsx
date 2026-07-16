@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award, ChevronRight, Check } from 'lucide-react';
 import { useStore } from '../../app/store';
@@ -23,6 +23,27 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isDark = theme === 'dark';
   const logoSrc = isDark ? '/disciplin-logo.svg' : '/disciplin-logo-light.svg';
+
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const hamburgerBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        mobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        hamburgerBtnRef.current &&
+        !hamburgerBtnRef.current.contains(event.target as Node)
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <header className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl border-b border-slate-200/60 dark:border-slate-800/60 fixed top-0 left-0 right-0 z-50 select-none transition-all duration-300">
@@ -111,6 +132,7 @@ export const Navbar: React.FC = () => {
 
               {/* Mobile hamburger menu button */}
               <button
+                ref={hamburgerBtnRef}
                 onClick={() => setMobileMenuOpen((v) => !v)}
                 className="sm:hidden w-10 h-10 flex items-center justify-center text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-all duration-200 cursor-pointer"
                 aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
@@ -137,20 +159,14 @@ export const Navbar: React.FC = () => {
       {/* ── Mobile slide-down menu ── */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 top-16 z-40 sm:hidden"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-              className="sm:hidden overflow-hidden absolute top-full left-0 right-0 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 z-50 shadow-2xl shadow-slate-900/10 dark:shadow-slate-950/50"
-            >
+          <motion.div
+            ref={mobileMenuRef}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            className="sm:hidden overflow-hidden absolute top-full left-0 right-0 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 z-50 shadow-2xl shadow-slate-900/10 dark:shadow-slate-950/50"
+          >
               <div className="px-4 pt-2.5 pb-5 flex flex-col gap-1">
                 {/* Nav links with refined boxes and chevrons */}
                 {navLinks.map((link, i) => {
@@ -232,7 +248,6 @@ export const Navbar: React.FC = () => {
                 </motion.div>
               </div>
             </motion.div>
-          </>
         )}
       </AnimatePresence>
     </header>
