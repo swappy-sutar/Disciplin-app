@@ -800,8 +800,9 @@ export default function LandingPage() {
           </p>
         </div>
 
+        {/* Desktop view: Horizontal Steps with Connector Line */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-12 relative"
+          className="hidden md:grid grid-cols-3 gap-8 relative z-10"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
@@ -809,16 +810,13 @@ export default function LandingPage() {
             hidden: {},
             show: {
               transition: {
-                staggerChildren: 0.15
+                staggerChildren: 0.12
               }
             }
           }}
         >
-          {/* Connector Lines between step circles on desktop */}
-          <div className="hidden md:block absolute top-6 left-[16%] right-[16%] h-0.5 bg-gray-200/80 dark:bg-slate-800/80 -z-10" />
-
-          {/* Vertical Connector Line on mobile to unify layout */}
-          <div className="md:hidden absolute left-1/2 top-6 bottom-16 w-px border-l border-dashed border-slate-250 dark:border-slate-800 -translate-x-1/2 -z-10" />
+          {/* Connector Line between step circles on desktop */}
+          <div className="absolute top-[28px] left-[15%] right-[15%] h-0.5 bg-gray-200/80 dark:bg-slate-800/80 -z-10" />
 
           {[
             { step: '1', title: 'Plan', desc: 'Map out weekly targets and configure daily timetable work blocks.' },
@@ -827,20 +825,68 @@ export default function LandingPage() {
           ].map((item) => (
             <motion.div
               key={item.step}
-              className="flex flex-col items-center text-center space-y-4 group relative"
+              className="flex flex-col items-center text-center p-6 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/80 rounded-2xl group relative"
               variants={{
                 hidden: { opacity: 0, scale: 0.9, y: 20 },
                 show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
               }}
             >
-              {/* Theme-aware and responsive step circle */}
-              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500/80 shadow-lg shadow-emerald-500/10 dark:shadow-emerald-500/5 group-hover:bg-primary-blue dark:group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:text-slate-950 transition-all duration-300 select-none scale-105 z-10">
+              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500 shadow-lg shadow-emerald-500/10 dark:shadow-emerald-500/5 group-hover:bg-primary-blue dark:group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:text-slate-950 transition-all duration-300 select-none scale-105 z-10">
                 {item.step}
               </div>
-              <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider">{item.title}</h3>
+              <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider pt-2">{item.title}</h3>
               <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-semibold max-w-xs leading-relaxed select-none">
                 {item.desc}
               </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Mobile view: Vertical Timeline with Glassmorphism Cards */}
+        <motion.div
+          className="md:hidden flex flex-col gap-6 relative pl-3 select-none text-left"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+        >
+          {/* Vertical Dashed Line aligned left */}
+          <div className="absolute left-[27px] top-6 bottom-10 w-[2px] border-l border-dashed border-emerald-500/30 dark:border-emerald-500/20 -z-10" />
+
+          {[
+            { step: '1', title: 'Plan', desc: 'Map out weekly targets and configure daily timetable work blocks.' },
+            { step: '2', title: 'Track', desc: 'Log habit routines, complete checklist goals, and update study checkpoints.' },
+            { step: '3', title: 'Stay Accountable', desc: 'Monitor streaks, review stats dashboards, and land your target offer.' },
+          ].map((item) => (
+            <motion.div
+              key={item.step}
+              className="flex items-start gap-4 relative group"
+              variants={{
+                hidden: { opacity: 0, x: -15 },
+                show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
+              }}
+            >
+              {/* Step Circle on the Left */}
+              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500 shrink-0 shadow-md shadow-emerald-500/10 dark:shadow-emerald-500/5 transition-all duration-300 z-10 scale-105">
+                {item.step}
+              </div>
+
+              {/* Glass Card on the Right */}
+              <div className="flex-1 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md p-4.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-md">
+                <h4 className="text-[13.5px] font-black uppercase text-slate-900 dark:text-white tracking-wider mb-1">
+                  {item.title}
+                </h4>
+                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
             </motion.div>
           ))}
         </motion.div>
