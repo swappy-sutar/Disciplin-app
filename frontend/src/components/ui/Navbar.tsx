@@ -55,7 +55,9 @@ export const Navbar: React.FC = () => {
         {/* Right controls */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           {/* Language Selector */}
-          <LanguageSelector />
+          <div className="hidden sm:block">
+            <LanguageSelector />
+          </div>
 
           {/* Theme toggle */}
           <button
@@ -167,6 +169,12 @@ export const Navbar: React.FC = () => {
                     </motion.a>
                   );
                 })}
+
+                {/* Language selection block */}
+                <div className="py-2.5 px-2.5 flex items-center justify-between border-t border-slate-100 dark:border-slate-900/60 mt-1.5 pt-3">
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Language / भाषा</span>
+                  <LanguageSelector />
+                </div>
 
                 {/* Divider */}
                 <div className="my-2.5 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
