@@ -94,15 +94,16 @@ export default function Login() {
     setIsLoading(true);
     setErrorMsg(null);
     setShowResend(false);
+    const toastId = toast.loading('Signing in...');
     try {
       const res = await apiClient.auth.login(data);
       setAuth(res.user, res.token);
-      toast.success(`Welcome back, ${res.user.name}!`);
+      toast.success(`Welcome back, ${res.user.name}!`, { id: toastId });
       navigate('/overview');
     } catch (e: any) {
       const err = e.message || 'Invalid email or password';
       setErrorMsg(err);
-      toast.error(err);
+      toast.error(err, { id: toastId });
       // Show resend option when email is unverified
       if (err.toLowerCase().includes('verify')) {
         setResendEmail(data.email);

@@ -44,18 +44,19 @@ export default function Register() {
   const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     setErrorMsg(null);
+    const toastId = toast.loading('Creating account...');
     try {
       const res = await apiClient.auth.register(data);
       if (res?.emailError) {
-        toast.error(res.message, { duration: 6000 });
+        toast.error(res.message, { id: toastId, duration: 6000 });
       } else {
-        toast.success(res.message || 'Registration successful! Please check your email to verify your account.');
+        toast.success(res.message || 'Registration successful! Check your inbox to verify your account.', { id: toastId });
       }
       navigate('/login');
     } catch (e: any) {
       const err = e.message || 'Registration failed';
       setErrorMsg(err);
-      toast.error(err);
+      toast.error(err, { id: toastId });
     } finally {
       setIsLoading(false);
     }
