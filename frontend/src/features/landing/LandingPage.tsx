@@ -815,7 +815,10 @@ export default function LandingPage() {
           }}
         >
           {/* Connector Lines between step circles on desktop */}
-          <div className="hidden md:block absolute top-6 left-[16%] right-[16%] h-0.5 bg-gray-200/80 -z-10" />
+          <div className="hidden md:block absolute top-6 left-[16%] right-[16%] h-0.5 bg-gray-200/80 dark:bg-slate-800/80 -z-10" />
+
+          {/* Vertical Connector Line on mobile to unify layout */}
+          <div className="md:hidden absolute left-1/2 top-6 bottom-16 w-px border-l border-dashed border-slate-250 dark:border-slate-800 -translate-x-1/2 -z-10" />
 
           {[
             { step: '1', title: 'Plan', desc: 'Map out weekly targets and configure daily timetable work blocks.' },
@@ -824,17 +827,18 @@ export default function LandingPage() {
           ].map((item) => (
             <motion.div
               key={item.step}
-              className="flex flex-col items-center text-center space-y-4 group"
+              className="flex flex-col items-center text-center space-y-4 group relative"
               variants={{
                 hidden: { opacity: 0, scale: 0.9, y: 20 },
                 show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
               }}
             >
-              <div className="w-12 h-12 rounded-full bg-white text-primary-blue flex items-center justify-center font-extrabold text-base border-2 border-primary-blue shadow-lg shadow-blue-500/10 group-hover:bg-primary-blue group-hover:text-white transition-all duration-300 select-none scale-105">
+              {/* Theme-aware and responsive step circle */}
+              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500/80 shadow-lg shadow-emerald-500/10 dark:shadow-emerald-500/5 group-hover:bg-primary-blue dark:group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:text-slate-950 transition-all duration-300 select-none scale-105 z-10">
                 {item.step}
               </div>
-              <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">{item.title}</h3>
-              <p className="text-xs md:text-sm text-gray-400 font-semibold max-w-xs leading-relaxed select-none">
+              <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider">{item.title}</h3>
+              <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-semibold max-w-xs leading-relaxed select-none">
                 {item.desc}
               </p>
             </motion.div>
