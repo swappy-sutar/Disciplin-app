@@ -8,7 +8,7 @@ import type {
   Quote
 } from '../types';
 
-let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+let apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api/v1';
 
 // Clean up trailing slash
 if (apiBase.endsWith('/')) {

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Types } from 'mongoose';
 import { TimetableBlock } from '../models/TimetableBlock';
 import { WeeklyGoal } from '../models/WeeklyGoal';
 import { Topic } from '../models/Topic';
@@ -96,7 +97,7 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
     });
 
     const statusCounts = await Application.aggregate([
-      { $match: { userId: parseDateStr(dateStr) ? new Object(userId) : userId } },
+      { $match: { userId: new Types.ObjectId(userId) } },
       {
         $group: {
           _id: '$status',
