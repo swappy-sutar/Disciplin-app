@@ -22,6 +22,64 @@ if (!apiBase.includes('/api/v1')) {
 
 const API_BASE_URL = apiBase;
 
+// Refresh token lock — prevents concurrent refresh races
+let isRefreshing = false;
+let pendingQueue: Array<{ resolve: (token: string) => void; reject: (err: Error) => void }> = [];
+
+function processQueue(error: Error | null, token: string | null) {
+  pendingQueue.forEach((p) => {
+    if (error) {
+      p.reject(error);
+    } else {
+      p.resolve(token!);
+    }
+  });
+  pendingQueue = [];
+}
+
+async function attemptTokenRefresh(): Promise<string> {
+  if (isRefreshing) {
+    // Another refresh is already in-flight — queue up and wait for it
+    return new Promise<string>((resolve, reject) => {
+      pendingQueue.push({ resolve, reject });
+    });
+  }
+
+  isRefreshing = true;
+
+  try {
+    const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
+
+    if (!refreshResponse.ok) {
+      throw new Error('Refresh failed');
+    }
+
+    const refreshJson = await refreshResponse.json();
+    const newAccessToken = refreshJson.data?.token || refreshJson.token;
+
+    if (!newAccessToken) {
+      throw new Error('No token in refresh response');
+    }
+
+    localStorage.setItem('disciplin_token', newAccessToken);
+
+    // Sync Zustand store with the new token
+    window.dispatchEvent(new Event('auth_change'));
+
+    processQueue(null, newAccessToken);
+    return newAccessToken;
+  } catch (err: any) {
+    processQueue(err, null);
+    throw err;
+  } finally {
+    isRefreshing = false;
+  }
+}
+
 // Base HTTP requester
 async function request<T>(
   method: string,
@@ -53,44 +111,40 @@ async function request<T>(
     path !== '/auth/verify-email' &&
     path !== '/auth/resend-verification'
   ) {
+    // Only attempt refresh if the user was previously authenticated
+    const hadToken = !!token;
+    if (!hadToken) {
+      throw new Error('Not authorized');
+    }
+
     try {
-      const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const newAccessToken = await attemptTokenRefresh();
+
+      // Retry original request with fresh token
+      const retryHeaders = { ...headers, 'Authorization': `Bearer ${newAccessToken}` };
+      const retryResponse = await fetch(`${API_BASE_URL}${path}`, {
+        method,
+        headers: retryHeaders,
+        body: body ? JSON.stringify(body) : undefined,
         credentials: 'include',
       });
 
-      if (refreshResponse.ok) {
-        const refreshJson = await refreshResponse.json();
-        const newAccessToken = refreshJson.data?.token || refreshJson.token;
-        if (newAccessToken) {
-          localStorage.setItem('disciplin_token', newAccessToken);
-          const retryHeaders = { ...headers, 'Authorization': `Bearer ${newAccessToken}` };
-          const retryResponse = await fetch(`${API_BASE_URL}${path}`, {
-            method,
-            headers: retryHeaders,
-            body: body ? JSON.stringify(body) : undefined,
-            credentials: 'include',
-          });
-          if (retryResponse.ok) {
-            const retryJson = await retryResponse.json();
-            return retryJson.data ?? retryJson;
-          }
-        }
+      if (retryResponse.ok) {
+        const retryJson = await retryResponse.json();
+        return retryJson.data ?? retryJson;
       }
+
+      // Retry also failed — fall through to clear auth
+      throw new Error('Retry after refresh failed');
     } catch (err) {
       console.error('JWT Auto-refresh failed:', err);
     }
 
-    // Refresh failed, logout user
+    // Refresh failed — clear session and redirect to login
     localStorage.removeItem('disciplin_token');
     localStorage.removeItem('disciplin_user');
     window.dispatchEvent(new Event('auth_change'));
     throw new Error('Session expired. Please log in again.');
-  } else if (response.status === 401) {
-    localStorage.removeItem('disciplin_token');
-    localStorage.removeItem('disciplin_user');
-    window.dispatchEvent(new Event('auth_change'));
   }
 
   if (!response.ok) {
