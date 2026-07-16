@@ -26,7 +26,7 @@ export default function Register() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { setAuth } = useStore();
+  const { setAuth, theme } = useStore();
 
   const handleGoogleCredentialResponse = async (response: any) => {
     setIsLoading(true);
@@ -55,7 +55,13 @@ export default function Register() {
         });
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignUpButton'),
-          { theme: 'outline', size: 'large', width: '100%' }
+          { 
+            theme: theme === 'dark' ? 'filled_black' : 'outline', 
+            size: 'large',
+            shape: 'pill',
+            logo_alignment: 'center',
+            width: 320
+          }
         );
       }
     };
@@ -73,7 +79,7 @@ export default function Register() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [theme]);
 
   const {
     register,
@@ -252,7 +258,13 @@ export default function Register() {
 
             {/* Google Sign-in Button */}
             <div className="w-full flex justify-center items-center">
-              <div id="googleSignUpButton" className="w-full max-w-sm rounded-xl overflow-hidden shadow-sm" />
+              <motion.div 
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
+                className="min-h-[44px] flex items-center justify-center"
+              >
+                <div id="googleSignUpButton" />
+              </motion.div>
             </div>
 
             {/* Redirect link */}
