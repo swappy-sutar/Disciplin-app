@@ -306,11 +306,12 @@ export default function Overview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
         
         {/* ================= COLUMN 1 ================= */}
-        <div className="space-y-5">
+        <div className="contents md:block md:space-y-5">
           
           {/* Daily Timetable */}
           <Card 
             title="Daily Timetable" 
+            className="order-1 md:order-none"
             icon={Calendar}
             iconColor="text-blue-500 bg-blue-500/10 border-blue-500/20"
             showMenu 
@@ -419,6 +420,7 @@ export default function Overview() {
           {/* Topics card */}
           <Card 
             title="Topics to Finish"
+            className="order-5 md:order-none"
             icon={BookOpen}
             iconColor="text-purple-500 bg-purple-500/10 border-purple-500/20"
             headerAction={
@@ -461,7 +463,7 @@ export default function Overview() {
 
           {/* Motivation Quote Card */}
           <div 
-            className="rounded-2xl p-6 text-white select-none relative overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-[2px] transition-all duration-300 group"
+            className="order-7 md:order-none rounded-2xl p-6 text-white select-none relative overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-[2px] transition-all duration-300 group"
             style={{ background: 'linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #EC4899 100%)' }}
           >
             {/* Absolute vector quote indicator */}
@@ -500,11 +502,12 @@ export default function Overview() {
         </div>
 
         {/* ================= COLUMN 2 ================= */}
-        <div className="space-y-5">
+        <div className="contents md:block md:space-y-5">
           
           {/* Habit Tracker */}
           <Card 
             title="Habit Tracker" 
+            className="order-3 md:order-none"
             icon={CheckCircle}
             iconColor="text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
             subtitle="Today's habit compliance"
@@ -564,7 +567,7 @@ export default function Overview() {
                                    addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
                                  }
                                }
-                             })}
+                              })}
                            />
                         </div>
                       );
@@ -578,6 +581,7 @@ export default function Overview() {
           {/* Application Tracker */}
           <Card 
             title="Application Tracker"
+            className="order-6 md:order-none"
             icon={Briefcase}
             iconColor="text-gray-600 bg-gray-500/10 border-gray-500/20 dark:text-slate-400 dark:bg-slate-900/30 dark:border-slate-800/80"
             headerAction={
@@ -659,11 +663,12 @@ export default function Overview() {
         </div>
 
         {/* ================= COLUMN 3 ================= */}
-        <div className="space-y-5">
+        <div className="contents md:block md:space-y-5">
           
           {/* Day Progress Tracker */}
           <Card 
             title="Day Progress"
+            className="order-2 md:order-none"
             icon={Activity}
             iconColor="text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
           >
@@ -687,6 +692,7 @@ export default function Overview() {
           {/* Weekly Goals */}
           <Card 
             title="Weekly Goals" 
+            className="order-4 md:order-none"
             icon={Target}
             iconColor="text-pink-500 bg-pink-500/10 border-pink-500/20"
             headerAction={
