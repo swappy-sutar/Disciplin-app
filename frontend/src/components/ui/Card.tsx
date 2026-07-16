@@ -27,14 +27,14 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100/50 
+      className={`bg-white dark:bg-slate-900 rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100/50 dark:border-slate-800/80 
         transition-all duration-300 ease-out
         ${hoverable ? 'hover:shadow-md hover:-translate-y-[2px] cursor-pointer' : ''} 
         ${className}`}
       {...props}
     >
       {(title || headerAction || showMenu) && (
-        <div className="flex items-center justify-between mb-5 gap-3 border-b border-gray-100 pb-3.5 select-none">
+        <div className="flex items-center justify-between mb-5 gap-3 border-b border-gray-100 dark:border-slate-850/60 pb-3.5 select-none">
           {Icon ? (
             <div className="flex items-center gap-3">
               <div className={`w-9 h-9 flex items-center justify-center rounded-xl border shrink-0 ${iconColor || 'text-gray-500 bg-gray-50 border-gray-100'}`}>

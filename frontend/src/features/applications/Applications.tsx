@@ -198,20 +198,33 @@ export default function Applications() {
       </div>
 
       {/* Main Counter Indicator Widget */}
-      <Card className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <Card className="relative overflow-hidden p-6">
+        {/* Accent border bar */}
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 rounded-t-2xl" />
+        {/* Glow ambient background */}
+        <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-blue-500/5 dark:bg-blue-500/10 blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Daily Applications Goal</span>
-            <div className="flex items-baseline gap-2 select-none">
-              <span className="text-4xl font-black text-gray-900 leading-none">{todayApps.length} / {targetCount}</span>
-              <span className="text-sm text-gray-400 font-semibold select-none">Submitted today</span>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">
+              {t.dailyGoal}
+            </span>
+            <div className="flex items-baseline gap-1 select-none">
+              <span className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-none tracking-tight">
+                {todayApps.length} / {targetCount}
+              </span>
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 select-none ml-1.5">
+                {t.submittedToday}
+              </span>
             </div>
-            <p className="text-xs text-gray-400">Log application filings to fill your daily dot grid.</p>
+            <p className="text-xs font-medium text-slate-400 dark:text-slate-500">
+              {t.logAppsDescription}
+            </p>
           </div>
           
-          <div className="flex-1 md:max-w-md bg-gray-50/50 rounded-2xl p-4 border border-gray-100/50 flex flex-col justify-center">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2 select-none">
-              Progress Visualization
+          <div className="flex-1 md:max-w-md bg-slate-50/60 dark:bg-slate-900/60 border border-slate-150/50 dark:border-slate-800/80 rounded-2xl p-4 flex flex-col justify-center shadow-sm">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-2.5 select-none">
+              {t.progressVisualization}
             </span>
             <DotGrid value={todayApps.length} target={targetCount} />
           </div>

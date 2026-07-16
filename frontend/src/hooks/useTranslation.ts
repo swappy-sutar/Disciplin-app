@@ -87,6 +87,10 @@ const translations = {
     jobAppsLabel: 'Job Apps',
     searchApps: 'Search by company name, role title or notes...',
     allStatuses: 'All Statuses',
+    dailyGoal: 'Daily Applications Goal',
+    submittedToday: 'submitted today',
+    logAppsDescription: 'Log application filings to fill your daily dot grid.',
+    progressVisualization: 'Progress Visualization',
 
     // Topics Page
     topicsTitle: 'Study Curriculum',
@@ -198,6 +202,10 @@ const translations = {
     jobAppsLabel: 'नौकरी आवेदन',
     searchApps: 'कंपनी का नाम, पद या नोट्स द्वारा खोजें...',
     allStatuses: 'सभी स्थितियाँ',
+    dailyGoal: 'दैनिक आवेदन लक्ष्य',
+    submittedToday: 'आज जमा किए गए',
+    logAppsDescription: 'अपने दैनिक डॉट ग्रिड को भरने के लिए आवेदन दर्ज करें।',
+    progressVisualization: 'प्रगति विज़ुअलाइज़ेशन',
 
     // Topics Page
     topicsTitle: 'अध्ययन पाठ्यक्रम',
@@ -309,6 +317,10 @@ const translations = {
     jobAppsLabel: 'नोकरी अर्ज',
     searchApps: 'कंपनीचे नाव, पद किंवा नोट्सद्वारे शोधा...',
     allStatuses: 'सर्व स्थिती',
+    dailyGoal: 'दैनिक अर्ज ध्येय',
+    submittedToday: 'आज सादर केले',
+    logAppsDescription: 'आपले दैनिक डॉट ग्रिड भरण्यासाठी अर्ज नोंदवा.',
+    progressVisualization: 'प्रगतीचे दर्शन',
 
     // Topics Page
     topicsTitle: 'अभ्यासक्रम',

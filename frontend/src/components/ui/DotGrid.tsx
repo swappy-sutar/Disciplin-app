@@ -27,11 +27,16 @@ export const DotGrid: React.FC<DotGridProps> = ({
             initial={{ scale: 0.8 }}
             animate={{ scale: isFilled ? [1, 1.15, 1] : 1 }}
             transition={{ duration: 0.25, delay: isFilled ? index * 0.03 : 0 }}
-            className="w-2.5 h-2.5 rounded-full border transition-all duration-300"
-            style={{
-              backgroundColor: isFilled ? color : '#E5E7EB',
-              borderColor: isFilled ? color : '#E5E7EB',
-            }}
+            className={`w-2.5 h-2.5 rounded-full border transition-all duration-300
+              ${isFilled 
+                ? 'border-transparent' 
+                : 'bg-slate-200 dark:bg-slate-700/60 border-slate-200 dark:border-slate-700/60'
+              }
+            `}
+            style={isFilled ? {
+              backgroundColor: color,
+              borderColor: color,
+            } : undefined}
           />
         );
       })}
