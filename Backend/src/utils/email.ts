@@ -42,6 +42,10 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
     return;
   }
 
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Email service (SMTP) is not configured. Please set SMTP_HOST and SMTP_USER in your Render environment settings.');
+  }
+
   // Development fallback: Log the email to console for easy testing
   console.log('\n=================== EMAIL SENT (MOCK) ===================');
   console.log(`To:      ${options.email}`);
