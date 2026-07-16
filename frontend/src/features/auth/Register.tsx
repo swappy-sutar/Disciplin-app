@@ -250,7 +250,7 @@ export default function Register() {
 
             {/* Google OAuth Divider */}
             <div className="relative my-5 flex items-center justify-center">
-              <hr className="w-full border-t border-gray-100 dark:border-slate-800" />
+              <hr className="w-full border-t border-gray-200 dark:border-slate-800" />
               <span className="absolute px-3 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 text-[10px] uppercase font-bold tracking-wider select-none">
                 Or continue with
               </span>
@@ -268,7 +268,7 @@ export default function Register() {
             </div>
 
             {/* Redirect link */}
-            <div className="text-center mt-6 pt-5 border-t border-gray-100 dark:border-gray-855">
+            <div className="text-center mt-6 pt-5 border-t border-gray-200 dark:border-gray-855">
               <span className="text-xs text-gray-450 dark:text-gray-500">Already have an account? </span>
               <Link 
                 to="/login" 
