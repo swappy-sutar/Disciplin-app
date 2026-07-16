@@ -290,7 +290,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 onClick={handleToggleUserMenu}
                 className="flex items-center justify-center p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer focus:outline-none"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-500 text-white font-bold text-xs tracking-wider flex items-center justify-center shadow-sm select-none border border-violet-500/10">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-xs tracking-wider flex items-center justify-center shadow-sm select-none border border-emerald-500/10">
                   {getInitials(user?.name)}
                 </div>
               </button>
