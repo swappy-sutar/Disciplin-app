@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award, ChevronRight } from 'lucide-react';
 import { useStore } from '../../app/store';
 import { AnimatePresence, motion } from 'framer-motion';
+import { LanguageSelector } from './LanguageSelector';
 
 const navLinks = [
   { label: 'Features', href: '/#features', icon: CheckSquare },
@@ -53,6 +54,9 @@ export const Navbar: React.FC = () => {
 
         {/* Right controls */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          {/* Language Selector */}
+          <LanguageSelector />
+
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}

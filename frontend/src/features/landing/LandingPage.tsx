@@ -7,7 +7,6 @@ import {
   Target,
   BookOpen,
   Briefcase,
-  Sun,
   Flame,
   ArrowRight,
   Star,
@@ -24,6 +23,7 @@ import { useStore } from '../../app/store';
 import { Footer } from '../../components/ui/Footer';
 import { GoToTop } from '../../components/ui/GoToTop';
 import { Navbar } from '../../components/ui/Navbar';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // ─── CountUp: animates a number when it scrolls into view ───────────────────
 function CountUp({
@@ -75,6 +75,7 @@ function CountUp({
 
 export default function LandingPage() {
   const { token } = useStore();
+  const { t } = useTranslation();
   const [activeFeature, setActiveFeature] = useState(0);
 
   // Always start from the top when the page loads
@@ -84,46 +85,39 @@ export default function LandingPage() {
 
   const features = [
     {
-      title: 'Daily Timetable',
-      desc: 'Time-block your day into focused slots. Maximize deep work and structure your applications follow-ups.',
+      title: t.dailyTimetable,
+      desc: t.dailyTimetableDesc,
       icon: Calendar,
       color: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
       accent: '#3B82F6'
     },
     {
-      title: 'Habit Tracker',
-      desc: 'Develop continuous routines. Log checks in weekly rows and watch active streaks maintain consistency.',
+      title: t.habitTracker,
+      desc: t.habitTrackerDesc,
       icon: CheckSquare,
       color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
       accent: '#10B981'
     },
     {
-      title: 'Weekly Goals',
-      desc: 'Formulate weekly benchmarks. Strive for weekly checklist milestones and map out target due days.',
+      title: t.weeklyGoals,
+      desc: t.weeklyGoalsDesc,
       icon: Target,
       color: 'text-pink-500 bg-pink-500/10 border-pink-500/20',
       accent: '#EC4899'
     },
     {
-      title: 'Topics Progress',
-      desc: 'Construct structured learning curves. Break courses into checklists and track percentage curves.',
+      title: t.studyPlanner,
+      desc: t.studyPlannerDesc,
       icon: BookOpen,
       color: 'text-purple-500 bg-purple-500/10 border-purple-500/20',
       accent: '#8B5CF6'
     },
     {
-      title: 'Application Tracker',
-      desc: 'Log company listings with clinical precision. Track OA links, status cycles, and scheduled dates.',
+      title: t.jobAppTracker,
+      desc: t.jobAppTrackerDesc,
       icon: Briefcase,
       color: 'text-slate-600 bg-slate-600/10 border-slate-600/20',
       accent: '#475569'
-    },
-    {
-      title: 'Daily Motivation',
-      desc: 'Curate quote logs. Favorite lines and write custom notes to spark active focus during the hunt.',
-      icon: Sun,
-      color: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
-      accent: '#F59E0B'
     },
   ];
 
@@ -371,7 +365,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
                 className="block bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent font-black"
               >
-                Plan your day.
+                {t.planYourDay}
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, y: 15 }}
@@ -379,7 +373,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
                 className="block bg-gradient-to-r from-emerald-600 via-teal-650 to-emerald-700 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-450 bg-clip-text text-transparent font-black"
               >
-                Build your habits.
+                {t.buildYourHabits}
               </motion.span>
             </h1>
 
@@ -389,7 +383,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="text-base md:text-lg text-slate-650 dark:text-slate-350 font-medium max-w-lg leading-relaxed select-none"
             >
-              The all-in-one career dashboard designed for high-performance job seekers. Organize your hunt, track learning goals, and follow habits with clinical precision.
+              {t.heroSubtitle}
             </motion.p>
 
             <motion.div
@@ -401,20 +395,20 @@ export default function LandingPage() {
               {token ? (
                 <Link to="/overview">
                   <Button variant="gradient" size="lg" className="font-extrabold px-8 py-4 shadow-xl hover:scale-[1.03] active:scale-95 transition-all duration-300 rounded-full">
-                    Go to Dashboard <ArrowRight size={17} className="ml-1.5" />
+                    {t.goToDashboard} <ArrowRight size={17} className="ml-1.5" />
                   </Button>
                 </Link>
               ) : (
                 <Link to="/register">
                   <Button variant="gradient" size="lg" className="font-extrabold px-8 py-4 shadow-xl hover:scale-[1.03] active:scale-95 transition-all duration-300 rounded-full">
-                    Get Started Free <ArrowRight size={17} className="ml-1.5" />
+                    {t.getStartedFree} <ArrowRight size={17} className="ml-1.5" />
                   </Button>
                 </Link>
               )}
               <a href="#demo">
                 <button className="inline-flex items-center justify-center font-bold text-sm px-6 py-4 gap-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-855 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/80 active:scale-95 transition-all duration-200 bg-white/60 dark:bg-slate-900/30 backdrop-blur-md shadow-sm hover:shadow hover:text-slate-900 dark:hover:text-white cursor-pointer">
                   <Play size={14} fill="currentColor" className="text-emerald-500 mr-0.5" />
-                  See how it works
+                  {t.seeHowItWorks}
                 </button>
               </a>
             </motion.div>

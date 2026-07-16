@@ -24,6 +24,7 @@ import { CalendarPicker } from '../components/ui/CalendarPicker';
 
 import { Logo } from '../components/ui/Logo';
 import { GoToTop } from '../components/ui/GoToTop';
+import { LanguageSelector } from '../components/ui/LanguageSelector';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -169,6 +170,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button>
             </div>
 
+
+            {/* Language Selector */}
+            <LanguageSelector />
 
             {/* Theme Toggle Button */}
             <button 

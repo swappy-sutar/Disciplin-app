@@ -36,6 +36,10 @@ interface UIState {
   accentColor: 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose';
   setAccentColor: (color: 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose') => void;
   
+  // Language state
+  language: 'en' | 'hi' | 'mr';
+  setLanguage: (lang: 'en' | 'hi' | 'mr') => void;
+  
   // Actions
   setActiveDate: (date: string) => void;
   setActiveWeekStart: (weekStart: string) => void;
@@ -93,6 +97,7 @@ export const useStore = create<UIState>((set) => {
     token: storedToken || null,
     theme: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_theme') : 'light') as 'light' | 'dark' || 'light',
     accentColor: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_accent_color') : 'emerald') as any || 'emerald',
+    language: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_language') : 'en') as any || 'en',
     
     toggleTheme: () => set((state) => {
       const nextTheme = state.theme === 'light' ? 'dark' : 'light';
@@ -121,6 +126,13 @@ export const useStore = create<UIState>((set) => {
         applyAccentColor(color);
       }
       return { accentColor: color };
+    }),
+
+    setLanguage: (lang) => set(() => {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('disciplin_language', lang);
+      }
+      return { language: lang };
     }),
     
     setActiveDate: (date) => set({ activeDate: date }),
