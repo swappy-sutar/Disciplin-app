@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { User } from '../types';
+import { sendSystemNotification } from '../utils/notifications';
 
 export const colorsMap = {
   blue: { primary: '#3B82F6', hover: '#2563EB' },
@@ -181,6 +182,10 @@ export const useStore = create<UIState>((set) => {
         isRead: false,
         type,
       };
+      
+      // Fire native system notification (desktop / mobile notification shade)
+      sendSystemNotification(title, message);
+
       return { notifications: [newNotification, ...state.notifications] };
     }),
     markAllAsRead: () => set((state) => ({

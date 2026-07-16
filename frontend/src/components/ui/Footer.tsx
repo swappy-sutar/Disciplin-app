@@ -3,15 +3,15 @@ import { Logo } from './Logo';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-50/60 dark:bg-slate-950/65 backdrop-blur-md border-t border-slate-200/50 dark:border-slate-900/60 pt-16 pb-8 select-none text-xs text-slate-500 dark:text-slate-400 font-semibold relative z-10 w-full overflow-hidden">
+    <footer className="bg-slate-50/60 dark:bg-slate-950/65 backdrop-blur-md border-t border-slate-200/50 dark:border-slate-900/60 pt-10 pb-6 select-none text-xs text-slate-500 dark:text-slate-400 font-semibold relative z-10 w-full overflow-hidden">
       {/* Subtle ambient gradient glow behind footer content */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-emerald-500/5 dark:bg-emerald-500/8 blur-[120px] rounded-full pointer-events-none -z-10" />
 
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 border-b border-slate-200/60 dark:border-slate-850/60 pb-12">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-6 border-b border-slate-200/60 dark:border-slate-850/60 pb-8">
 
         {/* Column 1: Logo, description, and social icons */}
-        <div className="col-span-2 md:col-span-5 space-y-5 text-left">
-          <Logo className="h-9 md:h-11" />
+        <div className="col-span-2 md:col-span-5 space-y-3.5 text-left">
+          <Logo className="h-12 md:h-14" />
           <p className="max-w-xs leading-relaxed text-slate-400 dark:text-slate-500 font-medium">
             Helping you land your dream role through systematic organization and habit excellence.
           </p>
@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
 
         {/* Column 2: Platform / Product */}
         <div className="col-span-1 md:col-span-2 space-y-3 text-left">
-          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-4">Product</span>
+          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-2.5">Product</span>
           <a href="#features" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Features</a>
           <a href="#demo" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Solutions</a>
           <a href="#pricing" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Pricing</a>
@@ -67,14 +67,14 @@ export const Footer: React.FC = () => {
 
         {/* Column 3: Legal */}
         <div className="col-span-1 md:col-span-2 space-y-3 text-left">
-          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-4">Legal</span>
+          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-2.5">Legal</span>
           <a href="#" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Privacy Policy</a>
           <a href="#" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Terms of Service</a>
         </div>
 
         {/* Column 4: Newsletter Stay Updated */}
         <div className="col-span-2 md:col-span-3 space-y-3.5 text-left">
-          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-4">Stay Updated</span>
+          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-2.5">Stay Updated</span>
           <p className="leading-relaxed text-slate-400 dark:text-slate-500 font-medium">
             Subscribe to our newsletter for productivity insights, release updates, and community news.
           </p>
@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Bottom copyright credits and operational status bar */}
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 dark:text-slate-500 text-xs font-semibold">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-400 dark:text-slate-500 text-xs font-semibold">
         <p className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left font-medium">
           <span>© 2026 Swapnil Sutar. All rights reserved.</span>
           <span className="hidden sm:inline text-slate-200 dark:text-slate-850">|</span>

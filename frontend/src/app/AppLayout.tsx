@@ -76,9 +76,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   // Nav items details
   const navItems = [
-    { name: 'Overview', path: '/overview', icon: LayoutDashboard },
     { name: 'Habits', path: '/habits', icon: CheckSquare },
     { name: 'Goals', path: '/goals', icon: Target },
+    { name: 'Overview', path: '/overview', icon: LayoutDashboard },
     { name: 'Applications', path: '/applications', icon: Briefcase },
     { name: 'Topics', path: '/topics', icon: BookOpen },
   ];
@@ -332,18 +332,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </main>
 
       {/* Sticky Bottom Nav Bar for Mobile Devices */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around h-16 z-40 shadow-lg px-2 select-none">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-950 border-t border-slate-200/50 dark:border-slate-900/60 flex items-center justify-around h-16 z-40 shadow-lg px-2 select-none backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) => `
-              flex flex-col items-center justify-center flex-1 h-full text-[10px] font-medium transition-colors
-              ${isActive ? 'text-primary-blue font-semibold' : 'text-gray-400 hover:text-gray-600'}
+              flex flex-col items-center justify-center flex-1 h-full text-[10px] font-bold transition-all duration-300
+              ${isActive 
+                ? 'text-primary-blue dark:text-emerald-400 scale-105' 
+                : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }
             `}
           >
-            <item.icon size={20} className="mb-0.5" />
-            {item.name}
+            <item.icon size={19} className="mb-0.5" />
+            <span>{item.name}</span>
           </NavLink>
         ))}
       </nav>

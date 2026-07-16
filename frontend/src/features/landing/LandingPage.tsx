@@ -695,14 +695,14 @@ export default function LandingPage() {
             </p>
           </div>
 
-           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch pt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch pt-6">
 
             {/* Mobile Tab Selector (Swipeable, visible only on < lg) */}
             <div className="lg:hidden flex flex-row overflow-x-auto gap-2.5 pb-2 px-1 scrollbar-none snap-x snap-mandatory w-full max-w-full">
               {demoFeatures.map((item, index) => {
                 const isActive = activeFeature === index;
                 const TabIcon = index === 0 ? Calendar : index === 1 ? CheckSquare : index === 2 ? Target : Briefcase;
-                
+
                 return (
                   <button
                     key={item.id}
