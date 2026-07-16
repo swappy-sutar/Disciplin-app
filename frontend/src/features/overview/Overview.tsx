@@ -179,19 +179,7 @@ export default function Overview() {
 
   const { timetable, progress, habits, weeklyGoals, topics, applications, quote } = summary;
 
-  const getBlockTag = (title: string): string => {
-    const hasTag = title.includes('[') && title.includes(']');
-    if (hasTag) {
-      const match = title.match(/\[(.*?)\]/);
-      return match ? match[1] : 'General';
-    }
-    return 'General';
-  };
-
-  const focusBlocks = timetable.filter(b => {
-    const tag = getBlockTag(b.title);
-    return tag === 'Work' || tag === 'Study';
-  });
+  const focusBlocks = timetable;
 
   const completedFocusHours = focusBlocks
     .filter(b => b.isDone)
@@ -720,8 +708,8 @@ export default function Overview() {
                 <span className="text-xs text-gray-400 font-semibold select-none">Applied today</span>
               </div>
               
-              <PillBadge trend="up">
-                {compareMode ? '+34 vs yesterday' : '+34 vs last week'}
+              <PillBadge trend={applications.todayCount > 0 ? "up" : "none"}>
+                {applications.todayCount > 0 ? `+${applications.todayCount} today` : `+${applications.weeklyCount} this week`}
               </PillBadge>
             </div>
 
