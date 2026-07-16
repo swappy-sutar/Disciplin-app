@@ -639,7 +639,7 @@ export default function LandingPage() {
                     }
                   }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="p-6 md:p-8 flex flex-col items-start text-left bg-white dark:bg-slate-900 border border-gray-100/50 dark:border-slate-800/80 rounded-2xl relative overflow-hidden group shadow-sm h-full cursor-pointer select-none transition-colors duration-300"
+                  className="p-5 sm:p-6 flex flex-col items-start text-left bg-white dark:bg-slate-900 border border-gray-100/50 dark:border-slate-800/80 rounded-2xl relative overflow-hidden group shadow-sm h-full cursor-pointer select-none transition-colors duration-300"
                 >
                   {/* Corner hover glow effect */}
                   <div
@@ -647,18 +647,22 @@ export default function LandingPage() {
                     style={{ backgroundColor: `${item.accent}15` }}
                   />
 
-                  <div className={`flex items-center gap-3 w-full p-2.5 px-4 rounded-xl border ${item.color} mb-4 transition-all duration-300`}>
+                  {/* Icon and Title Row */}
+                  <div className="flex items-center gap-3.5 mb-3.5 w-full">
                     <motion.div
                       variants={{
-                        hover: { scale: 1.15, rotate: 8 }
+                        hover: { scale: 1.12, rotate: 6 }
                       }}
                       transition={{ type: "spring", stiffness: 300, damping: 12 }}
+                      className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${item.color} transition-all duration-300`}
                     >
-                      <item.icon size={18} className="shrink-0" />
+                      <item.icon size={19} className="shrink-0" />
                     </motion.div>
-                    <span className="font-extrabold text-sm tracking-tight">{item.title}</span>
+                    <span className="font-extrabold text-[15px] sm:text-[16px] text-gray-900 dark:text-white tracking-tight leading-tight">{item.title}</span>
                   </div>
-                  <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-semibold leading-relaxed select-none">
+
+                  {/* Description */}
+                  <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed select-none">
                     {item.desc}
                   </p>
                 </motion.div>
