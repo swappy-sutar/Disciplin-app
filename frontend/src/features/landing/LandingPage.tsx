@@ -1043,7 +1043,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto space-y-4 text-left">
+        <div className="w-full space-y-4 text-left">
           {[
             { q: t.faq1Q, a: t.faq1A },
             { q: t.faq2Q, a: t.faq2A },
