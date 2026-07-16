@@ -12,6 +12,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton';
 import { BarChart } from '../../components/charts/BarChart';
 import { StepChart } from '../../components/charts/StepChart';
 import { format, parseISO, addDays, endOfWeek } from 'date-fns';
+import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Flame, 
   CheckSquare, 
@@ -22,6 +23,7 @@ import {
 
 export default function Habits() {
   const { activeDate, activeWeekStart, setActiveWeekStart, addNotification } = useStore();
+  const { t } = useTranslation();
   const [isAddOpen, setAddOpen] = useState(false);
   const [newHabitName, setNewHabitName] = useState('');
   const [newHabitColor, setNewHabitColor] = useState('#3B82F6');
@@ -145,7 +147,7 @@ export default function Habits() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-none">
-            Habit Tracker
+            {t.habitsTitle}
           </h1>
           <p className="text-sm font-medium text-gray-400 mt-2 select-none">
             Track your daily systems and build long-term consistency.
@@ -156,7 +158,7 @@ export default function Habits() {
           onClick={() => setAddOpen(true)}
           className="md:self-center select-none"
         >
-          Add Habit
+          {t.createHabit}
         </Button>
       </div>
 
@@ -170,7 +172,7 @@ export default function Habits() {
           {/* glow blob */}
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Today's Progress</span>
+            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">{t.totalCompletion}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{todayProgress}<span className="text-lg">%</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{todayLogs} of {activeCount} done</span>
           </div>
@@ -187,7 +189,7 @@ export default function Habits() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-400 to-rose-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-orange-500/10 dark:bg-orange-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-widest">Longest Streak</span>
+            <span className="text-[9px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-widest">{t.longestStreak}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{longestStreak}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Days</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Best personal record</span>
           </div>
@@ -201,7 +203,7 @@ export default function Habits() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-blue to-indigo-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-primary-blue/10 dark:bg-primary-blue/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-primary-blue dark:text-emerald-400 uppercase tracking-widest">Active Habits</span>
+            <span className="text-[9px] font-bold text-primary-blue dark:text-emerald-400 uppercase tracking-widest">{t.activeHabits}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{activeCount}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Active</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Habits in progress</span>
           </div>

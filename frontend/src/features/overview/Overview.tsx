@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { CalendarPicker } from '../../components/ui/CalendarPicker';
 import { notifySuccessCelebration } from '../../utils/celebration';
+import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Heart, 
   Plus, 
@@ -48,6 +49,8 @@ export default function Overview() {
     setCompareMode,
     addNotification
   } = useStore();
+
+  const { t } = useTranslation();
 
   const handlePrevDay = () => {
     const prev = subDays(new Date(activeDate), 1);
@@ -261,7 +264,7 @@ export default function Overview() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-            Today's Overview
+            {t.todayOverview}
           </h1>
           <div className="flex items-center gap-1 mt-1.5 text-sm text-gray-500 dark:text-slate-400">
             <button 
@@ -310,7 +313,7 @@ export default function Overview() {
           
           {/* Daily Timetable */}
           <Card 
-            title="Daily Timetable" 
+            title={t.dailyTimetable} 
             className="order-1 md:order-none"
             icon={Calendar}
             iconColor="text-blue-500 bg-blue-500/10 border-blue-500/20"
@@ -419,7 +422,7 @@ export default function Overview() {
 
           {/* Topics card */}
           <Card 
-            title="Topics to Finish"
+            title={t.topicsTitle}
             className="order-5 md:order-none"
             icon={BookOpen}
             iconColor="text-purple-500 bg-purple-500/10 border-purple-500/20"
@@ -506,7 +509,7 @@ export default function Overview() {
           
           {/* Habit Tracker */}
           <Card 
-            title="Habit Tracker" 
+            title={t.habitTracker} 
             className="order-3 md:order-none"
             icon={CheckCircle}
             iconColor="text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
@@ -580,7 +583,7 @@ export default function Overview() {
 
           {/* Application Tracker */}
           <Card 
-            title="Application Tracker"
+            title={t.applicationsTitle}
             className="order-6 md:order-none"
             icon={Briefcase}
             iconColor="text-gray-600 bg-gray-500/10 border-gray-500/20 dark:text-slate-400 dark:bg-slate-900/30 dark:border-slate-800/80"
@@ -667,7 +670,7 @@ export default function Overview() {
           
           {/* Day Progress Tracker */}
           <Card 
-            title="Day Progress"
+            title={t.completionRate}
             className="order-2 md:order-none"
             icon={Activity}
             iconColor="text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
@@ -691,7 +694,7 @@ export default function Overview() {
 
           {/* Weekly Goals */}
           <Card 
-            title="Weekly Goals" 
+            title={t.goalsTitle} 
             className="order-4 md:order-none"
             icon={Target}
             iconColor="text-pink-500 bg-pink-500/10 border-pink-500/20"

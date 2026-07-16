@@ -9,6 +9,7 @@ import { Modal } from '../../components/ui/Modal';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 import { StatCard } from '../../components/ui/StatCard';
 import { format, parseISO } from 'date-fns';
+import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Search, 
   Filter, 
@@ -25,6 +26,7 @@ import type { ApplicationStatus, Application } from '../../types';
 
 export default function Applications() {
   const { activeDate } = useStore();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   
@@ -177,7 +179,7 @@ export default function Applications() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-none">
-            Job Search Tracker
+            {t.applicationsTitle}
           </h1>
           <p className="text-sm font-medium text-gray-400 mt-2 select-none">
             Manage your recruitment stages, follow-up dates, and active offers.
@@ -191,7 +193,7 @@ export default function Applications() {
           }}
           className="md:self-center select-none"
         >
-          Add Application
+          {t.logApplication}
         </Button>
       </div>
 
@@ -219,8 +221,8 @@ export default function Applications() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 select-none">
         <StatCard
-          label="Today's Logged Total"
-          value={`${todayApps.length} Job Apps`}
+          label={t.todayLogged}
+          value={`${todayApps.length} ${t.jobAppsLabel}`}
           icon={<Briefcase size={18} />}
           accentColor="blue"
           iconBgColor="bg-blue-50/80 text-blue-500 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30"
@@ -229,8 +231,8 @@ export default function Applications() {
         />
 
         <StatCard
-          label="Weekly Submitted"
-          value={`${weeklyCount} Job Apps`}
+          label={t.weeklySubmitted}
+          value={`${weeklyCount} ${t.jobAppsLabel}`}
           icon={<CheckCircle size={18} />}
           accentColor="green"
           iconBgColor="bg-emerald-50/80 text-emerald-500 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30"
@@ -239,8 +241,8 @@ export default function Applications() {
         />
 
         <StatCard
-          label="Active Interview Tracks"
-          value={`${applications.filter(a => a.status === 'Interview').length} Scheduled`}
+          label={t.activeInterviews}
+          value={`${applications.filter(a => a.status === 'Interview').length} ${t.scheduledInterviews}`}
           icon={<Edit2 size={18} />}
           accentColor="violet"
           iconBgColor="bg-purple-50/80 text-purple-500 dark:bg-purple-950/30 dark:text-purple-400 border border-purple-100/50 dark:border-purple-900/30"
@@ -260,7 +262,7 @@ export default function Applications() {
           </span>
           <input
             type="text"
-            placeholder="Search by company name, role title or notes..."
+            placeholder={t.searchApps}
             value={searchTerm}
             onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:border-primary-blue shadow-sm font-medium"

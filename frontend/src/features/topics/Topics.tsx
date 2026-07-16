@@ -11,6 +11,7 @@ import { Modal } from '../../components/ui/Modal';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DonutChart } from '../../components/charts/DonutChart';
+import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Search, 
   Filter, 
@@ -92,6 +93,7 @@ const getMocksForTopic = (title: string) => {
 
 export default function Topics() {
   const { addNotification } = useStore();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   
@@ -1068,7 +1070,7 @@ export default function Topics() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-            Topics to Complete
+            {t.topicsTitle}
           </h1>
           <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2 select-none">
             Track your learning progress and master your curriculum systematically.
@@ -1081,7 +1083,7 @@ export default function Topics() {
           onClick={() => setAddOpen(true)}
           className="md:self-center select-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]"
         >
-          Add Topic
+          {t.createTopic}
         </Button>
       </div>
 
@@ -1093,9 +1095,9 @@ export default function Topics() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Total Topics</span>
+            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">{t.totalTopics}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{totalTopicsCount}</span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Curriculum modules</span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{t.curriculumModules}</span>
           </div>
           <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 dark:from-emerald-500/25 dark:to-teal-500/15 border border-emerald-500/15">
             <BookOpen size={18} className="text-emerald-500" />
@@ -1107,7 +1109,7 @@ export default function Topics() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-blue-500/10 dark:bg-blue-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">Completed</span>
+            <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">{t.topicsCompleted}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{completedTopicsCount}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Topics</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{totalTopicsCount - completedTopicsCount} remaining</span>
           </div>
@@ -1121,7 +1123,7 @@ export default function Topics() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-400 to-purple-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-violet-500/10 dark:bg-violet-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">Overall Progress</span>
+            <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">{t.overallTopicsProgress}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{overallProgressPercent}<span className="text-lg">%</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Curriculum coverage rate</span>
           </div>
@@ -1146,7 +1148,7 @@ export default function Topics() {
           </span>
           <input
             type="text"
-            placeholder="Search topics by name or category..."
+            placeholder={t.searchTopics}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:border-emerald-500 shadow-sm font-medium"

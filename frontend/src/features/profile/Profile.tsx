@@ -6,10 +6,12 @@ import { Button } from '../../components/ui/Button';
 import { toast } from 'react-hot-toast';
 import { User as UserIcon, Mail, Lock, ArrowLeft, Eye, EyeOff, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, token, setAuth } = useStore();
+  const { t } = useTranslation();
   const [name, setName] = useState(user?.name || '');
   const email = user?.email || '';
   const [password, setPassword] = useState('');
@@ -95,7 +97,7 @@ export default function Profile() {
         </button>
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
-            Account Settings
+            {t.profileSettings}
           </h1>
           <p className="text-sm text-gray-400 dark:text-gray-500 mt-1.5 font-semibold">
             Manage your personal details and account credentials.
@@ -108,7 +110,7 @@ export default function Profile() {
           {/* Name Field */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
-              Full Name
+              {t.fullName}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
@@ -127,7 +129,7 @@ export default function Profile() {
           {/* Email Field */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
-              Email Address
+              {t.emailAddress}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
@@ -153,7 +155,7 @@ export default function Profile() {
               {/* New Password */}
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
-                  New Password
+                  {t.newPassword}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
@@ -180,7 +182,7 @@ export default function Profile() {
               {/* Confirm Password */}
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
-                  Confirm Password
+                  {t.confirmPassword}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
@@ -211,7 +213,7 @@ export default function Profile() {
             <div>
               <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <Bell size={15} className="text-emerald-500" />
-                <span>Notification Settings</span>
+                <span>{t.notificationsTitle}</span>
               </h3>
               <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold mt-0.5">
                 Configure browser-level push updates on your laptop or mobile.
@@ -220,7 +222,7 @@ export default function Profile() {
 
             <div className="flex items-center justify-between bg-canvas-bg/60 dark:bg-slate-900/50 border border-gray-100/50 dark:border-slate-800/60 p-4 rounded-2xl">
               <div className="space-y-0.5 text-left">
-                <p className="text-xs font-bold text-gray-800 dark:text-slate-200">System Notifications</p>
+                <p className="text-xs font-bold text-gray-800 dark:text-slate-200">{t.systemNotifications}</p>
                 <p className="text-[10px] text-gray-400 dark:text-slate-500 font-semibold max-w-[340px]">
                   Receive instant system alerts when completing review checklists, streaks, and focus blocks.
                   Ensure browser permissions are allowed.
@@ -251,7 +253,7 @@ export default function Profile() {
               disabled={isLoading}
               className="px-8 py-3.5 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/10 cursor-pointer"
             >
-              {isLoading ? 'Saving Changes...' : 'Save Settings'}
+              {isLoading ? 'Saving Changes...' : t.saveChanges}
             </Button>
           </div>
         </form>

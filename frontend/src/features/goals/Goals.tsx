@@ -12,6 +12,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { BarChart } from '../../components/charts/BarChart';
 import { format, parseISO, addDays, endOfWeek, subDays } from 'date-fns';
+import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Flag, 
   ChevronLeft, 
@@ -28,6 +29,7 @@ import {
 
 export default function Goals() {
   const { activeWeekStart, setActiveWeekStart, addNotification } = useStore();
+  const { t } = useTranslation();
   const [isAddOpen, setAddOpen] = useState(false);
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const [newGoalDueDay, setNewGoalDueDay] = useState('');
@@ -129,7 +131,7 @@ export default function Goals() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-none flex items-center gap-2">
-            Weekly Goals
+            {t.goalsTitle}
           </h1>
           <p className="text-sm font-medium text-gray-400 mt-2 select-none">
             Break down your vision into manageable weekly focus items.
@@ -160,7 +162,7 @@ export default function Goals() {
             onClick={() => setAddOpen(true)}
             className="select-none"
           >
-            Add Goal
+            {t.createGoal}
           </Button>
         </div>
       </div>
@@ -173,7 +175,7 @@ export default function Goals() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-blue-500/10 dark:bg-blue-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">Goals This Week</span>
+            <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">{t.activeGoals}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{totalGoals}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Active</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{totalGoals - doneGoals} remaining</span>
           </div>
@@ -187,7 +189,7 @@ export default function Goals() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Completed</span>
+            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">{t.goalsCompleted}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{doneGoals}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Goals</span></span>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{doneGoals} of {totalGoals} done</span>
           </div>
@@ -201,9 +203,9 @@ export default function Goals() {
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-400 to-purple-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-violet-500/10 dark:bg-violet-500/15 blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">Completion Rate</span>
+            <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">{t.completionRate}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{completionRate}<span className="text-lg">%</span></span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Weekly target progress</span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{t.overallGoalsProgress}</span>
           </div>
           <div className="absolute bottom-3 right-3">
             <div className="relative">

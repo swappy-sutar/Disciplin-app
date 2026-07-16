@@ -25,6 +25,7 @@ import { CalendarPicker } from '../components/ui/CalendarPicker';
 import { Logo } from '../components/ui/Logo';
 import { GoToTop } from '../components/ui/GoToTop';
 import { LanguageSelector } from '../components/ui/LanguageSelector';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -46,6 +47,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     clearNotifications
   } = useStore();
 
+  const { t } = useTranslation();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -77,11 +79,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   // Nav items details
   const navItems = [
-    { name: 'Habits', path: '/habits', icon: CheckSquare },
-    { name: 'Goals', path: '/goals', icon: Target },
-    { name: 'Overview', path: '/overview', icon: LayoutDashboard },
-    { name: 'Applications', path: '/applications', icon: Briefcase },
-    { name: 'Topics', path: '/topics', icon: BookOpen },
+    { name: t.habits, path: '/habits', icon: CheckSquare },
+    { name: t.goals, path: '/goals', icon: Target },
+    { name: t.overview, path: '/overview', icon: LayoutDashboard },
+    { name: t.applications, path: '/applications', icon: Briefcase },
+    { name: t.topics, path: '/topics', icon: BookOpen },
   ];
 
   // Shifting dates
@@ -308,7 +310,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       className="w-full text-left px-3.5 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 cursor-pointer transition-colors block"
                     >
                       <UserIcon size={13} className="text-gray-400 dark:text-gray-500" />
-                      Account Settings
+                      {t.accountSettings}
                     </Link>
                     <button
                       onClick={() => {
@@ -318,7 +320,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       className="w-full text-left px-3.5 py-1.5 text-xs text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <LogOut size={13} />
-                      Sign Out
+                      {t.signOut}
                     </button>
                   </div>
                 </>
