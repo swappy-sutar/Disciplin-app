@@ -63,6 +63,7 @@ export const Footer: React.FC = () => {
           <a href="#features" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Features</a>
           <a href="#demo" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Solutions</a>
           <a href="#faq" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">FAQ</a>
+          <a href="/contact" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Contact Us</a>
         </div>
 
         {/* Column 3: Legal */}

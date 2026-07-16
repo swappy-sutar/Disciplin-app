@@ -18,6 +18,7 @@ import Profile from './features/profile/Profile';
 import ResetPassword from './features/auth/ResetPassword';
 import VerifyEmail from './features/auth/VerifyEmail';
 import NotFound from './components/NotFound';
+import ContactUs from './features/contact/ContactUs';
 
 import { Logo } from './components/ui/Logo';
 
@@ -213,6 +214,14 @@ function App() {
           <Route
             path="/"
             element={<LandingPage />}
+          />
+          <Route
+            path="/contact"
+            element={<ContactUs />}
+          />
+          <Route
+            path="/contact-us"
+            element={<ContactUs />}
           />
           <Route
             path="/overview"
