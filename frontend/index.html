@@ -1,41 +1,56 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#10B981" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    
-    <!-- Primary SEO Metadata -->
-    <title>Disciplin — Ultimate Habit Tracker, Daily Planner & Career Cockpit</title>
-    <meta name="description" content="Disciplin is a premium, state-of-the-art productivity dashboard. Track daily timetables, habits, weekly goals, study progress, and job applications with clean, high-performance precision." />
-    <meta name="keywords" content="Disciplin, Disciplin app, habit tracker, daily planner, productivity dashboard, career tracker, study progress, timetable scheduler, job application tracker, streak builder" />
-    <meta name="author" content="Swapnil Sutar" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://disciplin.app/" />
 
-    <!-- Open Graph / Facebook / LinkedIn -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://disciplin.app/" />
-    <meta property="og:title" content="Disciplin — Ultimate Habit Tracker & Career Cockpit" />
-    <meta property="og:description" content="Ditch the messy spreadsheets. Organize daily timetables, weekly goals, study checklists, habit streaks, and job applications in one unified workspace." />
-    <meta property="og:image" content="https://disciplin.app/disciplin_logo_system.svg" />
-    <meta property="og:site_name" content="Disciplin" />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#10B981" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://disciplin.app/" />
-    <meta name="twitter:title" content="Disciplin — Ultimate Habit Tracker & Career Cockpit" />
-    <meta name="twitter:description" content="Organize daily timetables, weekly goals, study checklists, habit streaks, and job applications in one unified workspace." />
-    <meta name="twitter:image" content="https://disciplin.app/disciplin_logo_system.svg" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LE7PN8KGKK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-    <!-- Structured Data (JSON-LD) for Search Engine Rich Snippets -->
-    <script type="application/ld+json">
+    gtag('config', 'G-LE7PN8KGKK');
+  </script>
+
+  <!-- Primary SEO Metadata -->
+  <title>Disciplin — Ultimate Habit Tracker, Daily Planner & Career Cockpit</title>
+  <meta name="description"
+    content="Disciplin is a premium, state-of-the-art productivity dashboard. Track daily timetables, habits, weekly goals, study progress, and job applications with clean, high-performance precision." />
+  <meta name="keywords"
+    content="Disciplin, Disciplin app, habit tracker, daily planner, productivity dashboard, career tracker, study progress, timetable scheduler, job application tracker, streak builder" />
+  <meta name="author" content="Swapnil Sutar" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://disciplin.app/" />
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://disciplin.app/" />
+  <meta property="og:title" content="Disciplin — Ultimate Habit Tracker & Career Cockpit" />
+  <meta property="og:description"
+    content="Ditch the messy spreadsheets. Organize daily timetables, weekly goals, study checklists, habit streaks, and job applications in one unified workspace." />
+  <meta property="og:image" content="https://disciplin.app/disciplin_logo_system.svg" />
+  <meta property="og:site_name" content="Disciplin" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://disciplin.app/" />
+  <meta name="twitter:title" content="Disciplin — Ultimate Habit Tracker & Career Cockpit" />
+  <meta name="twitter:description"
+    content="Organize daily timetables, weekly goals, study checklists, habit streaks, and job applications in one unified workspace." />
+  <meta name="twitter:image" content="https://disciplin.app/disciplin_logo_system.svg" />
+
+  <!-- Structured Data (JSON-LD) for Search Engine Rich Snippets -->
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -61,19 +76,21 @@
       }
     </script>
 
-    <!-- Google Fonts: Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      }
-    </style>
-  </head>
-  <body class="bg-[#0b0c10] text-gray-100 min-h-screen selection:bg-indigo-500/30 selection:text-indigo-200">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+  </style>
+</head>
 
+<body class="bg-[#0b0c10] text-gray-100 min-h-screen selection:bg-indigo-500/30 selection:text-indigo-200">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
