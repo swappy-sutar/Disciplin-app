@@ -322,15 +322,16 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-canvas-bg text-gray-800 selection:bg-blue-500/10 selection:text-blue-600 relative overflow-hidden font-sans pt-16">
+    <div className="min-h-screen bg-canvas-bg text-gray-800 selection:bg-emerald-500/10 selection:text-emerald-500 relative overflow-hidden font-sans pt-16">
       
-      {/* Glow mesh background graphics */}
-      <div className="absolute top-[-10%] left-[-20%] w-[60%] h-[50%] bg-blue-200/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-[-5%] right-[-10%] w-[50%] h-[40%] bg-purple-200/20 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-pink-100/15 blur-[120px] rounded-full pointer-events-none" />
+      {/* Cinematic Spotlight mesh background graphics */}
+      <div className="absolute top-[-15%] left-[-15%] w-[65%] h-[60%] bg-emerald-400/15 dark:bg-emerald-500/10 blur-[130px] rounded-full pointer-events-none animate-pulse duration-[10s]" />
+      <div className="absolute top-[-10%] right-[-10%] w-[55%] h-[50%] bg-teal-400/15 dark:bg-teal-500/8 blur-[120px] rounded-full pointer-events-none animate-pulse duration-[12s] delay-[2s]" />
+      <div className="absolute bottom-[15%] right-[-5%] w-[45%] h-[45%] bg-cyan-400/10 dark:bg-cyan-500/5 blur-[110px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[5%] left-[-10%] w-[40%] h-[40%] bg-indigo-400/8 dark:bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
       
       {/* Decorative dot-mesh background */}
-      <div className="absolute inset-0 bg-[radial-gradient(#E5E7EB_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#E2E8F0_1px,transparent_1px)] dark:bg-[radial-gradient(#1E293B_1px,transparent_1px)] [background-size:24px_24px] opacity-60 dark:opacity-40 pointer-events-none" />
 
       {/* 1. Header/Navigation */}
       <Navbar />
@@ -339,35 +340,36 @@ export default function LandingPage() {
       <section className="w-full min-h-[calc(100vh-64px)] flex flex-col justify-between relative z-10">
 
         {/* ── Hero grid (vertically centered in remaining space) ── */}
-        <div className="flex-1 max-w-[1440px] mx-auto w-full px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-10">
+        <div className="flex-1 max-w-[1440px] mx-auto w-full px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 md:py-16">
 
         {/* Left main text details */}
         <motion.div 
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="lg:col-span-6 space-y-6 text-left"
         >
-          {/* Beta/Status Badge */}
-          <div className="inline-flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 text-primary-blue dark:text-blue-400 px-3 py-1 rounded-full text-xs font-bold shadow-sm select-none">
-            <Zap size={12} fill="currentColor" />
+          {/* Beta/Status Badge with subtle pulsing ring */}
+          <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-450 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm select-none animate-fade-in relative overflow-hidden group">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping absolute left-3" />
+            <Zap size={11} fill="currentColor" className="ml-2.5" />
             <span>Introducing v1.0 Release</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black text-gray-900 dark:text-white tracking-tight leading-[1.08] flex flex-col">
+          <h1 className="text-4xl md:text-5xl lg:text-[62px] font-black tracking-tight leading-[1.05] flex flex-col">
             <motion.span
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-              className="block"
+              transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+              className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent"
             >
               Plan your day.
             </motion.span>
             <motion.span
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-              className="block"
+              transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+              className="block bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent"
             >
               Build your habits.
             </motion.span>
@@ -376,35 +378,35 @@ export default function LandingPage() {
           <motion.p 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="text-base md:text-lg text-gray-600 dark:text-gray-300 font-medium max-w-lg leading-relaxed select-none"
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-base md:text-lg text-slate-650 dark:text-slate-350 font-medium max-w-lg leading-relaxed select-none"
           >
-            The all-in-one career dashboard designed for high-performance job seekers. Organize your hunt, tracks learning goals, and follow habits with clinical precision.
+            The all-in-one career dashboard designed for high-performance job seekers. Organize your hunt, track learning goals, and follow habits with clinical precision.
           </motion.p>
 
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.9 }}
-            className="flex flex-wrap gap-4 pt-2 select-none"
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="flex flex-wrap gap-4 pt-3 select-none"
           >
             {token ? (
               <Link to="/overview">
-                <Button size="lg" className="font-semibold shadow-md shadow-blue-500/10 hover:scale-[1.02] active:scale-95 transition-transform">
-                  Go to Dashboard <ArrowRight size={16} className="ml-1" />
+                <Button size="lg" className="font-extrabold px-7 py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300 rounded-full hover:scale-[1.03] active:scale-95">
+                  Go to Dashboard <ArrowRight size={17} className="ml-1.5" />
                 </Button>
               </Link>
             ) : (
               <Link to="/register">
-                <Button size="lg" className="font-semibold shadow-md shadow-blue-500/10 hover:scale-[1.02] active:scale-95 transition-transform">
-                  Get Started Free <ArrowRight size={16} className="ml-1" />
+                <Button size="lg" className="font-extrabold px-7 py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300 rounded-full hover:scale-[1.03] active:scale-95">
+                  Get Started Free <ArrowRight size={17} className="ml-1.5" />
                 </Button>
               </Link>
             )}
             <a href="#demo">
-              <Button variant="outline" size="lg" className="font-semibold hover:bg-gray-50 transition-colors">
+              <button className="inline-flex items-center justify-center font-bold text-sm px-6 py-3.5 gap-2 rounded-full border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900/60 active:scale-95 transition-all duration-200 bg-white/40 dark:bg-slate-900/20 backdrop-blur-sm shadow-sm cursor-pointer">
                 See how it works
-              </Button>
+              </button>
             </a>
           </motion.div>
         </motion.div>
@@ -413,17 +415,17 @@ export default function LandingPage() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
           className="lg:col-span-6 relative flex justify-center"
         >
           {/* Double background blur circle to lift mockup */}
-          <div className="absolute w-[80%] h-[80%] bg-blue-400/10 blur-[60px] rounded-full pointer-events-none select-none" />
+          <div className="absolute w-[85%] h-[85%] bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none select-none" />
           
-          {/* Animated Float Container */}
+          {/* Animated Float Container - Added premium rounded-2xl glassmorphism borders */}
           <motion.div 
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-            className="w-full max-w-[560px] bg-white dark:bg-slate-950 p-3 shadow-xl border border-gray-100 dark:border-slate-900 relative overflow-hidden select-none"
+            className="w-full max-w-[560px] bg-white/80 dark:bg-slate-950/80 p-3 shadow-2xl border border-slate-250/70 dark:border-slate-900/90 rounded-2xl relative overflow-hidden select-none backdrop-blur-md"
           >
             {/* Top window dots */}
             <div className="flex items-center gap-1.5 mb-3 px-1">
