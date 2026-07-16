@@ -15,7 +15,8 @@ import {
   Zap,
   Shield,
   EyeOff,
-  Server
+  Server,
+  Play
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -392,19 +393,20 @@ export default function LandingPage() {
             >
               {token ? (
                 <Link to="/overview">
-                  <Button size="lg" className="font-extrabold px-7 py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300 rounded-full hover:scale-[1.03] active:scale-95">
+                  <Button variant="gradient" size="lg" className="font-extrabold px-8 py-4 shadow-xl hover:scale-[1.03] active:scale-95 transition-all duration-300 rounded-full">
                     Go to Dashboard <ArrowRight size={17} className="ml-1.5" />
                   </Button>
                 </Link>
               ) : (
                 <Link to="/register">
-                  <Button size="lg" className="font-extrabold px-7 py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300 rounded-full hover:scale-[1.03] active:scale-95">
+                  <Button variant="gradient" size="lg" className="font-extrabold px-8 py-4 shadow-xl hover:scale-[1.03] active:scale-95 transition-all duration-300 rounded-full">
                     Get Started Free <ArrowRight size={17} className="ml-1.5" />
                   </Button>
                 </Link>
               )}
               <a href="#demo">
-                <button className="inline-flex items-center justify-center font-bold text-sm px-6 py-3.5 gap-2 rounded-full border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900/60 active:scale-95 transition-all duration-200 bg-white/40 dark:bg-slate-900/20 backdrop-blur-sm shadow-sm cursor-pointer">
+                <button className="inline-flex items-center justify-center font-bold text-sm px-6 py-4 gap-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-855 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/80 active:scale-95 transition-all duration-200 bg-white/60 dark:bg-slate-900/30 backdrop-blur-md shadow-sm hover:shadow hover:text-slate-900 dark:hover:text-white cursor-pointer">
+                  <Play size={14} fill="currentColor" className="text-emerald-500 mr-0.5" />
                   See how it works
                 </button>
               </a>
