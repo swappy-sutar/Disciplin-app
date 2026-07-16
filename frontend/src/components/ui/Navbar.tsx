@@ -32,7 +32,7 @@ export const Navbar: React.FC = () => {
           <img
             src={logoSrc}
             alt="Disciplin"
-            className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+            className="h-12 sm:h-15 md:h-16 w-auto object-contain"
             draggable={false}
           />
         </Link>
