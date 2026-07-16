@@ -54,7 +54,7 @@ export const Navbar: React.FC = () => {
         {/* Logo - Made significantly bigger */}
         <Link
           to="/"
-          className="flex-shrink-0 hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] -ml-3 sm:-ml-5 md:-ml-6"
+          className="flex-shrink-0 hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] -ml-5 sm:-ml-7 md:-ml-8"
           aria-label="Disciplin home"
         >
           <img
