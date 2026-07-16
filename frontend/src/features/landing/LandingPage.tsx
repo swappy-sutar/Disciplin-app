@@ -800,9 +800,9 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Desktop view: Horizontal Steps with Connector Line */}
+        {/* Desktop view: Horizontal Steps with Connector Line (Borderless minimal flow) */}
         <motion.div
-          className="hidden md:grid grid-cols-3 gap-8 relative z-10"
+          className="hidden md:grid grid-cols-3 gap-12 relative z-10"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
@@ -816,7 +816,7 @@ export default function LandingPage() {
           }}
         >
           {/* Connector Line between step circles on desktop */}
-          <div className="absolute top-[28px] left-[15%] right-[15%] h-0.5 bg-gray-200/80 dark:bg-slate-800/80 -z-10" />
+          <div className="absolute top-[24px] left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-emerald-500/20 via-teal-500/40 to-emerald-500/20 dark:from-emerald-500/10 dark:via-teal-500/20 dark:to-emerald-500/10 -z-10" />
 
           {[
             { step: '1', title: 'Plan', desc: 'Map out weekly targets and configure daily timetable work blocks.' },
@@ -825,17 +825,17 @@ export default function LandingPage() {
           ].map((item) => (
             <motion.div
               key={item.step}
-              className="flex flex-col items-center text-center p-6 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/80 rounded-2xl group relative"
+              className="flex flex-col items-center text-center group relative select-none"
               variants={{
                 hidden: { opacity: 0, scale: 0.9, y: 20 },
                 show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
               }}
             >
-              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500 shadow-lg shadow-emerald-500/10 dark:shadow-emerald-500/5 group-hover:bg-primary-blue dark:group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:text-slate-950 transition-all duration-300 select-none scale-105 z-10">
+              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-950 text-emerald-550 dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-emerald-500 dark:border-emerald-450 shadow-md transition-all duration-300 select-none scale-105 group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:bg-emerald-500 dark:group-hover:text-slate-950 z-10">
                 {item.step}
               </div>
-              <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider pt-2">{item.title}</h3>
-              <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-semibold max-w-xs leading-relaxed select-none">
+              <h3 className="text-[15px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider pt-4 pb-1.5">{item.title}</h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold max-w-[240px] leading-relaxed select-none">
                 {item.desc}
               </p>
             </motion.div>
