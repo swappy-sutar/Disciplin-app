@@ -851,7 +851,7 @@ export default function LandingPage() {
 
         {/* Mobile view: Vertical Timeline with Glassmorphism Cards */}
         <motion.div
-          className="md:hidden flex flex-col gap-6 relative pl-3 select-none text-left"
+          className="md:hidden flex flex-col gap-6 relative select-none text-left"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-50px" }}
@@ -864,9 +864,6 @@ export default function LandingPage() {
             }
           }}
         >
-          {/* Vertical solid gradient timeline line - Perfectly centered (left-3 + w-12/2 = 36px) */}
-          <div className="absolute left-[35px] top-6 bottom-16 w-[3.5px] bg-gradient-to-b from-emerald-500 via-teal-500 to-emerald-500/10 dark:from-emerald-450 dark:via-teal-500/50 dark:to-emerald-500/5 rounded-full -z-10" />
-
           {[
             { step: '1', title: 'Plan', desc: 'Map out weekly targets and configure daily timetable work blocks.' },
             { step: '2', title: 'Track', desc: 'Log habit routines, complete checklist goals, and update study checkpoints.' },
@@ -880,9 +877,14 @@ export default function LandingPage() {
                 show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
               }}
             >
-              {/* Step Circle on the Left */}
-              <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500 shrink-0 shadow-md shadow-emerald-500/10 dark:shadow-emerald-500/5 transition-all duration-300 z-10 scale-105">
-                {item.step}
+              {/* Left Column: Circle & Centered Connector Line Segment */}
+              <div className="flex flex-col items-center shrink-0 relative w-12">
+                <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 text-primary-blue dark:text-emerald-450 flex items-center justify-center font-extrabold text-base border-2 border-primary-blue dark:border-emerald-500 shadow-md shadow-emerald-500/10 dark:shadow-emerald-500/5 transition-all duration-300 z-10 scale-105">
+                  {item.step}
+                </div>
+                {item.step !== '3' && (
+                  <div className="absolute top-12 bottom-[-30px] w-[3.5px] bg-gradient-to-b from-emerald-500 via-teal-500 to-emerald-500/10 dark:from-emerald-450 dark:via-teal-500/50 dark:to-emerald-500/5 rounded-full z-0" />
+                )}
               </div>
 
               {/* Glass Card on the Right */}
