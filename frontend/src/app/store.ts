@@ -203,6 +203,18 @@ if (typeof window !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
+  // Clear obsolete mock database keys from local storage
+  const obsoleteKeys = [
+    'disciplin_timetable',
+    'disciplin_habits',
+    'disciplin_habit_logs',
+    'disciplin_goals',
+    'disciplin_topics',
+    'disciplin_applications',
+    'disciplin_quotes'
+  ];
+  obsoleteKeys.forEach(key => localStorage.removeItem(key));
+
   const storedTheme = localStorage.getItem('disciplin_theme') || 'light';
   if (storedTheme === 'dark') {
     document.documentElement.classList.add('dark');
