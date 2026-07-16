@@ -49,6 +49,14 @@ const translations = {
     faq3A: 'Your consistency grids and streaks update in real-time as you complete daily habit checks. Maintaining continuous check-ins increases your streak multiplier and displays interactive celebrations.',
     faq4Q: 'Can I track interviews and follow-ups?',
     faq4A: 'Yes, the Job Application Tracker helps you document salary offerings, status states (Applied, Interviewing, Offered, Rejected), recruiter contact details, and follow-up deadlines.',
+    faq5Q: 'Can I use Disciplin on my mobile device?',
+    faq5A: 'Yes, absolutely. Disciplin is fully responsive and optimized for mobile screens. You can add it to your home screen as a Progressive Web App (PWA) for immediate access.',
+    faq6Q: 'How does the study planner targeting work?',
+    faq6A: 'The study planner allows you to create key curriculum topics, split them into target sub-modules, and track completion progress. The app automatically calculates your total syllabus completion percentage.',
+    faq7Q: 'Does the app support light and dark modes?',
+    faq7A: 'Yes, indeed! Disciplin comes with a premium dark mode and a clean light mode. The theme toggle is available in the top navbar and saves your settings automatically.',
+    faq8Q: 'Is there a cost to use Disciplin?',
+    faq8A: 'Disciplin is 100% free to use for personal planning, habit tracking, study management, and job logging. All core features are fully unlocked for all users.',
 
     // Footer
     footerDesc: 'Ultimate productivity cockpit for habit tracking, daily planning, and career log.',
@@ -176,6 +184,14 @@ const translations = {
     faq3A: 'जैसे ही आप दैनिक आदत की जाँच पूरी करते हैं, आपकी स्थिरता ग्रिड और स्ट्रीक वास्तविक समय में अपडेट हो जाते हैं। निरंतर चेक-इन बनाए रखने से आपकी स्ट्रीक मल्टीप्लायर बढ़ती है और जश्न एनिमेशन प्रदर्शित होते हैं।',
     faq4Q: 'क्या मैं इंटरव्यू और फॉलो-अप को ट्रैक कर सकता हूँ?',
     faq4A: 'हाँ, नौकरी आवेदन ट्रैकर आपको वेतन विवरण, आवेदन की स्थिति (Applied, Interviewing, Offered, Rejected), रिक्रूटर संपर्क विवरण और फॉलो-अप समय सीमा दर्ज करने में मदद करता है।',
+    faq5Q: 'क्या मैं अपने मोबाइल डिवाइस पर Disciplin का उपयोग कर सकता हूँ?',
+    faq5A: 'हाँ, बिल्कुल। Disciplin पूरी तरह से उत्तरदायी है और मोबाइल स्क्रीन के लिए अनुकूलित है। त्वरित पहुंच के लिए आप इसे अपने होम स्क्रीन पर प्रोग्रेसिव वेब ऐप (PWA) के रूप में जोड़ सकते हैं।',
+    faq6Q: 'अध्ययन योजनाकार लक्ष्य कैसे काम करता है?',
+    faq6A: 'अध्ययन योजनाकार आपको मुख्य पाठ्यक्रम विषय बनाने, उन्हें लक्षित उप-मॉड्यूल में विभाजित करने और पूर्णता प्रगति को ट्रैक करने की अनुमति देता है। ऐप आपके कुल पाठ्यक्रम पूर्णता प्रतिशत की स्वचालित रूप से गणना करता है।',
+    faq7Q: 'क्या ऐप लाइट और डार्क मोड का समर्थन करता है?',
+    faq7A: 'हाँ, बिल्कुल! Disciplin में एक प्रीमियम डार्क मोड और एक साफ लाइट मोड है। थीम टॉगल शीर्ष नेविगेशन बार में उपलब्ध है और आपकी सेटिंग्स को स्वचालित रूप से सहेजता है।',
+    faq8Q: 'क्या Disciplin का उपयोग करने के लिए कोई शुल्क है?',
+    faq8A: 'व्यक्तिगत योजना, आदत ट्रैकिंग, अध्ययन प्रबंधन और नौकरी लॉगिंग के लिए Disciplin उपयोग करने के लिए 100% निःशुल्क है। सभी मुख्य सुविधाएं सभी उपयोगकर्ताओं के लिए पूरी तरह से खुली हैं।',
 
     // Footer
     footerDesc: 'आदत ट्रैकिंग, दैनिक योजना और करियर लॉग के लिए सर्वश्रेष्ठ उत्पादकता कॉकपिट।',
@@ -303,6 +319,14 @@ const translations = {
     faq3A: 'तुम्ही दररोज सवय पूर्ण केल्यावर तुमची सातत्य ग्रिड आणि स्ट्रीक रिअल-टाइममध्ये अपडेट होतात. सातत्यपूर्ण चेक-इन राखल्यास तुमचे स्ट्रीक मल्टिप्लायर वाढते आणि स्क्रीनवर सेलिब्रेशन एनिमेशन दिसतात.',
     faq4Q: 'मी मुलाखती आणि फॉलो-अप ट्रॅक करू शकतो का?',
     faq4A: 'होय, नोकरी अर्ज ट्रॅकर आपल्याला सॅलरी ऑफर्स, अर्जाची स्थिती (Applied, Interviewing, Offered, Rejected), रिक्रूटर कॉन्टॅक्ट तपशील आणि फॉलो-अप मुदती नोंदवण्यास मदत करतो.',
+    faq5Q: 'मी माझ्या मोबाईलवर Disciplin वापरू शकतो का?',
+    faq5A: 'होय, नक्कीच. Disciplin पूर्णपणे प्रतिसाद देणारी आहे आणि मोबाईल स्क्रीनसाठी ऑप्टिमाइझ केलेली आहे. जलद प्रवेशासाठी तुम्ही ते तुमच्या होम स्क्रीनवर प्रोग्रेसिव्ह वेब ॲप (PWA) म्हणून जोडू शकता.',
+    faq6Q: 'अभ्यास नियोजक लक्ष्य कसे कार्य करते?',
+    faq6A: 'अभ्यास नियोजक आपल्याला मुख्य अभ्यासक्रम विषय तयार करण्यास, त्यांना लक्ष्य उप-मॉड्यूल्समध्ये विभाजित करण्यास आणि प्रगतीचा मागोवा घेण्यास अनुमती देतो. ॲप आपल्या एकूण अभ्यासक्रमाच्या पूर्णतेची टक्केवारी स्वयंचलितपणे मोजतो.',
+    faq7Q: 'ॲप लाईट आणि डार्क मोडला सपोर्ट करतो का?',
+    faq7A: 'होय, नक्कीच! Disciplin मध्ये प्रीमियम डार्क मोड आणि एक स्वच्छ लाईट मोड आहे. थीम टॉगल वरच्या नेव्हिगेशन बारमध्ये उपलब्ध आहे आणि तुमची सेटिंग्ज स्वयंचलितपणे जतन करतो.',
+    faq8Q: 'Disciplin वापरण्यासाठी काही शुल्क आहे का?',
+    faq8A: 'वैयक्तिक नियोजन, सवय ट्रॅकिंग, अभ्यास व्यवस्थापन आणि नोकरी लॉगिंगसाठी Disciplin वापरण्यास १००% विनामूल्य आहे. सर्व मुख्य वैशिष्ट्ये सर्व वापरकर्त्यांसाठी पूर्णपणे विनामूल्य उपलब्ध आहेत.',
 
     // Footer
     footerDesc: 'सवय ट्रॅकिंग, दैनिक नियोजन आणि करिअर लॉगसाठी सर्वोत्तम उत्पादकता कॉकपिट.',

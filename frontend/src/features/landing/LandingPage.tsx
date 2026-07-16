@@ -1049,6 +1049,10 @@ export default function LandingPage() {
             { q: t.faq2Q, a: t.faq2A },
             { q: t.faq3Q, a: t.faq3A },
             { q: t.faq4Q, a: t.faq4A },
+            { q: t.faq5Q, a: t.faq5A },
+            { q: t.faq6Q, a: t.faq6A },
+            { q: t.faq7Q, a: t.faq7A },
+            { q: t.faq8Q, a: t.faq8A },
           ].map((item, idx) => {
             const isOpen = activeFaqIndex === idx;
             return (
