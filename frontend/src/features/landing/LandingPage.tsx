@@ -554,12 +554,12 @@ export default function LandingPage() {
         </div>{/* end hero grid */}
 
         {/* ── Pillars strip pinned to bottom of full-screen hero ── */}
-        <div className="w-full border-t border-white/10 py-6 text-center space-y-4 bg-slate-900/60 backdrop-blur-sm">
-          <p className="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
+        <div className="w-full border-t border-slate-200/50 dark:border-slate-800/80 py-6 text-center space-y-4 bg-slate-100/40 dark:bg-slate-900/60 backdrop-blur-md">
+          <p className="text-[11px] font-extrabold text-slate-400 dark:text-gray-500 uppercase tracking-[0.2em]">
             DESIGNED AROUND PURE MOMENTUM &amp; PRODUCTIVITY PILLARS
           </p>
           <motion.div
-            className="flex flex-wrap justify-center gap-3.5 md:gap-4 text-xs font-bold tracking-wide text-slate-500 dark:text-slate-400 uppercase select-none"
+            className="flex flex-wrap justify-center gap-3.5 md:gap-4 text-xs font-bold tracking-wide text-slate-550 dark:text-slate-400 uppercase select-none"
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
@@ -576,7 +576,7 @@ export default function LandingPage() {
                 variants={{ hidden: { opacity: 0, scale: 0.7, y: 14 }, show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 16 } } }}
                 whileHover={{ scale: 1.06, y: -2 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 ${pill.hoverBorder} transition-all duration-300 cursor-default group text-[10px] md:text-xs`}
+                className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/60 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 ${pill.hoverBorder} transition-all duration-300 cursor-default group text-[10px] md:text-xs text-slate-700 dark:text-slate-350 shadow-sm`}
               >
                 <pill.icon size={15} className={`${pill.iconCls} group-hover:scale-110 transition-transform flex-shrink-0`} />
                 <span>{pill.label}</span>
