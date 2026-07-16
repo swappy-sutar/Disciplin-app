@@ -28,3 +28,5 @@ const startServer = async () => {
 };
 
 startServer();
+// Trigger server reload to pick up updated GOOGLE_CLIENT_ID from .env
+
