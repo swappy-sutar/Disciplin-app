@@ -89,16 +89,16 @@ function App() {
         <Toaster 
           position="top-right" 
           toastOptions={{ 
-            duration: 5000,
+            duration: 4000,
             style: {
-              background: 'var(--card-bg, #0b0c10)',
-              color: 'var(--text-main, #f3f4f6)',
-              borderRadius: '16px',
-              border: '1px solid rgba(16, 185, 129, 0.15)',
+              background: 'var(--card-bg, #FFFFFF)',
+              color: 'var(--text-main, #1F2937)',
+              borderRadius: '20px',
+              border: '1.5px solid var(--border-main, #E5E7EB)',
               fontSize: '13px',
-              fontWeight: 600,
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3)',
-              padding: '12px 18px',
+              fontWeight: 650,
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03)',
+              padding: '12px 20px',
               maxWidth: '420px',
             },
             success: {
@@ -107,7 +107,8 @@ function App() {
                 secondary: '#ffffff',
               },
               style: {
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                border: '1.5px solid #10B981',
+                boxShadow: '0 10px 20px -3px rgba(16, 185, 129, 0.15)',
               }
             },
             error: {
@@ -116,7 +117,8 @@ function App() {
                 secondary: '#ffffff',
               },
               style: {
-                border: '1px solid rgba(239, 68, 68, 0.25)',
+                border: '1.5px solid #EF4444',
+                boxShadow: '0 10px 20px -3px rgba(239, 68, 68, 0.15)',
               }
             }
           }} 
