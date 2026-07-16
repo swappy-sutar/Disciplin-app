@@ -135,52 +135,57 @@ export default function LandingPage() {
       title: 'All key systems, aggregated in one window',
       desc: 'Get an immediate visual pulse of your day. Monitor daily schedules, pending weekly goals, consistency grids, and recent applications on a single screen.',
       preview: (
-        <div className="bg-canvas-bg rounded-2xl p-5 border border-gray-100 shadow-inner space-y-4 text-left select-none text-[10px] w-full">
+        <div className="bg-canvas-bg dark:bg-slate-950 rounded-2xl p-4 border border-gray-100 dark:border-slate-850/80 shadow-inner space-y-4 text-left select-none text-[10px] w-full min-h-[235px] flex flex-col justify-between">
           {/* Header row */}
-          <div className="flex justify-between items-center bg-white px-3 py-2.5 rounded-xl border border-gray-100/50 shadow-sm">
+          <div className="flex justify-between items-center bg-white dark:bg-slate-900 px-3 py-2.5 rounded-xl border border-gray-100/50 dark:border-slate-800/80 shadow-sm">
             <div>
-              <span className="font-extrabold text-gray-800 text-xs block leading-none">Today's Overview</span>
-              <span className="text-[8px] text-gray-400 font-semibold mt-1 block">Monday, Oct 16, 2023</span>
+              <span className="font-extrabold text-gray-800 dark:text-slate-100 text-xs block leading-none">Today's Overview</span>
+              <span className="text-[8px] text-gray-400 dark:text-slate-500 mt-1 block font-semibold">Monday, Oct 16, 2023</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[8px] bg-indigo-50/50 text-primary-blue px-2.5 py-1 rounded-full font-bold">
+            <div className="flex items-center gap-1.5 text-[8px] bg-indigo-50/50 dark:bg-indigo-950/30 text-primary-blue dark:text-indigo-400 px-2.5 py-1 rounded-full font-bold">
               <Calendar size={10} />
               <span>Oct 12 - Oct 18</span>
             </div>
           </div>
           {/* Dashboard contents */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-gray-100/50 shadow-sm space-y-3">
-              <span className="font-extrabold text-gray-800 text-xs block">Daily Timetable</span>
-              <div className="relative border-l-2 border-gray-100 pl-3 ml-1 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div className="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-gray-100/50 dark:border-slate-800/80 shadow-sm space-y-3 flex flex-col justify-between">
+              <span className="font-extrabold text-gray-800 dark:text-slate-100 text-xs block">Daily Timetable</span>
+              <div className="relative border-l-2 border-gray-100 dark:border-slate-850 pl-3 ml-1 space-y-2.5">
                 <div className="relative">
-                  <div className="absolute -left-[16px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
-                  <p className="font-semibold text-gray-700 leading-none">Morning Routine</p>
-                  <span className="text-[8px] text-gray-400 mt-0.5 block">08:00 - 09:00</span>
+                  <div className="absolute -left-[16px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" />
+                  <p className="font-semibold text-gray-700 dark:text-slate-350 leading-none">Morning Routine</p>
+                  <span className="text-[8px] text-gray-400 dark:text-slate-550 mt-0.5 block">08:00 - 09:00</span>
                 </div>
                 <div className="relative">
-                  <div className="absolute -left-[16px] top-1 w-2.5 h-2.5 rounded-full bg-primary-blue border-2 border-white" />
-                  <p className="font-semibold text-gray-700 leading-none">DSA Practice: Graphs</p>
-                  <span className="text-[8px] text-gray-400 mt-0.5 block">12:00 - 13:30</span>
+                  <div className="absolute -left-[16px] top-1 w-2.5 h-2.5 rounded-full bg-primary-blue border-2 border-white dark:border-slate-900" />
+                  <p className="font-semibold text-gray-700 dark:text-slate-350 leading-none">DSA Practice: Graphs</p>
+                  <span className="text-[8px] text-gray-400 dark:text-slate-550 mt-0.5 block">12:00 - 13:30</span>
+                </div>
+                <div className="relative">
+                  <div className="absolute -left-[16px] top-1 w-2.5 h-2.5 rounded-full bg-violet-500 border-2 border-white dark:border-slate-900" />
+                  <p className="font-semibold text-gray-700 dark:text-slate-350 leading-none">System Architecture</p>
+                  <span className="text-[8px] text-gray-400 dark:text-slate-550 mt-0.5 block">16:00 - 17:30</span>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-100/50 shadow-sm space-y-3 flex flex-col justify-between">
-              <span className="font-extrabold text-gray-800 text-xs block">Day Progress</span>
-              <div className="flex items-center justify-around py-1">
-                <div className="w-14 h-14 rounded-full border-4 border-primary-blue border-r-transparent flex flex-col items-center justify-center font-bold text-gray-800 text-xs">
+            <div className="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-gray-100/50 dark:border-slate-800/80 shadow-sm space-y-3 flex flex-col justify-between">
+              <span className="font-extrabold text-gray-800 dark:text-slate-100 text-xs block">Day Progress</span>
+              <div className="flex items-center justify-around py-0.5">
+                <div className="w-13 h-13 rounded-full border-4 border-primary-blue border-r-transparent flex flex-col items-center justify-center font-bold text-gray-850 dark:text-slate-200 text-xs">
                   <span>68%</span>
                 </div>
                 <div className="text-right">
                   <span className="text-emerald-500 font-extrabold text-xs">▲ +5%</span>
-                  <span className="text-[8px] text-gray-400 block mt-0.5">vs yesterday</span>
+                  <span className="text-[8px] text-gray-400 dark:text-slate-500 block mt-0.5">vs yesterday</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="flex justify-between font-semibold text-gray-400 select-none text-[8px]">
+                <div className="flex justify-between font-semibold text-gray-400 dark:text-slate-500 select-none text-[8px]">
                   <span>Focus Hours</span>
                   <span>5.5 / 8 hrs</span>
                 </div>
-                <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div className="h-full bg-primary-blue rounded-full" style={{ width: '68%' }} />
                 </div>
               </div>
@@ -196,13 +201,13 @@ export default function LandingPage() {
       title: 'Build consistency, day by day',
       desc: 'Track habits on a responsive weekly grid. Circular checklist markers show active streak counts and completion summaries immediately.',
       preview: (
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4 text-left select-none text-[10px] w-full">
-          <div className="flex justify-between items-center border-b border-gray-100 pb-2.5">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-gray-100 dark:border-slate-800/80 shadow-sm space-y-4 text-left select-none text-[10px] w-full min-h-[235px] flex flex-col justify-between">
+          <div className="flex justify-between items-center border-b border-gray-100 dark:border-slate-800 pb-2.5">
             <div>
-              <span className="font-extrabold text-gray-800 text-xs block">Weekly Consistency</span>
-              <span className="text-[8px] text-gray-400 block mt-0.5">Oct 23 - Oct 29</span>
+              <span className="font-extrabold text-gray-800 dark:text-slate-100 text-xs block">Weekly Consistency</span>
+              <span className="text-[8px] text-gray-400 dark:text-slate-500 block mt-0.5 font-semibold">Oct 23 - Oct 29</span>
             </div>
-            <span className="text-[9px] bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+            <span className="text-[9px] bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full font-bold flex items-center gap-1 border border-emerald-100/50 dark:border-emerald-900/30">
               <Flame size={12} fill="currentColor" />
               12 Day Streak
             </span>
@@ -211,16 +216,17 @@ export default function LandingPage() {
             {[
               { name: 'Workout', color: '#3B82F6', done: 4 },
               { name: 'DSA Study', color: '#EC4899', done: 3 },
-              { name: 'Project Code', color: '#10B981', done: 4 }
+              { name: 'Project Code', color: '#10B981', done: 4 },
+              { name: 'LeetCode Daily', color: '#F59E0B', done: 4 }
             ].map((habit, hIdx) => (
               <div key={hIdx} className="grid grid-cols-[1fr_repeat(7,24px)] gap-1.5 items-center">
-                <span className="font-bold text-gray-700 truncate">{habit.name}</span>
+                <span className="font-bold text-gray-700 dark:text-slate-350 truncate">{habit.name}</span>
                 {Array.from({ length: 7 }).map((_, i) => {
                   const isDone = i < habit.done;
                   return (
                     <div key={i} className="flex justify-center">
                       <div
-                        className="w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center text-[8px] font-black"
+                        className="w-4.5 h-4.5 rounded-full border flex items-center justify-center text-[8px] font-black"
                         style={{
                           borderColor: isDone ? habit.color : '#E5E7EB',
                           backgroundColor: isDone ? habit.color : 'transparent',
@@ -245,30 +251,30 @@ export default function LandingPage() {
       title: 'Target weekly milestone checkpoints',
       desc: 'Outline targets for the active week. Categorize milestone focus items with colored badge chips (Career, Learning, Personal).',
       preview: (
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4 text-left select-none text-[10px] w-full">
-          <div className="flex justify-between items-center border-b border-gray-100 pb-2.5">
-            <span className="font-extrabold text-gray-800 text-xs block">Goals This Week</span>
-            <span className="text-[8px] bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-bold">3/5 Completed</span>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-gray-100 dark:border-slate-800/80 shadow-sm space-y-4 text-left select-none text-[10px] w-full min-h-[235px] flex flex-col justify-between">
+          <div className="flex justify-between items-center border-b border-gray-100 dark:border-slate-800 pb-2.5">
+            <span className="font-extrabold text-gray-800 dark:text-slate-100 text-xs block">Goals This Week</span>
+            <span className="text-[8px] bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full font-bold border border-blue-100/50 dark:border-blue-900/30">3/5 Completed</span>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {[
               { title: 'Complete Portfolio UI', cat: 'Career', done: true },
               { title: 'Apply to 20 Jobs', cat: 'Career', done: true },
               { title: 'Finish 10 DSA Medium', cat: 'Learning', done: false },
               { title: 'Call Recruiters', cat: 'Personal', done: false }
             ].map((g, idx) => (
-              <div key={idx} className="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-0">
+              <div key={idx} className="flex items-center justify-between py-1.5 border-b border-gray-50 dark:border-slate-850 last:border-0">
                 <div className="flex items-center gap-2.5">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center font-bold text-[8px]
-                    ${g.done ? 'bg-blue-500 border-blue-500 text-white' : 'border-gray-200'}
+                    ${g.done ? 'bg-blue-500 border-blue-500 text-white' : 'border-gray-200 dark:border-slate-800'}
                   `}>
                     {g.done && '✓'}
                   </div>
-                  <span className={`font-semibold ${g.done ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{g.title}</span>
+                  <span className={`font-semibold ${g.done ? 'text-gray-400 line-through dark:text-slate-600' : 'text-gray-700 dark:text-slate-350'}`}>{g.title}</span>
                 </div>
                 <span className={`text-[8px] font-bold px-2 py-0.5 rounded border
-                  ${g.cat === 'Career' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                    g.cat === 'Learning' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-amber-50 text-amber-600 border-amber-100'}
+                  ${g.cat === 'Career' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100/50 dark:border-blue-900/30' :
+                    g.cat === 'Learning' ? 'bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-100/50 dark:border-purple-900/30' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100/50 dark:border-amber-900/30'}
                 `}>
                   {g.cat}
                 </span>
@@ -285,32 +291,33 @@ export default function LandingPage() {
       title: 'Organize recruitment pipelines',
       desc: 'Track company logs, statuses, assessment dates, and interview calendars. Check off pipeline stages and status distribution cards.',
       preview: (
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4 text-left select-none text-[10px] w-full">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-gray-100 dark:border-slate-800/80 shadow-sm space-y-4 text-left select-none text-[10px] w-full min-h-[235px] flex flex-col justify-between">
           <div className="flex justify-between items-center mb-1">
             <div>
-              <span className="font-extrabold text-gray-800 text-xs block">Applications Log</span>
-              <span className="text-[8px] text-gray-400 block mt-0.5">Active Pipelines</span>
+              <span className="font-extrabold text-gray-800 dark:text-slate-100 text-xs block">Applications Log</span>
+              <span className="text-[8px] text-gray-400 dark:text-slate-500 block mt-0.5 font-semibold">Active Pipelines</span>
             </div>
-            <span className="text-[9px] bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-bold">14/20 Today</span>
+            <span className="text-[9px] bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full font-bold border border-blue-100/50 dark:border-blue-900/30">14/20 Today</span>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 text-[8px] font-extrabold text-gray-400 uppercase tracking-wider">
+              <tr className="border-b border-gray-100 dark:border-slate-850 text-[8px] font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-wider">
                 <th className="pb-2">Company</th>
                 <th className="pb-2">Role</th>
                 <th className="pb-2 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-50 dark:divide-slate-850">
               {[
-                { company: 'TechFlow', role: 'Frontend Dev', status: 'Interview', color: 'bg-blue-50 text-blue-600 border-blue-100' },
-                { company: 'GlobalSaaS', role: 'Product Mgr', status: 'Offer', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-                { company: 'MetaPixel', role: 'UI Designer', status: 'Applied', color: 'bg-slate-50 text-slate-500 border-slate-200' },
+                { company: 'TechFlow', role: 'Frontend Dev', status: 'Interview', color: 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100/50 dark:border-blue-900/30' },
+                { company: 'GlobalSaaS', role: 'Product Mgr', status: 'Offer', color: 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100/50 dark:border-emerald-900/30' },
+                { company: 'MetaPixel', role: 'UI Designer', status: 'Applied', color: 'bg-slate-50 dark:bg-slate-900/30 text-slate-500 dark:text-slate-450 border-slate-200/50 dark:border-slate-800/80' },
+                { company: 'ByteCraft', role: 'Backend Eng', status: 'Technical', color: 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100/50 dark:border-amber-900/30' },
               ].map((app, idx) => (
-                <tr key={idx} className="text-gray-700">
-                  <td className="py-2.5 font-bold">{app.company}</td>
-                  <td className="py-2.5 text-gray-500 font-medium">{app.role}</td>
-                  <td className="py-2.5 text-right">
+                <tr key={idx} className="text-gray-700 dark:text-slate-350">
+                  <td className="py-2 font-bold">{app.company}</td>
+                  <td className="py-2 text-gray-500 dark:text-slate-450 font-medium">{app.role}</td>
+                  <td className="py-2 text-right">
                     <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full border ${app.color}`}>{app.status}</span>
                   </td>
                 </tr>
