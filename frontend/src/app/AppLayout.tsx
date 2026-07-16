@@ -15,9 +15,17 @@ import {
   MoonStar,
   User as UserIcon,
   Clock,
-  Sparkles
+  Sparkles,
+  Check
 } from 'lucide-react';
 import { useStore } from './store';
+
+const languages = [
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
+  { code: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
+] as const;
+
 import { apiClient } from '../lib/api-client';
 import { addDays, subDays, startOfWeek, endOfWeek, format, parseISO } from 'date-fns';
 import { CalendarPicker } from '../components/ui/CalendarPicker';
@@ -44,7 +52,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     toggleTheme,
     notifications,
     markAllAsRead,
-    clearNotifications
+    clearNotifications,
+    language,
+    setLanguage
   } = useStore();
 
   const { t } = useTranslation();
@@ -174,7 +184,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
 
             {/* Language Selector */}
-            <LanguageSelector />
+            <div className="hidden md:block">
+              <LanguageSelector />
+            </div>
 
             {/* Theme Toggle Button */}
             <button 
@@ -304,6 +316,38 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate">{user?.name || ''}</p>
                       <p className="text-[10px] text-gray-450 dark:text-slate-450 font-semibold truncate mt-0.5">{user?.email || ''}</p>
                     </div>
+
+                    {/* Language Selector for Mobile inside dropdown */}
+                    <div className="block md:hidden border-b border-slate-100 dark:border-slate-800/60 pb-2 mb-2 px-1">
+                      <p className="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 px-2.5">Language / भाषा</p>
+                      <div className="flex flex-col gap-0.5">
+                        {languages.map((lang) => {
+                          const isSelected = lang.code === language;
+                          return (
+                            <button
+                              key={lang.code}
+                              onClick={() => {
+                                setLanguage(lang.code);
+                              }}
+                              className={`flex items-center justify-between w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] font-bold cursor-pointer transition-colors duration-150
+                                ${
+                                  isSelected
+                                    ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                                }
+                              `}
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs">{lang.flag}</span>
+                                <span>{lang.nativeName}</span>
+                              </div>
+                              {isSelected && <Check size={12} className="text-emerald-500" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <Link
                       to="/profile"
                       onClick={() => setIsUserMenuOpen(false)}
