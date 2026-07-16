@@ -13,6 +13,7 @@ export interface IUser extends Document {
   verificationExpires?: Date;
   hashedRefreshToken?: string;
   role: 'admin' | 'moderator' | 'user' | 'premium';
+  googleId?: string;
   comparePassword(password: string): Promise<boolean>;
 }
 
@@ -57,6 +58,11 @@ const UserSchema = new Schema<IUser>({
     type: String,
     enum: ['admin', 'moderator', 'user', 'premium'],
     default: 'user'
+  },
+  googleId: {
+    type: String,
+    sparse: true,
+    unique: true
   },
   createdAt: {
     type: Date,

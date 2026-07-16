@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
+import { useStore } from '../../app/store';
 import { apiClient } from '../../lib/api-client';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -25,6 +26,54 @@ export default function Register() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { setAuth } = useStore();
+
+  const handleGoogleCredentialResponse = async (response: any) => {
+    setIsLoading(true);
+    const toastId = toast.loading('Signing up with Google...');
+    try {
+      const res = await apiClient.auth.googleLogin(response.credential);
+      setAuth(res.user, res.token);
+      toast.success(`Welcome to Disciplin, ${res.user.name}! 🚀`, { id: toastId });
+      navigate('/overview');
+    } catch (e: any) {
+      const err = e.message || 'Google signup failed';
+      setErrorMsg(err);
+      toast.error(err, { id: toastId });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initGoogleOAuth = () => {
+      if (typeof window !== 'undefined' && (window as any).google) {
+        const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-oauth-client-id-goes-here.apps.googleusercontent.com';
+        (window as any).google.accounts.id.initialize({
+          client_id,
+          callback: handleGoogleCredentialResponse,
+        });
+        (window as any).google.accounts.id.renderButton(
+          document.getElementById('googleSignUpButton'),
+          { theme: 'outline', size: 'large', width: '100%' }
+        );
+      }
+    };
+
+    // Poll for the Google SDK availability
+    let attempts = 0;
+    const interval = setInterval(() => {
+      if ((window as any).google) {
+        initGoogleOAuth();
+        clearInterval(interval);
+      } else {
+        attempts++;
+        if (attempts > 30) clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const {
     register,
@@ -192,6 +241,19 @@ export default function Register() {
               </Button>
 
             </form>
+
+            {/* Google OAuth Divider */}
+            <div className="relative my-5 flex items-center justify-center">
+              <hr className="w-full border-t border-gray-100 dark:border-slate-800" />
+              <span className="absolute px-3 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 text-[10px] uppercase font-bold tracking-wider select-none">
+                Or continue with
+              </span>
+            </div>
+
+            {/* Google Sign-in Button */}
+            <div className="w-full flex justify-center items-center">
+              <div id="googleSignUpButton" className="w-full max-w-sm rounded-xl overflow-hidden shadow-sm" />
+            </div>
 
             {/* Redirect link */}
             <div className="text-center mt-6 pt-5 border-t border-gray-100 dark:border-gray-855">

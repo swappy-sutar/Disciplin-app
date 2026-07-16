@@ -4,6 +4,8 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '.
 import { User } from '../models/User';
 import { NotFoundError, UnauthorizedError, BadRequestError, ForbiddenError } from '../utils/custom-errors';
 import { env } from '../config/env';
+import { OAuth2Client } from 'google-auth-library';
+import { seedUserHabits, seedUserProfileData } from '../utils/seed-data';
 import crypto from 'crypto';
 import { sendEmail } from '../utils/email';
 import { getWelcomeEmail } from '../templates/mail/welcome.template';
@@ -467,3 +469,101 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
+
+const googleOAuthClient = new OAuth2Client();
+
+export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      throw new BadRequestError('Google ID token is required');
+    }
+
+    const clientId = env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.warn('[WARN] GOOGLE_CLIENT_ID is not configured in backend .env.');
+    }
+
+    // Verify token using google-auth-library
+    let payload;
+    try {
+      const ticket = await googleOAuthClient.verifyIdToken({
+        idToken,
+        audience: clientId || undefined,
+      });
+      payload = ticket.getPayload();
+    } catch (err: any) {
+      console.error('Google token verification failed:', err);
+      throw new BadRequestError('Invalid or expired Google ID token: ' + (err.message || err));
+    }
+
+    if (!payload || !payload.email) {
+      throw new BadRequestError('Invalid Google ID token payload');
+    }
+
+    const { email, name, sub: googleId } = payload;
+
+    // Find or create user
+    let user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      // Create user without password (assign random hash)
+      const randomPassword = crypto.randomBytes(32).toString('hex');
+      user = new User({
+        name: name || email.split('@')[0],
+        email: email.toLowerCase(),
+        passwordHash: randomPassword,
+        googleId,
+        isVerified: true, // Google accounts are pre-verified
+      });
+      await user.save();
+      
+      // Auto seed habits/data for new Google user
+      try {
+        await seedUserHabits(user._id);
+        await seedUserProfileData(user._id);
+      } catch (seedErr) {
+        console.error('Failed to seed habits/data for Google user:', seedErr);
+      }
+    } else {
+      // If user exists but has no googleId, link it
+      let needsSave = false;
+      if (!user.googleId) {
+        user.googleId = googleId;
+        needsSave = true;
+      }
+      if (!user.isVerified) {
+        user.isVerified = true;
+        needsSave = true;
+      }
+      if (needsSave) {
+        await user.save();
+      }
+    }
+
+    const accessToken = generateAccessToken(user._id, user.role);
+    const refreshToken = generateRefreshToken(user._id);
+
+    const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    user.hashedRefreshToken = hashedToken;
+    await user.save();
+
+    setAuthCookie(res, accessToken);
+    setRefreshTokenCookie(res, refreshToken);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+        token: accessToken,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

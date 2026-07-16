@@ -177,6 +177,17 @@ export const apiClient = {
       window.dispatchEvent(new Event('auth_change'));
       return { token, user };
     }),
+    googleLogin: (idToken: string) => request<any>('POST', '/auth/google-login', { idToken }).then(res => {
+      const userRes = res.user || res.data?.user || res.data || res;
+      const token = res.token || res.data?.token;
+      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email };
+      localStorage.setItem('disciplin_user', JSON.stringify(user));
+      if (token) {
+        localStorage.setItem('disciplin_token', token);
+      }
+      window.dispatchEvent(new Event('auth_change'));
+      return { token, user };
+    }),
     register: (body: any) => request<any>('POST', '/auth/register', body),
     logout: async () => {
       try {

@@ -13,6 +13,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   FRONTEND_URL: z.string().default('http://localhost:5173'),
+  GOOGLE_CLIENT_ID: z.string().default(''),
 }).refine((data) => {
   if (data.NODE_ENV === 'production') {
     const isDefaultSecret = data.JWT_SECRET === 'super_secret_key_change_me_in_production';
