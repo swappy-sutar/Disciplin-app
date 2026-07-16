@@ -73,12 +73,12 @@ export default function Goals() {
   // Render dummy goals list categories
   const getCategoryColor = (cat: string) => {
     const colors: Record<string, string> = {
-      Career: 'bg-blue-50 text-blue-600 border-blue-100/50',
-      Health: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
-      Learning: 'bg-purple-50 text-purple-600 border-purple-100/50',
-      Personal: 'bg-amber-50 text-amber-600 border-amber-100/50'
+      Career: 'bg-blue-50/70 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100/50 dark:border-blue-900/30',
+      Health: 'bg-emerald-50/70 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100/50 dark:border-emerald-900/30',
+      Learning: 'bg-purple-50/70 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-100/50 dark:border-purple-900/30',
+      Personal: 'bg-amber-50/70 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100/50 dark:border-amber-900/30'
     };
-    return colors[cat] || 'bg-gray-100 text-gray-600 border-gray-200/50';
+    return colors[cat] || 'bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-800/80';
   };
 
   // Generate Daily Activity Bar Chart
@@ -229,7 +229,7 @@ export default function Goals() {
                 No goals created for this week. Add some using the button in the top right!
               </div>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-gray-100 dark:divide-slate-800/40">
                 {goals.map((goal) => {
                   const hasTag = goal.title.includes('[') && goal.title.includes(']');
                   let cleanTitle = goal.title;
@@ -264,7 +264,7 @@ export default function Goals() {
                         </div>
                         <div>
                           <p className={`text-sm font-semibold leading-normal transition-colors select-none
-                            ${goal.isDone ? 'text-gray-400 dark:text-gray-550 line-through' : 'text-gray-800 dark:text-slate-200'}
+                            ${goal.isDone ? 'text-slate-450 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-200'}
                           `}>
                             {cleanTitle}
                           </p>
@@ -273,7 +273,7 @@ export default function Goals() {
                               {category}
                             </span>
                             {goal.dueDay && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-pink-500 dark:text-pink-400">
+                              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-rose-500 dark:text-rose-455">
                                 <Clock size={10} />
                                 Due {goal.dueDay}
                               </span>
@@ -311,16 +311,16 @@ export default function Goals() {
             <div className="space-y-5">
               <div>
                 <div className="flex justify-between items-baseline mb-1.5 select-none">
-                  <span className="text-xs font-bold text-gray-500">{doneGoals} / {totalGoals} Complete</span>
-                  <span className="text-xs font-semibold text-gray-400">{completionRate}%</span>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{doneGoals} / {totalGoals} Complete</span>
+                  <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">{completionRate}%</span>
                 </div>
                 <ProgressBar value={doneGoals} max={totalGoals} color="blue" />
               </div>
 
               {/* Daily Activity Chart */}
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800/40">
                 <div className="flex justify-between items-center w-full mb-3 select-none">
-                  <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Daily Activity</span>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Daily Activity</span>
                   <span className="text-[10px] font-extrabold text-primary-blue bg-primary-blue/10 px-2 py-0.5 rounded-full select-none">{completionRate}% rate</span>
                 </div>
                 <div className="w-full mt-2">
@@ -353,10 +353,10 @@ export default function Goals() {
       <Card className="select-none">
         <button
           onClick={() => setHistoryExpanded(!isHistoryExpanded)}
-          className="w-full flex items-center justify-between text-sm font-semibold text-gray-600 hover:text-gray-900 cursor-pointer"
+          className="w-full flex items-center justify-between text-sm font-semibold text-slate-650 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
         >
           <div className="flex items-center gap-2">
-            <Clock size={16} className="text-gray-400" />
+            <Clock size={16} className="text-slate-400 dark:text-slate-500" />
             <span>Past Weeks History</span>
           </div>
           {isHistoryExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
