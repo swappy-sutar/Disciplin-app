@@ -3,13 +3,16 @@ import { Logo } from './Logo';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-50/50 dark:bg-slate-950 border-t border-slate-200/60 dark:border-slate-800/80 pt-16 pb-8 select-none text-xs text-slate-500 dark:text-slate-400 font-semibold relative z-10 w-full">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 border-b border-slate-200/60 dark:border-slate-800/60 pb-12">
+    <footer className="bg-slate-50/60 dark:bg-slate-950/65 backdrop-blur-md border-t border-slate-200/50 dark:border-slate-900/60 pt-16 pb-8 select-none text-xs text-slate-500 dark:text-slate-400 font-semibold relative z-10 w-full overflow-hidden">
+      {/* Subtle ambient gradient glow behind footer content */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-emerald-500/5 dark:bg-emerald-500/8 blur-[120px] rounded-full pointer-events-none -z-10" />
+
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10 border-b border-slate-200/60 dark:border-slate-850/60 pb-12">
 
         {/* Column 1: Logo, description, and social icons */}
         <div className="col-span-2 md:col-span-5 space-y-5 text-left">
-          <Logo />
-          <p className="max-w-xs leading-relaxed text-slate-450 dark:text-slate-500 leading-normal font-medium">
+          <Logo className="h-9 md:h-11" />
+          <p className="max-w-xs leading-relaxed text-slate-400 dark:text-slate-500 font-medium">
             Helping you land your dream role through systematic organization and habit excellence.
           </p>
           {/* Social Icons with rounded bordered boxes */}
@@ -18,7 +21,7 @@ export const Footer: React.FC = () => {
               href="https://www.linkedin.com/in/swappy-sutar/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-sm"
+              className="p-2.5 border border-slate-200/80 dark:border-slate-850 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-sm"
               aria-label="LinkedIn"
             >
               <svg className="w-[18px] h-[18px] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
@@ -31,7 +34,7 @@ export const Footer: React.FC = () => {
               href="https://github.com/swappy-sutar"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-500/30 dark:hover:border-slate-500/30 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-sm"
+              className="p-2.5 border border-slate-200/80 dark:border-slate-850 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-550/30 dark:hover:border-slate-500/30 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-sm"
               aria-label="GitHub"
             >
               <svg className="w-[18px] h-[18px] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
@@ -42,7 +45,7 @@ export const Footer: React.FC = () => {
               href="https://er-swapppy.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-450 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-sm"
+              className="p-2.5 border border-slate-200/80 dark:border-slate-850 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-450 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-sm"
               aria-label="Profile Website"
             >
               <svg className="w-[18px] h-[18px] fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
@@ -55,23 +58,23 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Column 2: Platform / Product */}
-        <div className="col-span-1 md:col-span-2 space-y-3.5 text-left">
-          <span className="text-[10px] font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">Product</span>
-          <a href="#features" className="block text-slate-500 dark:text-slate-450 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors font-medium">Features</a>
-          <a href="#demo" className="block text-slate-500 dark:text-slate-450 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors font-medium">Solutions</a>
-          <a href="#pricing" className="block text-slate-500 dark:text-slate-450 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors font-medium">Pricing</a>
+        <div className="col-span-1 md:col-span-2 space-y-3 text-left">
+          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-4">Product</span>
+          <a href="#features" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Features</a>
+          <a href="#demo" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Solutions</a>
+          <a href="#pricing" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Pricing</a>
         </div>
 
         {/* Column 3: Legal */}
-        <div className="col-span-1 md:col-span-2 space-y-3.5 text-left">
-          <span className="text-[10px] font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">Legal</span>
-          <a href="#" className="block text-slate-500 dark:text-slate-455 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors font-medium">Privacy Policy</a>
-          <a href="#" className="block text-slate-500 dark:text-slate-455 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors font-medium">Terms of Service</a>
+        <div className="col-span-1 md:col-span-2 space-y-3 text-left">
+          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-4">Legal</span>
+          <a href="#" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Privacy Policy</a>
+          <a href="#" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Terms of Service</a>
         </div>
 
         {/* Column 4: Newsletter Stay Updated */}
-        <div className="col-span-2 md:col-span-3 space-y-3 text-left">
-          <span className="text-[10px] font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">Stay Updated</span>
+        <div className="col-span-2 md:col-span-3 space-y-3.5 text-left">
+          <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-4">Stay Updated</span>
           <p className="leading-relaxed text-slate-400 dark:text-slate-500 font-medium">
             Subscribe to our newsletter for productivity insights, release updates, and community news.
           </p>
@@ -79,11 +82,11 @@ export const Footer: React.FC = () => {
             <input
               type="email"
               placeholder="name@example.com"
-              className="w-full bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl pl-4 pr-12 py-3 text-xs font-semibold focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
+              className="w-full bg-white/90 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-800/80 rounded-2xl pl-4 pr-12 py-3.5 text-xs font-bold focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
             />
             <button
               type="submit"
-              className="absolute right-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-2 transition-all flex items-center justify-center cursor-pointer shadow-md shadow-emerald-500/10 hover:scale-105 active:scale-95 duration-200"
+              className="absolute right-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-2.5 transition-all flex items-center justify-center cursor-pointer shadow-md shadow-emerald-500/10 hover:scale-105 active:scale-95 duration-200"
               aria-label="Subscribe"
             >
               <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
@@ -97,19 +100,19 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Bottom copyright credits and operational status bar */}
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 dark:text-slate-400 text-xs font-semibold">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 dark:text-slate-500 text-xs font-semibold">
         <p className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left font-medium">
           <span>© 2026 Swapnil Sutar. All rights reserved.</span>
-          <span className="hidden sm:inline text-slate-300 dark:text-slate-800">|</span>
+          <span className="hidden sm:inline text-slate-200 dark:text-slate-850">|</span>
           <span className="flex items-center gap-1 mt-1 sm:mt-0">
-            Made with <span className="text-violet-500 animate-pulse">💜</span> by{' '}
+            Made with <span className="text-emerald-550 dark:text-emerald-450 animate-pulse font-extrabold">💚</span> by{' '}
             <a
               href="https://github.com/swappy-sutar"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-violet-600 dark:text-violet-400 hover:underline font-bold transition-all"
+              className="text-emerald-600 dark:text-emerald-400 hover:underline font-bold transition-all"
             >
-              Er-Swappy
+              Er-Swapnil
             </a>{' '}
             for all.
           </span>
