@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award, ChevronRight } from 'lucide-react';
+import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award, ChevronRight, Check } from 'lucide-react';
 import { useStore } from '../../app/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LanguageSelector } from './LanguageSelector';
@@ -12,8 +12,14 @@ const navLinks = [
   { label: 'Testimonials', href: '/#testimonials', icon: HelpCircle },
 ];
 
+const languages = [
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
+  { code: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
+] as const;
+
 export const Navbar: React.FC = () => {
-  const { token, theme, toggleTheme } = useStore();
+  const { token, theme, toggleTheme, language, setLanguage } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isDark = theme === 'dark';
   const logoSrc = isDark ? '/disciplin-logo.svg' : '/disciplin-logo-light.svg';
@@ -171,9 +177,32 @@ export const Navbar: React.FC = () => {
                 })}
 
                 {/* Language selection block */}
-                <div className="py-2.5 px-2.5 flex items-center justify-between border-t border-slate-100 dark:border-slate-900/60 mt-1.5 pt-3">
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Language / भाषा</span>
-                  <LanguageSelector />
+                <div className="border-t border-slate-100 dark:border-slate-900/60 mt-1.5 pt-3 px-2.5">
+                  <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-2">Language / भाषा</span>
+                  <div className="flex gap-1.5">
+                    {languages.map((lang) => {
+                      const isSelected = lang.code === language;
+                      return (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            setLanguage(lang.code);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors duration-150 border
+                            ${
+                              isSelected
+                                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/10'
+                                : 'bg-transparent text-slate-650 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-900/50 border-slate-200/50 dark:border-slate-800/60'
+                            }
+                          `}
+                        >
+                          <span className="text-xs select-none">{lang.flag}</span>
+                          <span>{lang.nativeName}</span>
+                          {isSelected && <Check size={12} className="text-emerald-500" />}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Divider */}
