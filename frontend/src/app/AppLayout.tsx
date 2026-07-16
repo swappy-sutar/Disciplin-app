@@ -159,7 +159,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           
           {/* Logo */}
-          <Link to="/" className="hover:opacity-90 transition-opacity flex-shrink-0">
+          <Link to="/" className="hover:opacity-90 transition-opacity flex-shrink-0 -ml-3 sm:-ml-5 md:-ml-6">
             <Logo className="h-12 md:h-14" />
           </Link>
 
