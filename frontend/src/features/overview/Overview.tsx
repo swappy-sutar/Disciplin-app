@@ -38,7 +38,8 @@ import {
   Target,
   Activity,
   Briefcase,
-  Edit2
+  Edit2,
+  Check
 } from 'lucide-react';
 
 const formatTo12Hour = (timeStr?: string): string => {
@@ -423,11 +424,14 @@ export default function Overview() {
                     <div key={block._id} className="relative group flex items-start justify-between gap-4 p-2.5 -m-2.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300">
                       {/* Circle Dot Marker */}
                       <div 
-                        className={`absolute -left-[23px] top-[15px] w-3.5 h-3.5 rounded-full border-2 bg-white dark:bg-slate-900 transition-all duration-300 flex items-center justify-center z-10
-                          ${block.isDone ? 'border-primary-blue bg-primary-blue scale-110 shadow-sm shadow-primary-blue/30' : 'border-gray-300 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-500'}
+                        className={`absolute -left-[23px] top-[15.5px] w-3.5 h-3.5 rounded-full border transition-all duration-300 flex items-center justify-center z-10
+                          ${block.isDone 
+                            ? 'border-primary-blue bg-primary-blue scale-110 shadow-sm shadow-primary-blue/20' 
+                            : 'border-gray-300 bg-white dark:bg-slate-900 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-500'
+                          }
                         `}
                       >
-                        {block.isDone && <div className="w-1.5 h-1.5 rounded-full bg-white animate-scale-up" />}
+                        {block.isDone && <Check className="w-2 h-2 text-white stroke-[4.5] animate-scale-up" />}
                       </div>
 
                       <div className="flex-1 min-w-0">
