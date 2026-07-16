@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award } from 'lucide-react';
+import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award, ChevronRight } from 'lucide-react';
 import { useStore } from '../../app/store';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -136,11 +136,11 @@ export const Navbar: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="sm:hidden overflow-hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 z-50 shadow-2xl shadow-slate-900/10 dark:shadow-slate-950/50"
+              transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+              className="sm:hidden overflow-hidden absolute top-full left-0 right-0 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 z-50 shadow-2xl shadow-slate-900/10 dark:shadow-slate-950/50"
             >
-              <div className="px-5 pt-3 pb-6 flex flex-col gap-1">
-                {/* Nav links with icons for attractive layout */}
+              <div className="px-4 pt-2.5 pb-5 flex flex-col gap-1">
+                {/* Nav links with refined boxes and chevrons */}
                 {navLinks.map((link, i) => {
                   const LinkIcon = link.icon;
                   return (
@@ -148,38 +148,43 @@ export const Navbar: React.FC = () => {
                       key={link.label}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      initial={{ opacity: 0, x: -15 }}
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.04, duration: 0.2 }}
-                      className="flex items-center gap-3.5 py-3.5 px-4 text-[15px] font-semibold text-slate-700 dark:text-slate-350 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/10 rounded-2xl transition-all duration-150 active:scale-[0.98]"
+                      transition={{ delay: i * 0.03, duration: 0.15 }}
+                      className="flex items-center justify-between py-2 px-2.5 text-[14.5px] font-semibold text-slate-850 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-450 hover:bg-emerald-500/8 dark:hover:bg-emerald-500/8 rounded-xl transition-all duration-150 active:scale-[0.98] group/item"
                     >
-                      <LinkIcon size={18} className="text-slate-450 dark:text-slate-500 group-hover:text-emerald-500 transition-colors" />
-                      {link.label}
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-slate-100/60 dark:bg-slate-900 flex items-center justify-center text-slate-500 dark:text-slate-450 group-hover/item:bg-emerald-500/10 group-hover/item:text-emerald-500 transition-colors duration-200">
+                          <LinkIcon size={16} />
+                        </div>
+                        <span>{link.label}</span>
+                      </div>
+                      <ChevronRight size={15} className="text-slate-400 dark:text-slate-550 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200" />
                     </motion.a>
                   );
                 })}
 
-                {/* Divider with high-fidelity glow */}
-                <div className="my-3 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
+                {/* Divider */}
+                <div className="my-2.5 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
 
-                {/* Auth actions in dropdown */}
+                {/* Auth actions with reduced heights */}
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.18, duration: 0.2 }}
-                  className="flex flex-col gap-3 pt-2"
+                  transition={{ delay: 0.15, duration: 0.18 }}
+                  className="flex flex-col gap-2 pt-1"
                 >
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white text-[15px] font-extrabold shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-all duration-150"
+                    className="w-full flex items-center justify-center py-3 rounded-xl bg-primary-blue hover:bg-primary-blue-hover text-white text-[14.5px] font-bold shadow-md shadow-emerald-500/20 active:scale-[0.98] transition-all duration-150"
                   >
                     Get Started Free →
                   </Link>
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-[15px] font-bold hover:bg-slate-50 dark:hover:bg-slate-850/60 active:scale-[0.98] transition-all duration-150 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md"
+                    className="w-full flex items-center justify-center py-3 rounded-xl border border-slate-200/85 dark:border-slate-805 text-slate-700 dark:text-slate-350 text-[14.5px] font-bold hover:bg-slate-50 dark:hover:bg-slate-850/60 active:scale-[0.98] transition-all duration-150 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md"
                   >
                     Sign In
                   </Link>
