@@ -8,7 +8,7 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
 import { Modal } from '../../components/ui/Modal';
-import { LoadingScreen } from '../../components/ui/LoadingScreen';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { BarChart } from '../../components/charts/BarChart';
 import { format, parseISO, addDays, endOfWeek, subDays } from 'date-fns';
@@ -45,7 +45,7 @@ export default function Goals() {
   const { goals, history, isLoading, createGoal, updateGoal, deleteGoal } = useGoals(activeWeekStart);
 
   if (isLoading) {
-    return <LoadingScreen message="Loading your goals" subtext="Fetching weekly goals and progress data..." />;
+    return <PageSkeleton cards={3} rows={4} />;
   }
 
   // Calculate dates
@@ -166,7 +166,7 @@ export default function Goals() {
       </div>
 
       {/* Summary strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 select-none">
         <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col">

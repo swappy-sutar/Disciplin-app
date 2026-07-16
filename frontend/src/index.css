@@ -48,6 +48,10 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
 html, body {
   background-color: var(--canvas-bg);
   color: var(--text-main);

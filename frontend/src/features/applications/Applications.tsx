@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DotGrid } from '../../components/ui/DotGrid';
 import { Modal } from '../../components/ui/Modal';
-import { LoadingScreen } from '../../components/ui/LoadingScreen';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 import { StatCard } from '../../components/ui/StatCard';
 import { format, parseISO } from 'date-fns';
 import { 
@@ -56,7 +56,7 @@ export default function Applications() {
   const { applications, isLoading, createApplication, updateApplication, deleteApplication } = useApplications();
 
   if (isLoading) {
-    return <LoadingScreen message="Loading your applications" subtext="Fetching job applications and status logs..." />;
+    return <PageSkeleton cards={3} rows={5} />;
   }
 
   // Filter application items
@@ -217,7 +217,7 @@ export default function Applications() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 select-none">
         <StatCard 
           label="Today's Logged Total" 
           value={`${todayApps.length} Job Apps`} 

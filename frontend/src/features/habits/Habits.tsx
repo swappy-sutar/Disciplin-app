@@ -8,7 +8,7 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialProgress } from '../../components/ui/RadialProgress';
 import { Modal } from '../../components/ui/Modal';
-import { LoadingScreen } from '../../components/ui/LoadingScreen';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 import { BarChart } from '../../components/charts/BarChart';
 import { StepChart } from '../../components/charts/StepChart';
 import { format, parseISO, addDays, endOfWeek } from 'date-fns';
@@ -53,7 +53,7 @@ export default function Habits() {
   ];
 
   if (isLoading) {
-    return <LoadingScreen message="Loading your habits" subtext="Fetching habit logs and weekly streaks..." />;
+    return <PageSkeleton cards={4} rows={5} />;
   }
 
   // Calculate days offset list
@@ -161,7 +161,7 @@ export default function Habits() {
       </div>
 
       {/* Stats strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 select-none">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 select-none">
         
         {/* Today's Progress Radial */}
         <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">

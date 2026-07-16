@@ -15,7 +15,7 @@ import { RadialProgress } from '../../components/ui/RadialProgress';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { DotGrid } from '../../components/ui/DotGrid';
 import { Modal } from '../../components/ui/Modal';
-import { LoadingScreen } from '../../components/ui/LoadingScreen';
+import { OverviewSkeleton } from '../../components/ui/Skeleton';
 import { Link } from 'react-router-dom';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { CalendarPicker } from '../../components/ui/CalendarPicker';
@@ -112,7 +112,7 @@ export default function Overview() {
   const [isSubmittingQuote, setSubmittingQuote] = useState(false);
 
   if (isLoading) {
-    return <LoadingScreen message="Syncing your momentum" subtext="Fetching timetables, habits, and active goals..." />;
+    return <OverviewSkeleton />;
   }
 
   if (isError || !summary) {
