@@ -10,13 +10,13 @@ import {
   Flame,
   ArrowRight,
   Star,
-  Check,
   Zap,
   Shield,
   EyeOff,
   Server,
   Play,
-  BarChart2
+  BarChart2,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -78,6 +78,7 @@ export default function LandingPage() {
   const { token } = useStore();
   const { t } = useTranslation();
   const [activeFeature, setActiveFeature] = useState(0);
+  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
   // Always start from the top when the page loads
   useEffect(() => {
@@ -1028,85 +1029,64 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* 9. Pricing Section ("Choose your path") */}
-      <section id="pricing" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center">
-          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-405 border border-amber-500/15 dark:border-amber-500/30 shadow-sm inline-flex select-none">
-            Pricing Plans
+      {/* 9. FAQ Section */}
+      <section id="faq" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 select-none relative z-10">
+        <div className="max-w-2xl mx-auto space-y-2.5 mb-12 text-center">
+          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
+            FAQ
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
-            Choose <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">your path</span>
+            {t.faqTitle}
           </h2>
           <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold leading-relaxed">
-            Get started for free or upgrade to executive access to unlock advanced AI logs.
+            {t.faqSubtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch select-none">
-
-          {/* Card 1 Free */}
-          <div className="bg-white/60 dark:bg-slate-950/40 backdrop-blur-sm p-8 flex flex-col justify-between text-left border border-gray-100 dark:border-gray-900 rounded-3xl shadow-lg relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
-            <div className="space-y-6">
-              <div>
-                <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block select-none">Hustle</span>
-                <div className="flex items-baseline mt-2.5 gap-1 select-none">
-                  <span className="text-4xl font-black text-gray-950 dark:text-white leading-none">$0</span>
-                  <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold select-none">/ forever</span>
-                </div>
-              </div>
-
-              <ul className="space-y-3 pt-6 border-t border-gray-100/80 dark:border-gray-900 text-xs font-semibold text-gray-600 dark:text-gray-400">
-                <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> Daily Planner</li>
-                <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> Basic Habit Tracker</li>
-                <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> Up to 10 active Job Apps</li>
-              </ul>
-            </div>
-
-            <Link to="/register" className="mt-8 select-none block">
-              <Button variant="outline" fullWidth className="py-3 font-bold border-gray-250 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer rounded-2xl">
-                Start Free
-              </Button>
-            </Link>
-          </div>
-
-          {/* Card 2 Pro */}
-          <div className="relative group hover:scale-[1.01] transition-transform duration-300">
-            {/* Outer border glow line */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl opacity-20 group-hover:opacity-40 blur transition duration-300 -z-10" />
-
-            <div className="bg-white dark:bg-slate-950 p-8 flex flex-col justify-between text-left border border-emerald-500/20 dark:border-emerald-500/30 rounded-3xl shadow-xl h-full relative overflow-hidden">
-              {/* Corner radial glow highlight */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[40px] rounded-full pointer-events-none" />
-
-              <div className="absolute top-4 right-4 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full px-2.5 py-0.5 text-[9px] font-extrabold select-none uppercase tracking-wider border border-emerald-500/20">
-                Most Popular
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest block select-none">Executive</span>
-                  <div className="flex items-baseline mt-2.5 gap-1 select-none">
-                    <span className="text-4xl font-black text-gray-950 dark:text-white leading-none">$12</span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500 font-semibold select-none">/ month</span>
-                  </div>
-                </div>
-
-                <ul className="space-y-3 pt-6 border-t border-gray-100/80 dark:border-gray-900 text-xs font-semibold text-gray-600 dark:text-gray-400">
-                  <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> All Hustle features</li>
-                  <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> Unlimited Job Pipeline</li>
-                  <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> AI-powered Analytics & Insights</li>
-                  <li className="flex items-center gap-2.5"><Check size={15} className="text-emerald-500" /> Custom Motivation Engine</li>
-                </ul>
-              </div>
-
-              <Link to="/register" className="mt-8 select-none block">
-                <button className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-extrabold text-xs tracking-wide rounded-2xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-300 cursor-pointer border border-emerald-500/20">
-                  Get Pro Access
+        <div className="max-w-2xl mx-auto space-y-4 text-left">
+          {[
+            { q: t.faq1Q, a: t.faq1A },
+            { q: t.faq2Q, a: t.faq2A },
+            { q: t.faq3Q, a: t.faq3A },
+            { q: t.faq4Q, a: t.faq4A },
+          ].map((item, idx) => {
+            const isOpen = activeFaqIndex === idx;
+            return (
+              <div 
+                key={idx}
+                className="bg-white/60 dark:bg-slate-950/40 backdrop-blur-sm border border-gray-100 dark:border-slate-850/80 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:border-gray-200 dark:hover:border-slate-800"
+              >
+                <button
+                  onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
+                  className="w-full flex items-center justify-between p-5 text-left font-bold text-sm md:text-base text-gray-900 dark:text-white transition-colors cursor-pointer select-none focus:outline-none border-none bg-transparent"
+                >
+                  <span>{item.q}</span>
+                  <motion.span
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-gray-400 dark:text-slate-500 flex-shrink-0 ml-4"
+                  >
+                    <ChevronDown size={18} />
+                  </motion.span>
                 </button>
-              </Link>
-            </div>
-          </div>
 
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    >
+                      <div className="px-5 pb-5 pt-0 text-xs md:text-sm font-semibold text-gray-500 dark:text-slate-400 leading-relaxed border-t border-gray-50/50 dark:border-slate-900/60 select-none">
+                        {item.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       </section>
 

@@ -8,8 +8,8 @@ import { LanguageSelector } from './LanguageSelector';
 const navLinks = [
   { label: 'Features', href: '/#features', icon: CheckSquare },
   { label: 'Solutions', href: '/#demo', icon: Shield },
-  { label: 'Pricing', href: '/#pricing', icon: Award },
-  { label: 'Testimonials', href: '/#testimonials', icon: HelpCircle },
+  { label: 'FAQ', href: '/#faq', icon: HelpCircle },
+  { label: 'Testimonials', href: '/#testimonials', icon: Award },
 ];
 
 const languages = [
