@@ -11,8 +11,8 @@ import {
   ChevronLeft, 
   ChevronRight, 
   LogOut,
-  Sun,
-  Moon,
+  SunDim,
+  MoonStar,
   User as UserIcon,
   Clock,
   Sparkles
@@ -185,7 +185,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   transition={{ duration: 0.18, ease: "easeInOut" }}
                   className="flex items-center justify-center"
                 >
-                  {theme === 'dark' ? <Sun size={19} className="text-yellow-500" /> : <Moon size={19} />}
+                  {theme === 'dark' ? <SunDim size={19} className="text-yellow-500" /> : <MoonStar size={19} className="text-slate-700 dark:text-slate-350" />}
                 </motion.div>
               </AnimatePresence>
             </button>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Moon, Menu, X, CheckSquare, Shield, HelpCircle, Award } from 'lucide-react';
+import { SunDim, MoonStar, Menu, X, CheckSquare, Shield, HelpCircle, Award } from 'lucide-react';
 import { useStore } from '../../app/store';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -68,7 +68,7 @@ export const Navbar: React.FC = () => {
                 transition={{ duration: 0.15 }}
                 className="flex items-center justify-center"
               >
-                {isDark ? <Sun size={19} className="text-yellow-400" /> : <Moon size={19} />}
+                {isDark ? <SunDim size={19} className="text-yellow-400" /> : <MoonStar size={19} className="text-slate-700 dark:text-slate-350" />}
               </motion.span>
             </AnimatePresence>
           </button>
