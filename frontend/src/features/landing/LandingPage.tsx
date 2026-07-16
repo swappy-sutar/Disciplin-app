@@ -594,7 +594,8 @@ export default function LandingPage() {
             Feature Set
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
-            Everything you need to <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 bg-clip-text text-transparent">stay focused</span>
+            Everything you need to <br />
+            <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 bg-clip-text text-transparent">stay focused</span>
           </h2>
           <p className="text-sm md:text-base text-slate-400 dark:text-slate-500 font-semibold max-w-lg mx-auto leading-relaxed">
             One cockpit dashboard to replace your messy spreadsheets, checklists, calendar dates, and notes.
