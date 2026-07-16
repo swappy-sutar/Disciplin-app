@@ -50,7 +50,7 @@ export const sendSystemNotification = (title: string, message: string) => {
           vibrate: [100, 50, 100],
           tag: 'disciplin-alert',
           renotify: true
-        });
+        } as any);
       })
       .catch((err) => {
         console.warn('Service worker fallback to direct Notification API:', err);
