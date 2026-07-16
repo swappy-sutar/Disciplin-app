@@ -13,11 +13,11 @@ export const Logo: React.FC<LogoProps> = ({ className = 'h-10 md:h-12', showText
 
   if (showText) {
     return (
-      <div className={`flex items-center justify-start select-none ${className}`}>
+      <div className={`flex items-center select-none ${className}`}>
         <img 
           src={isDark ? "/disciplin-logo.svg" : "/disciplin-logo-light.svg"} 
           alt="Disciplin Logo" 
-          className="h-full w-auto object-contain" 
+          className="h-full w-auto object-contain mx-auto" 
         />
       </div>
     );
