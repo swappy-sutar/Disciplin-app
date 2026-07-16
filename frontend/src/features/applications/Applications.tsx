@@ -217,32 +217,36 @@ export default function Applications() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 select-none">
-        <StatCard 
-          label="Today's Logged Total" 
-          value={`${todayApps.length} Job Apps`} 
-          icon={<Briefcase size={20} />} 
-          iconBgColor="bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30"
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 select-none">
+        <StatCard
+          label="Today's Logged Total"
+          value={`${todayApps.length} Job Apps`}
+          icon={<Briefcase size={18} />}
+          accentColor="blue"
+          iconBgColor="bg-blue-50/80 text-blue-500 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30"
           trendText={todayTrendText}
           trendDirection={todayTrendDirection}
         />
-        
-        <StatCard 
-          label="Weekly Submitted" 
-          value={`${weeklyCount} Job Apps`} 
-          icon={<CheckCircle size={20} />} 
-          iconBgColor="bg-emerald-50 text-emerald-500 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30"
+
+        <StatCard
+          label="Weekly Submitted"
+          value={`${weeklyCount} Job Apps`}
+          icon={<CheckCircle size={18} />}
+          accentColor="green"
+          iconBgColor="bg-emerald-50/80 text-emerald-500 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30"
           trendText="+34 vs last week"
           trendDirection="up"
         />
 
-        <StatCard 
-          label="Active Interview Tracks" 
-          value={`${applications.filter(a => a.status === 'Interview').length} Scheduled`} 
-          icon={<Edit2 size={20} />} 
-          iconBgColor="bg-purple-50 text-purple-500 dark:bg-purple-950/20 dark:text-purple-400 border border-purple-100/50 dark:border-purple-900/30"
+        <StatCard
+          label="Active Interview Tracks"
+          value={`${applications.filter(a => a.status === 'Interview').length} Scheduled`}
+          icon={<Edit2 size={18} />}
+          accentColor="violet"
+          iconBgColor="bg-purple-50/80 text-purple-500 dark:bg-purple-950/30 dark:text-purple-400 border border-purple-100/50 dark:border-purple-900/30"
           trendText={activeTrendText}
           trendDirection="none"
+          className="col-span-2 lg:col-span-1"
         />
       </div>
 

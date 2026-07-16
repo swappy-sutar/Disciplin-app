@@ -161,70 +161,70 @@ export default function Habits() {
       </div>
 
       {/* Stats strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 select-none">
-        
-        {/* Today's Progress Radial */}
-        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Today's Progress</span>
-              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{todayProgress}%</span>
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
-                {todayLogs} of {activeCount} completed
-              </span>
-            </div>
-            <div className="relative flex items-center justify-center">
-              {/* Soft backdrop glow */}
-              <div className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 blur-md rounded-full" />
-              <RadialProgress percentage={todayProgress} size={58} strokeWidth={5.5} showLabel={false} color="green" />
-            </div>
-          </div>
-        </Card>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 select-none">
 
-        {/* Longest streak */}
-        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Longest Streak</span>
-              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{longestStreak} Days</span>
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
-                Best personal record
-              </span>
-            </div>
-            <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500 shadow-sm">
-              <Flame size={20} fill="currentColor" className="animate-pulse" />
+        {/* Today's Progress */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-emerald-500/20 dark:border-emerald-500/15 shadow-lg shadow-emerald-500/5">
+          {/* top color accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
+          {/* glow blob */}
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
+          <div className="flex flex-col gap-0.5 relative">
+            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Today's Progress</span>
+            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{todayProgress}<span className="text-lg">%</span></span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{todayLogs} of {activeCount} done</span>
+          </div>
+          <div className="absolute bottom-3 right-3">
+            <div className="relative">
+              <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-full" />
+              <RadialProgress percentage={todayProgress} size={46} strokeWidth={5} showLabel={false} color="green" />
             </div>
           </div>
-        </Card>
+        </div>
 
-        {/* Active habits */}
-        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Active Habits</span>
-              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{activeCount} Tracker</span>
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
-                Habits in progress
-              </span>
-            </div>
-            <div className="p-3 rounded-2xl bg-primary-blue/10 text-primary-blue shadow-sm">
-              <CheckSquare size={20} />
-            </div>
+        {/* Longest Streak */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-orange-500/20 dark:border-orange-500/15 shadow-lg shadow-orange-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-400 to-rose-400 rounded-t-2xl" />
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-orange-500/10 dark:bg-orange-500/15 blur-2xl pointer-events-none" />
+          <div className="flex flex-col gap-0.5 relative">
+            <span className="text-[9px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-widest">Longest Streak</span>
+            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{longestStreak}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Days</span></span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Best personal record</span>
           </div>
-        </Card>
+          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-orange-500/20 to-rose-500/10 dark:from-orange-500/25 dark:to-rose-500/15 border border-orange-500/15">
+            <Flame size={18} fill="currentColor" className="text-orange-500 animate-pulse" />
+          </div>
+        </div>
 
-        {/* Weekly Bar Chart Mini */}
-        <Card className="p-5 flex flex-col justify-between bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex justify-between items-center w-full mb-1">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">This Week</span>
-            <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full select-none">{weeklyAverage}% avg</span>
+        {/* Active Habits */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-primary-blue/20 dark:border-primary-blue/15 shadow-lg shadow-primary-blue/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-blue to-indigo-400 rounded-t-2xl" />
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-primary-blue/10 dark:bg-primary-blue/15 blur-2xl pointer-events-none" />
+          <div className="flex flex-col gap-0.5 relative">
+            <span className="text-[9px] font-bold text-primary-blue dark:text-emerald-400 uppercase tracking-widest">Active Habits</span>
+            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{activeCount}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Active</span></span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Habits in progress</span>
           </div>
-          <div className="w-full mt-2">
-            <BarChart data={barChartData} height={60} color="#10B981" showYAxis={false} showXAxis={true} />
+          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-primary-blue/20 to-indigo-500/10 dark:from-primary-blue/25 dark:to-indigo-500/15 border border-primary-blue/15">
+            <CheckSquare size={18} className="text-primary-blue" />
           </div>
-        </Card>
+        </div>
+
+        {/* Weekly Chart */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-violet-500/20 dark:border-violet-500/15 shadow-lg shadow-violet-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-400 to-purple-400 rounded-t-2xl" />
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-violet-500/10 dark:bg-violet-500/15 blur-2xl pointer-events-none" />
+          <div className="flex justify-between items-start w-full relative">
+            <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">This Week</span>
+            <span className="text-[9px] font-extrabold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full">{weeklyAverage}%</span>
+          </div>
+          <div className="w-full mt-2 relative">
+            <BarChart data={barChartData} height={54} color="#10B981" showYAxis={false} showXAxis={true} />
+          </div>
+        </div>
 
       </div>
+
 
       {/* Main Weekly Consistency Card */}
       <Card 

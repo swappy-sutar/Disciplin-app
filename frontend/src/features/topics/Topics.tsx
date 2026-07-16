@@ -1086,56 +1086,55 @@ export default function Topics() {
       </div>
 
       {/* Stats strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 select-none">
-        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Total Topics</span>
-              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{totalTopicsCount}</span>
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
-                Curriculum target modules
-              </span>
-            </div>
-            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 shadow-sm animate-pulse">
-              <BookOpen size={20} />
-            </div>
-          </div>
-        </Card>
-        
-        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Completed</span>
-              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">{completedTopicsCount} Topics</span>
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
-                {totalTopicsCount - completedTopicsCount} remaining to learn
-              </span>
-            </div>
-            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 shadow-sm">
-              <CheckCircle size={20} className="animate-bounce" />
-            </div>
-          </div>
-        </Card>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 select-none">
 
-        <Card className="bg-gradient-to-br from-white to-gray-50/30 dark:from-card-bg dark:to-slate-900/30 border border-gray-100 dark:border-slate-800/80 shadow-md">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">Overall Progress</span>
-              <span className="text-3xl font-black text-gray-900 dark:text-white mt-1.5 select-none leading-none tracking-tight">
-                {overallProgressPercent}%
-              </span>
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1 select-none">
-                Curriculum coverage rate
-              </span>
-            </div>
-            <div className="relative flex items-center justify-center">
-              {/* Soft backdrop glow */}
-              <div className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 blur-md rounded-full" />
-              <RadialProgress percentage={overallProgressPercent} size={58} strokeWidth={5.5} showLabel={false} color="green" />
+        {/* Total Topics */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-emerald-500/20 dark:border-emerald-500/15 shadow-lg shadow-emerald-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
+          <div className="flex flex-col gap-0.5 relative">
+            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Total Topics</span>
+            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{totalTopicsCount}</span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Curriculum modules</span>
+          </div>
+          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 dark:from-emerald-500/25 dark:to-teal-500/15 border border-emerald-500/15">
+            <BookOpen size={18} className="text-emerald-500" />
+          </div>
+        </div>
+
+        {/* Completed */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-blue-500/20 dark:border-blue-500/15 shadow-lg shadow-blue-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-t-2xl" />
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-blue-500/10 dark:bg-blue-500/15 blur-2xl pointer-events-none" />
+          <div className="flex flex-col gap-0.5 relative">
+            <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">Completed</span>
+            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{completedTopicsCount}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Topics</span></span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{totalTopicsCount - completedTopicsCount} remaining</span>
+          </div>
+          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/10 dark:from-blue-500/25 dark:to-indigo-500/15 border border-blue-500/15">
+            <CheckCircle size={18} className="text-blue-500 animate-bounce" />
+          </div>
+        </div>
+
+        {/* Overall Progress */}
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-violet-500/20 dark:border-violet-500/15 shadow-lg shadow-violet-500/5 col-span-2 lg:col-span-1">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-400 to-purple-400 rounded-t-2xl" />
+          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-violet-500/10 dark:bg-violet-500/15 blur-2xl pointer-events-none" />
+          <div className="flex flex-col gap-0.5 relative">
+            <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">Overall Progress</span>
+            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{overallProgressPercent}<span className="text-lg">%</span></span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Curriculum coverage rate</span>
+          </div>
+          <div className="absolute bottom-3 right-3">
+            <div className="relative">
+              <div className="absolute inset-0 bg-violet-500/20 blur-md rounded-full" />
+              <RadialProgress percentage={overallProgressPercent} size={46} strokeWidth={5} showLabel={false} color="green" />
             </div>
           </div>
-        </Card>
+        </div>
+
       </div>
+
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 select-none">
