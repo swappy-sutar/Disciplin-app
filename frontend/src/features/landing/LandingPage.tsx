@@ -324,14 +324,14 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-canvas-bg text-gray-800 selection:bg-emerald-500/10 selection:text-emerald-500 relative overflow-hidden font-sans pt-16">
       
-      {/* Cinematic Spotlight mesh background graphics */}
-      <div className="absolute top-[-15%] left-[-15%] w-[65%] h-[60%] bg-emerald-400/15 dark:bg-emerald-500/10 blur-[130px] rounded-full pointer-events-none animate-pulse duration-[10s]" />
-      <div className="absolute top-[-10%] right-[-10%] w-[55%] h-[50%] bg-teal-400/15 dark:bg-teal-500/8 blur-[120px] rounded-full pointer-events-none animate-pulse duration-[12s] delay-[2s]" />
-      <div className="absolute bottom-[15%] right-[-5%] w-[45%] h-[45%] bg-cyan-400/10 dark:bg-cyan-500/5 blur-[110px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[5%] left-[-10%] w-[40%] h-[40%] bg-indigo-400/8 dark:bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
+      {/* Cinematic Spotlight mesh background graphics - theme aware to prevent muddy green fill in light mode */}
+      <div className="absolute top-[-15%] left-[-15%] w-[65%] h-[60%] bg-violet-100/50 dark:bg-emerald-500/10 blur-[130px] rounded-full pointer-events-none animate-pulse duration-[10s]" />
+      <div className="absolute top-[-10%] right-[-10%] w-[55%] h-[50%] bg-indigo-100/40 dark:bg-teal-500/8 blur-[120px] rounded-full pointer-events-none animate-pulse duration-[12s] delay-[2s]" />
+      <div className="absolute bottom-[15%] right-[-5%] w-[45%] h-[45%] bg-pink-100/30 dark:bg-cyan-500/5 blur-[110px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[5%] left-[-10%] w-[40%] h-[40%] bg-blue-100/20 dark:bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
       
       {/* Decorative dot-mesh background */}
-      <div className="absolute inset-0 bg-[radial-gradient(#E2E8F0_1px,transparent_1px)] dark:bg-[radial-gradient(#1E293B_1px,transparent_1px)] [background-size:24px_24px] opacity-60 dark:opacity-40 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#E2E8F0_1px,transparent_1px)] dark:bg-[radial-gradient(#1E293B_1px,transparent_1px)] [background-size:24px_24px] opacity-65 dark:opacity-40 pointer-events-none" />
 
       {/* 1. Header/Navigation */}
       <Navbar />
@@ -350,7 +350,7 @@ export default function LandingPage() {
           className="lg:col-span-6 space-y-6 text-left"
         >
           {/* Beta/Status Badge with subtle pulsing ring */}
-          <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-450 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm select-none animate-fade-in relative overflow-hidden group">
+          <div className="inline-flex items-center gap-2 bg-emerald-55/60 dark:bg-emerald-950/20 border border-emerald-100/80 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-450 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm select-none animate-fade-in relative overflow-hidden group">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping absolute left-3" />
             <Zap size={11} fill="currentColor" className="ml-2.5" />
             <span>Introducing v1.0 Release</span>
@@ -361,7 +361,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-              className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent"
+              className="block bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent"
             >
               Plan your day.
             </motion.span>
@@ -369,7 +369,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-              className="block bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent"
+              className="block bg-gradient-to-r from-emerald-600 via-teal-650 to-emerald-700 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-450 bg-clip-text text-transparent"
             >
               Build your habits.
             </motion.span>
@@ -432,7 +432,7 @@ export default function LandingPage() {
               <div className="w-2.5 h-2.5 rounded-full bg-red-400/90" />
               <div className="w-2.5 h-2.5 rounded-full bg-amber-400/90" />
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/90" />
-              <div className="bg-gray-50 dark:bg-slate-900/60 border border-gray-200/50 dark:border-slate-800/80 rounded-lg text-[9px] font-bold text-gray-400 dark:text-slate-500 px-3 py-0.5 ml-4 flex-1 text-center max-w-[280px]">
+              <div className="bg-gray-55 dark:bg-slate-900/60 border border-gray-200/50 dark:border-slate-800/80 rounded-lg text-[9px] font-bold text-gray-600 dark:text-slate-400 px-3 py-0.5 ml-4 flex-1 text-center max-w-[280px]">
                 disciplin.app/overview
               </div>
             </div>
@@ -443,7 +443,7 @@ export default function LandingPage() {
               <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-900 pb-3">
                 <div>
                   <h4 className="text-xs font-black text-gray-900 dark:text-white leading-none">Today's Overview</h4>
-                  <span className="text-[8px] text-gray-400 mt-1 block select-none">Monday, Oct 16</span>
+                  <span className="text-[8px] text-gray-500 dark:text-slate-450 mt-1 block select-none">Monday, Oct 16</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-14 h-4 bg-emerald-100 border border-emerald-200 text-emerald-600 rounded-full text-[8px] font-bold flex items-center justify-center">
