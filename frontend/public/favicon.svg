@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <defs>
     <linearGradient id="gradDeep" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#8B5CF6"/>
-      <stop offset="1" stop-color="#3B0F70"/>
+      <stop offset="0" stop-color="#10B981"/>
+      <stop offset="1" stop-color="#064E3B"/>
     </linearGradient>
     <linearGradient id="gradLight" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#DDD6FE"/>
-      <stop offset="1" stop-color="#7C3AED"/>
+      <stop offset="0" stop-color="#A7F3D0"/>
+      <stop offset="1" stop-color="#059669"/>
     </linearGradient>
   </defs>
   <!-- Dark rounded rectangle app icon background -->
