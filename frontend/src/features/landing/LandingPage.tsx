@@ -857,8 +857,8 @@ export default function LandingPage() {
             }
           }}
         >
-          {/* Vertical Dashed Line aligned left */}
-          <div className="absolute left-[27px] top-6 bottom-10 w-[2px] border-l border-dashed border-emerald-500/30 dark:border-emerald-500/20 -z-10" />
+          {/* Vertical solid gradient timeline line - Perfectly centered (left-3 + w-12/2 = 36px) */}
+          <div className="absolute left-[35px] top-6 bottom-16 w-[3.5px] bg-gradient-to-b from-emerald-500 via-teal-500 to-emerald-500/10 dark:from-emerald-450 dark:via-teal-500/50 dark:to-emerald-500/5 rounded-full -z-10" />
 
           {[
             { step: '1', title: 'Plan', desc: 'Map out weekly targets and configure daily timetable work blocks.' },
