@@ -588,8 +588,8 @@ export default function LandingPage() {
       </section>
 
       {/* 4. Features Grid Section */}
-      <section id="features" className="max-w-[1440px] mx-auto px-6 md:px-12 py-24 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+      <section id="features" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 text-center select-none relative z-10">
+        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center">
           <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
             Feature Set
           </div>
@@ -672,11 +672,10 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* 5. Product Mockup / Interactive Feature Selector */}
-      <section id="demo" className="bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-slate-900 py-24 select-none relative z-10">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 space-y-12">
+      <section id="demo" className="bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-slate-900 py-14 sm:py-16 md:py-20 select-none relative z-10">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 space-y-8">
 
-          <div className="text-center max-w-2xl mx-auto space-y-4">
+          <div className="text-center max-w-2xl mx-auto space-y-2.5">
             <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-405 border border-blue-500/15 dark:border-blue-500/30 shadow-sm inline-flex select-none">
               Interactive Preview
             </div>
@@ -787,8 +786,8 @@ export default function LandingPage() {
       </section>
 
       {/* 6. Workflow Section */}
-      <section className="max-w-[1440px] mx-auto px-6 md:px-12 py-24 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+      <section className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 text-center select-none relative z-10">
+        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center">
           <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-405 border border-indigo-500/15 dark:border-indigo-500/30 shadow-sm inline-flex select-none">
             Process Method
           </div>
@@ -927,8 +926,8 @@ export default function LandingPage() {
       </section>
 
       {/* 8. Testimonials Section */}
-      <section id="testimonials" className="max-w-[1440px] mx-auto px-6 md:px-12 py-24 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+      <section id="testimonials" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 text-center select-none relative z-10">
+        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center">
           <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-pink-500/10 dark:bg-pink-500/20 text-pink-600 dark:text-pink-405 border border-pink-500/15 dark:border-pink-500/30 shadow-sm inline-flex select-none">
             Social Proof
           </div>
@@ -1018,8 +1017,8 @@ export default function LandingPage() {
       </section>
 
       {/* 9. Pricing Section ("Choose your path") */}
-      <section id="pricing" className="max-w-[1440px] mx-auto px-6 md:px-12 py-20 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-4 mb-16 text-center">
+      <section id="pricing" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 text-center select-none relative z-10">
+        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center">
           <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-405 border border-amber-500/15 dark:border-amber-500/30 shadow-sm inline-flex select-none">
             Pricing Plans
           </div>
@@ -1100,13 +1099,13 @@ export default function LandingPage() {
       </section>
 
       {/* 10. CTA Section Banner */}
-      <section className="py-24 mb-12 select-none relative overflow-hidden">
+      <section className="py-16 md:py-20 mb-4 select-none relative overflow-hidden">
         {/* Soft glowing ambient background radial gradient */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 dark:bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none -z-10" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-teal-500/5 dark:bg-teal-500/10 blur-[80px] rounded-full pointer-events-none -z-10" />
 
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 text-center space-y-8 flex flex-col justify-center items-center">
-          <div className="inline-flex p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-xs font-extrabold uppercase tracking-wider select-none border border-emerald-100/50 dark:border-emerald-900/30">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 text-center space-y-5 flex flex-col justify-center items-center">
+          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
             Start Today
           </div>
 
