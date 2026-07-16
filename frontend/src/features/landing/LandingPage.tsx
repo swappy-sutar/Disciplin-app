@@ -362,7 +362,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-                className="block bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent"
+                className="block bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent font-black"
               >
                 Plan your day.
               </motion.span>
@@ -370,7 +370,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-                className="block bg-gradient-to-r from-emerald-600 via-teal-650 to-emerald-700 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-450 bg-clip-text text-transparent"
+                className="block bg-gradient-to-r from-emerald-600 via-teal-650 to-emerald-700 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-450 bg-clip-text text-transparent font-black"
               >
                 Build your habits.
               </motion.span>
