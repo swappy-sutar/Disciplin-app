@@ -96,21 +96,21 @@ function App() {
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-80" />
             
             {/* Glowing Ambient Color Blobs */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-violet-500/10 dark:bg-violet-600/10 blur-[100px] animate-pulse [animation-duration:8s]" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-indigo-500/5 dark:bg-indigo-600/5 blur-[100px] animate-pulse [animation-duration:10s] [animation-delay:2s]" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-emerald-500/10 dark:bg-emerald-600/10 blur-[100px] animate-pulse [animation-duration:8s]" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/5 dark:bg-teal-600/5 blur-[100px] animate-pulse [animation-duration:10s] [animation-delay:2s]" />
 
             {/* Floating content wrapper */}
             <div className="relative z-10 flex flex-col items-center max-w-sm w-full animate-scale-up">
               
               <div className="relative mb-8 mt-2">
                 {/* Floating Shadow base */}
-                <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 opacity-20 blur-xl animate-pulse" />
+                <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-500 opacity-20 blur-xl animate-pulse" />
                 
                 {/* Outer counter-rotating ring */}
-                <div className="absolute -inset-3.5 rounded-full border border-transparent border-t-violet-400/40 border-l-violet-400/40 animate-spin [animation-duration:3s]" style={{ animationDirection: 'reverse' }} />
+                <div className="absolute -inset-3.5 rounded-full border border-transparent border-t-emerald-400/40 border-l-emerald-400/40 animate-spin [animation-duration:3s]" style={{ animationDirection: 'reverse' }} />
                 
                 {/* Inner spinner ring */}
-                <div className="absolute -inset-1.5 rounded-full border-2 border-transparent border-r-violet-500 border-b-violet-500 animate-spin [animation-duration:1.2s]" />
+                <div className="absolute -inset-1.5 rounded-full border-2 border-transparent border-r-emerald-500 border-b-emerald-500 animate-spin [animation-duration:1.2s]" />
                 
                 {/* Branded spinner container */}
                 <div className="relative w-20 h-20 flex items-center justify-center bg-white dark:bg-slate-900 border border-gray-150/80 dark:border-gray-800 rounded-full shadow-lg">
@@ -119,19 +119,19 @@ function App() {
               </div>
               
               {/* Logo text with official gradient theme matching logo chevrons */}
-              <h1 className="text-2xl font-black bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-600 dark:from-violet-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent tracking-tight leading-none mt-2 drop-shadow-sm select-none">
+              <h1 className="text-2xl font-black bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 dark:from-emerald-400 dark:via-teal-400 dark:to-emerald-400 bg-clip-text text-transparent tracking-tight leading-none mt-2 drop-shadow-sm select-none">
                 Disciplin
               </h1>
               
               {/* Tagline: focus. consistency. growth. */}
               <p className="text-[10px] font-black tracking-[0.2em] text-gray-400 dark:text-gray-500 mt-3.5 select-none uppercase">
-                focus. consistency. <span className="text-violet-500 dark:text-violet-400 font-extrabold">growth.</span>
+                focus. consistency. <span className="text-emerald-500 dark:text-emerald-450 font-extrabold">growth.</span>
               </p>
 
               {/* Custom animated progress bar with glow */}
               <div className="w-40 h-1.5 bg-gray-150 dark:bg-gray-800/80 rounded-full mt-6 overflow-hidden shadow-inner relative">
                 <div 
-                  className="h-full bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(139,92,246,0.5)]" 
+                  className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(16,185,129,0.5)]" 
                   style={{ width: `${loadingProgress}%` }}
                 />
               </div>

@@ -35,12 +35,12 @@ export const Logo: React.FC<LogoProps> = ({ className = 'h-10 md:h-12', showText
       >
         <defs>
           <linearGradient id="logoGradDeep" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#8B5CF6"/>
-            <stop offset="1" stopColor="#3B0F70"/>
+            <stop offset="0" stopColor="#10B981"/>
+            <stop offset="1" stopColor="#047857"/>
           </linearGradient>
           <linearGradient id="logoGradLight" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#DDD6FE"/>
-            <stop offset="1" stopColor="#7C3AED"/>
+            <stop offset="0" stopColor="#A7F3D0"/>
+            <stop offset="1" stopColor="#14B8A6"/>
           </linearGradient>
         </defs>
         <polygon points="30,35 100,100 30,165 58,165 128,100 58,35" fill="url(#logoGradDeep)"/>
