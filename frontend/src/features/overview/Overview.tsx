@@ -56,6 +56,25 @@ const formatTo12Hour = (timeStr?: string): string => {
   return `${displayHours}:${displayMinutes} ${ampm}`;
 };
 
+const calculateDurationInHours = (start?: string, end?: string): number => {
+  if (!start || !end) return 0;
+  const [startH, startM] = start.split(':').map(Number);
+  const [endH, endM] = end.split(':').map(Number);
+  
+  if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) return 0;
+  
+  let startMinutes = startH * 60 + startM;
+  let endMinutes = endH * 60 + endM;
+  
+  if (endMinutes < startMinutes) {
+    // If the slot crosses midnight (e.g. sleep 23:30 to 06:30)
+    endMinutes += 24 * 60;
+  }
+  
+  return (endMinutes - startMinutes) / 60;
+};
+
+
 export default function Overview() {
   const { 
     activeDate, 
@@ -159,6 +178,26 @@ export default function Overview() {
   }
 
   const { timetable, progress, habits, weeklyGoals, topics, applications, quote } = summary;
+
+  const getBlockTag = (title: string): string => {
+    const hasTag = title.includes('[') && title.includes(']');
+    if (hasTag) {
+      const match = title.match(/\[(.*?)\]/);
+      return match ? match[1] : 'General';
+    }
+    return 'General';
+  };
+
+  const focusBlocks = timetable.filter(b => {
+    const tag = getBlockTag(b.title);
+    return tag === 'Work' || tag === 'Study';
+  });
+
+  const completedFocusHours = focusBlocks
+    .filter(b => b.isDone)
+    .reduce((sum, b) => sum + calculateDurationInHours(b.startTime, b.endTime), 0);
+
+  const totalFocusTarget = focusBlocks.reduce((sum, b) => sum + calculateDurationInHours(b.startTime, b.endTime), 0) || 8;
 
   // Handle Form Submissions
   const handleAddSlot = async (e: React.FormEvent) => {
@@ -761,12 +800,12 @@ export default function Overview() {
                 subtext="Timetable Completion"
               />
               
-              <div className="w-full mt-6 pt-5 border-t border-gray-100 flex flex-col gap-1.5">
-                <div className="flex justify-between items-center text-xs text-gray-500 font-semibold select-none">
+              <div className="w-full mt-6 pt-5 border-t border-gray-100/50 dark:border-slate-800/40 flex flex-col gap-1.5">
+                <div className="flex justify-between items-center text-xs text-gray-500 dark:text-slate-400 font-semibold select-none">
                   <span>Focus Hours</span>
-                  <span>5.5 / 8 hrs</span>
+                  <span>{completedFocusHours.toFixed(1)} / {totalFocusTarget.toFixed(1)} hrs</span>
                 </div>
-                <ProgressBar value={5.5} max={8} color="blue" />
+                <ProgressBar value={completedFocusHours} max={totalFocusTarget} color="blue" />
               </div>
             </div>
           </Card>
