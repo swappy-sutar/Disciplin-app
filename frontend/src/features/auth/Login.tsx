@@ -63,8 +63,8 @@ export default function Login() {
             theme: theme === 'dark' ? 'filled_black' : 'outline', 
             size: 'large',
             shape: 'pill',
-            logo_alignment: 'center',
-            width: 320
+            logo_alignment: 'left',
+            width: 240
           }
         );
       }
@@ -196,7 +196,7 @@ export default function Login() {
               <>
                 {/* Brand logo inside card */}
                 <div className="text-center mb-8">
-                  <Logo showText={true} className="h-15 w-full flex justify-center mb-6 drop-shadow-[0_0_20px_rgba(16,185,129,0.25)]" />
+                  <Logo showText={true} className="h-16 w-full flex justify-center mb-6 drop-shadow-[0_0_20px_rgba(16,185,129,0.25)]" />
                   <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign In</h2>
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-medium leading-relaxed max-w-xs mx-auto">Track habits, achieve goals, and log job search applications</p>
                 </div>
@@ -359,9 +359,9 @@ export default function Login() {
                   <motion.div 
                     whileHover={{ scale: 1.015 }}
                     whileTap={{ scale: 0.985 }}
-                    className="w-[320px] h-[40px] flex items-center justify-center"
+                    className="w-[240px] h-[40px] flex items-center justify-center"
                   >
-                    <div id="googleSignInButton" className="w-[320px] h-[40px]" />
+                    <div id="googleSignInButton" className="w-[240px] h-[40px]" />
                   </motion.div>
                 </div>
 

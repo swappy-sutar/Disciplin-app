@@ -59,8 +59,8 @@ export default function Register() {
             theme: theme === 'dark' ? 'filled_black' : 'outline', 
             size: 'large',
             shape: 'pill',
-            logo_alignment: 'center',
-            width: 320
+            logo_alignment: 'left',
+            width: 240
           }
         );
       }
@@ -144,7 +144,7 @@ export default function Register() {
           <Card className="p-6 md:p-8 bg-white/95 dark:bg-card-bg/95 backdrop-blur-md border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">
             {/* Brand logo inside card */}
             <div className="text-center mb-8">
-              <Logo showText={true} className="h-15 w-full flex justify-center mb-6 drop-shadow-[0_0_20px_rgba(16,185,129,0.25)]" />
+              <Logo showText={true} className="h-16 w-full flex justify-center mb-6 drop-shadow-[0_0_20px_rgba(16,185,129,0.25)]" />
               <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign Up</h2>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 font-semibold leading-relaxed max-w-xs mx-auto">Start tracking habits and goals systematically</p>
             </div>
@@ -261,9 +261,9 @@ export default function Register() {
               <motion.div 
                 whileHover={{ scale: 1.015 }}
                 whileTap={{ scale: 0.985 }}
-                className="w-[320px] h-[40px] flex items-center justify-center"
+                className="w-[240px] h-[40px] flex items-center justify-center"
               >
-                <div id="googleSignUpButton" className="w-[320px] h-[40px]" />
+                <div id="googleSignUpButton" className="w-[240px] h-[40px]" />
               </motion.div>
             </div>
 
