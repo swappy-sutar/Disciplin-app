@@ -79,9 +79,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   // Nav items details
   const navItems = [
+    { name: t.overview, path: '/overview', icon: LayoutDashboard },
     { name: t.habits, path: '/habits', icon: CheckSquare },
     { name: t.goals, path: '/goals', icon: Target },
-    { name: t.overview, path: '/overview', icon: LayoutDashboard },
     { name: t.applications, path: '/applications', icon: Briefcase },
     { name: t.topics, path: '/topics', icon: BookOpen },
   ];
