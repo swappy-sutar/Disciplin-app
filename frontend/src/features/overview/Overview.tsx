@@ -472,10 +472,10 @@ export default function Overview() {
                          />
                         <button
                           onClick={() => handleEditClick(block)}
-                          className="text-gray-300 hover:text-primary-blue dark:text-gray-450 dark:hover:text-primary-blue transition-colors p-1 cursor-pointer"
+                          className="text-gray-400 hover:text-primary-blue dark:text-slate-400 dark:hover:text-primary-blue transition-colors p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-lg cursor-pointer"
                           aria-label="Edit slot"
                         >
-                          <Edit2 size={13} />
+                          <Edit2 size={14} />
                         </button>
                         <button
                           onClick={() => setConfirmModal({
@@ -485,7 +485,7 @@ export default function Overview() {
                             message: `Are you sure you want to delete the schedule block "${block.title}"? This action cannot be undone.`,
                             onConfirm: () => deleteBlock(block._id)
                           })}
-                          className="text-gray-300 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors p-1 cursor-pointer"
+                          className="text-gray-400 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 transition-colors p-1.5 hover:bg-red-50/60 dark:hover:bg-red-950/30 rounded-lg cursor-pointer"
                           aria-label="Delete slot"
                         >
                           <Trash2 size={14} />
