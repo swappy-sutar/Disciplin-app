@@ -894,43 +894,36 @@ export default function LandingPage() {
 
       {/* 7. Stats Grid Section */}
       <section className="max-w-[1440px] mx-auto px-6 md:px-12 mb-16 select-none relative z-10">
-        <motion.div
-          className="rounded-[32px] p-8 md:p-14 text-white text-center relative overflow-hidden shadow-2xl space-y-8 flex flex-col justify-center border border-gray-800/80"
-          style={{ background: 'linear-gradient(135deg, #0F172A 0%, #020617 100%)' }}
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ type: "spring", stiffness: 70, damping: 15 }}
-        >
-          {/* Glowing backdrop circular graphics inside stat container */}
-          <div className="absolute top-[-50%] right-[-20%] w-[60%] h-[150%] bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
-          <div className="absolute bottom-[-50%] left-[-20%] w-[50%] h-[150%] bg-teal-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 relative z-10">
+          {[
+            { value: 10000, suffix: '+', label: 'Tasks Completed', desc: 'Active habits, daily schedules, and syllabus syllabus items logged.', fromColor: 'from-emerald-500', toColor: 'to-teal-500', glowColor: 'bg-emerald-500/5', borderGlow: 'hover:border-emerald-500/30' },
+            { value: 2500, suffix: '+', label: 'Jobs Landed', desc: 'Users landing dream roles at premium product companies.', fromColor: 'from-blue-500', toColor: 'to-indigo-500', glowColor: 'bg-blue-500/5', borderGlow: 'hover:border-blue-500/30' },
+            { value: 98, suffix: '%', label: 'Consistency Rating', desc: 'Average user routine and checklist streak maintenance score.', fromColor: 'from-pink-500', toColor: 'to-purple-500', glowColor: 'bg-pink-500/5', borderGlow: 'hover:border-pink-500/30' },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className={`bg-white/60 dark:bg-slate-900/60 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-slate-200/50 dark:border-slate-800/80 shadow-lg text-center flex flex-col justify-center items-center relative overflow-hidden group cursor-default transition-all duration-300 ${stat.borderGlow}`}
+            >
+              {/* Internal glow backdrop */}
+              <div className={`absolute -inset-10 ${stat.glowColor} blur-2xl rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
-            <div className="space-y-1">
-              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                <CountUp to={10000} suffix="+" duration={2000} />
+              <span className={`text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r ${stat.fromColor} ${stat.toColor} bg-clip-text text-transparent relative z-10`}>
+                <CountUp to={stat.value} suffix={stat.suffix} duration={1.6 + i * 0.2} />
               </span>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 select-none">TASKS COMPLETED</p>
-            </div>
-            <div className="space-y-1 border-y md:border-y-0 md:border-x border-gray-800/80 py-6 md:py-0">
-              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                <CountUp to={2500} suffix="+" duration={1800} />
-              </span>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 select-none">JOBS LANDED</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-4xl md:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                <CountUp to={98} suffix="%" duration={1600} />
-              </span>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 select-none">CONSISTENCY RATING</p>
-            </div>
-          </div>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-3 mb-1 select-none relative z-10">{stat.label}</p>
+              <p className="text-[11.5px] font-semibold text-slate-400 dark:text-slate-500 max-w-[220px] leading-relaxed relative z-10">{stat.desc}</p>
+            </motion.div>
+          ))}
+        </div>
 
-          <h3 className="text-lg md:text-xl font-bold text-gray-200 tracking-tight leading-none select-none pt-4 relative z-10">
-            Ready to find your momentum?
-          </h3>
-        </motion.div>
+        <h3 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white tracking-tight leading-none text-center pt-10 select-none relative z-10">
+          Ready to find your momentum?
+        </h3>
       </section>
 
       {/* 8. Testimonials Section */}
