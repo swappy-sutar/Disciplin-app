@@ -15,7 +15,8 @@ import {
   Shield,
   EyeOff,
   Server,
-  Play
+  Play,
+  BarChart2
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -118,6 +119,13 @@ export default function LandingPage() {
       icon: Briefcase,
       color: 'text-slate-600 bg-slate-600/10 border-slate-600/20',
       accent: '#475569'
+    },
+    {
+      title: t.smartAnalytics,
+      desc: t.smartAnalyticsDesc,
+      icon: BarChart2,
+      color: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
+      accent: '#F59E0B'
     },
   ];
 

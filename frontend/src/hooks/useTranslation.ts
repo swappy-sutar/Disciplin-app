@@ -37,6 +37,8 @@ const translations = {
     studyPlannerDesc: 'Structure your learning path. Break down complex topics into checklists and track your total progress percentage.',
     jobAppTracker: 'Job Application Tracker',
     jobAppTrackerDesc: 'Organize your job search. Log submissions, track interviews, document follow-ups, and manage interview pipelines.',
+    smartAnalytics: 'Performance Analytics',
+    smartAnalyticsDesc: 'Visualize your progress with dynamic charts. Track habit consistency trends, job search conversion ratios, and learning speed over time.',
 
     // Footer
     footerDesc: 'Ultimate productivity cockpit for habit tracking, daily planning, and career log.',
@@ -152,6 +154,8 @@ const translations = {
     studyPlannerDesc: 'अपने सीखने के मार्ग को व्यवस्थित करें। जटिल विषयों को चेकलिस्ट में विभाजित करें और अपनी कुल प्रगति प्रतिशत को ट्रैक करें।',
     jobAppTracker: 'नौकरी आवेदन ट्रैकर',
     jobAppTrackerDesc: 'अपनी नौकरी की खोज को व्यवस्थित करें। सबमिशन लॉग इन करें, इंटरव्यू ट्रैक करें, फॉलो-अप का दस्तावेजीकरण करें, और इंटरव्यू पाइपलाइनों का प्रबंधन करें।',
+    smartAnalytics: 'प्रदर्शन विश्लेषण',
+    smartAnalyticsDesc: 'गतिशील चार्ट के साथ अपनी प्रगति की कल्पना करें। समय के साथ आदत निरंतरता के रुझान, नौकरी खोज रूपांतरण अनुपात और सीखने की गति को ट्रैक करें।',
 
     // Footer
     footerDesc: 'आदत ट्रैकिंग, दैनिक योजना और करियर लॉग के लिए सर्वश्रेष्ठ उत्पादकता कॉकपिट।',
@@ -267,6 +271,8 @@ const translations = {
     studyPlannerDesc: 'आपला शिकण्याचा मार्ग व्यवस्थित करा. क्लिष्ट विषयांना चेकलिस्टमध्ये विभाजित करा आणि आपल्या एकूण प्रगतीची टक्केवारी ट्रॅक करा.',
     jobAppTracker: 'नोकरी अर्ज ट्रॅकर',
     jobAppTrackerDesc: 'आपली नोकरी शोध मोहीम व्यवस्थित करा. अर्ज सबमिट करा, मुलाखती ट्रॅक करा, फॉलो-अपची नोंद करा आणि मुलाखत पाइपलाइन व्यवस्थापित करा.',
+    smartAnalytics: 'कामगिरी विश्लेषण',
+    smartAnalyticsDesc: 'डायनॅमिक चार्ट्ससह आपल्या प्रगतीची दृश्य रचना करा. वेळेनुसार सवय सुसंगततेचे ट्रेंड, नोकरी शोध रूपांतरण गुणोत्तर आणि शिकण्याचा वेग ट्रॅक करा।',
 
     // Footer
     footerDesc: 'सवय ट्रॅकिंग, दैनिक नियोजन आणि करिअर लॉगसाठी सर्वोत्तम उत्पादकता कॉकपिट.',
