@@ -196,7 +196,7 @@ export default function Login() {
               <>
                 {/* Brand logo inside card */}
                 <div className="text-center mb-8">
-                  <Logo showText={true} className="h-16 w-full flex justify-center mb-6 drop-shadow-[0_0_20px_rgba(16,185,129,0.25)]" />
+                  <Logo showText={true} center={true} className="h-16 w-full flex justify-center mb-6 drop-shadow-[0_0_20px_rgba(16,185,129,0.25)]" />
                   <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Sign In</h2>
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-medium leading-relaxed max-w-xs mx-auto">Track habits, achieve goals, and log job search applications</p>
                 </div>

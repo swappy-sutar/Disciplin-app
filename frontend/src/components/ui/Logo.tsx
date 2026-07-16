@@ -5,19 +5,25 @@ interface LogoProps {
   className?: string;
   showText?: boolean;
   forceDark?: boolean;
+  center?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = 'h-10 md:h-12', showText = true, forceDark = false }) => {
+export const Logo: React.FC<LogoProps> = ({ 
+  className = 'h-10 md:h-12', 
+  showText = true, 
+  forceDark = false,
+  center = false
+}) => {
   const theme = useStore(state => state.theme);
   const isDark = forceDark || theme === 'dark';
 
   if (showText) {
     return (
-      <div className={`flex items-center select-none ${className}`}>
+      <div className={`flex items-center select-none ${className} ${center ? 'justify-center' : 'justify-start'}`}>
         <img 
           src={isDark ? "/disciplin-logo.svg" : "/disciplin-logo-light.svg"} 
           alt="Disciplin Logo" 
-          className="h-full w-auto object-contain mx-auto" 
+          className={`h-full w-auto object-contain ${center ? 'mx-auto' : ''}`} 
         />
       </div>
     );
