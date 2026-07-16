@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import dns from 'dns';
-import { env } from '../config/env';
 
 // Force DNS lookup to prefer IPv4, preventing ENETUNREACH errors on IPv6-disabled container networks
 dns.setDefaultResultOrder('ipv4first');
@@ -13,50 +12,8 @@ interface EmailOptions {
 }
 
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  const hasResendConfig = env.RESEND_API_KEY;
   const hasSmtpConfig = process.env.SMTP_HOST && process.env.SMTP_USER;
 
-  // 1. Resend API Fallback (HTTPS/Port 443 - Mandatory for Render Free Tier since SMTP is blocked)
-  if (hasResendConfig) {
-    let fromAddress = process.env.EMAIL_FROM || 'onboarding@resend.dev';
-    
-    // Resend requires verified custom domains. Public domains (gmail, yahoo, etc.) cannot be verified and will throw a 403.
-    // If the from address uses a public domain, automatically fallback to Resend's sandbox domain.
-    const isPublicDomain = /@(gmail|yahoo|outlook|hotmail|icloud|mail)\.com/i.test(fromAddress);
-    if (isPublicDomain) {
-      fromAddress = '"Disciplin" <onboarding@resend.dev>';
-    }
-    
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: fromAddress,
-        to: options.email,
-        subject: options.subject,
-        text: options.message,
-        html: options.html || `<p>${options.message}</p>`,
-      }),
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      let cleanMessage = errText;
-      try {
-        const parsed = JSON.parse(errText);
-        if (parsed.message) {
-          cleanMessage = parsed.message;
-        }
-      } catch (_) {}
-      throw new Error(cleanMessage);
-    }
-    return;
-  }
-
-  // 2. Nodemailer SMTP (Port 587 - Works locally or on paid Render tiers)
   if (hasSmtpConfig) {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -85,7 +42,7 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('Email service is not configured. Please set RESEND_API_KEY or SMTP variables in your Render dashboard environment.');
+    throw new Error('Email service (SMTP) is not configured. Please set SMTP_HOST and SMTP_USER in your production environment settings.');
   }
 
   // Development fallback: Log the email to console for easy testing
