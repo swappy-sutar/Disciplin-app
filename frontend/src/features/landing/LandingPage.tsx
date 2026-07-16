@@ -554,7 +554,7 @@ export default function LandingPage() {
         </div>{/* end hero grid */}
 
         {/* ── Pillars strip pinned to bottom of full-screen hero ── */}
-        <div className="w-full border-t border-slate-200/50 dark:border-slate-800/80 py-6 text-center space-y-4 bg-slate-100/40 dark:bg-slate-900/60 backdrop-blur-md">
+        <div className="w-full border-y border-slate-200/60 dark:border-slate-800/80 py-6 text-center space-y-4 bg-slate-100/40 dark:bg-slate-900/60 backdrop-blur-md shadow-lg shadow-slate-900/5 dark:shadow-slate-950/40 relative z-20">
           <p className="text-[11px] font-extrabold text-slate-400 dark:text-gray-500 uppercase tracking-[0.2em]">
             DESIGNED AROUND PURE MOMENTUM &amp; PRODUCTIVITY PILLARS
           </p>
