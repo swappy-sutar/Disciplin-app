@@ -403,21 +403,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </main>
 
       {/* Sticky Bottom Nav Bar for Mobile Devices */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-950 border-t border-slate-200/50 dark:border-slate-900/60 flex items-center justify-around h-16 z-40 shadow-lg px-2 select-none backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-950/95 border-t border-slate-200/50 dark:border-slate-900/60 flex items-center justify-around h-16 z-40 shadow-lg px-2 select-none backdrop-blur-md">
         {mobileNavItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) => `
-              flex flex-col items-center justify-center flex-1 h-full text-[10px] font-bold transition-all duration-300
+              flex flex-col items-center justify-center flex-1 h-full text-[9px] font-black transition-all duration-200 cursor-pointer
               ${isActive 
-                ? 'text-emerald-600 dark:text-emerald-400 scale-105' 
+                ? 'text-emerald-600 dark:text-emerald-400' 
                 : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }
             `}
           >
-            <item.icon size={19} className="mb-0.5" />
-            <span>{item.name}</span>
+            {({ isActive }) => (
+              <>
+                <div className={`py-1 px-3.5 rounded-full transition-all duration-200 flex items-center justify-center ${isActive ? 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 scale-105' : 'text-slate-400 dark:text-slate-500'}`}>
+                  <item.icon size={18} />
+                </div>
+                <span className="mt-0.5 tracking-tight">{item.name}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
