@@ -329,10 +329,8 @@ export default function Workouts() {
     return days;
   };
 
-  const isSaving = false;
-
   return (
-    <div className="space-y-6 md:space-y-8 select-none">
+    <div className="space-y-6 md:space-y-8 select-none pb-24 animate-fade-in">
       
       {/* Header Title */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -346,28 +344,28 @@ export default function Workouts() {
         </div>
         
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-gray-100 dark:bg-slate-900 p-1 rounded-xl self-start md:self-center border border-gray-150/50 dark:border-gray-800">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1.5 bg-gray-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl w-full sm:w-auto border border-gray-150/40 dark:border-slate-800/80">
           <button 
             onClick={() => setActiveTab('today')}
-            className={`px-4 py-2 text-xs font-black rounded-lg cursor-pointer transition-all border-none ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 hover:bg-gray-250 dark:hover:bg-slate-800/50'}`}
+            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
           >
             {t.todayWorkout || "Today's Lift"}
           </button>
           <button 
             onClick={() => setActiveTab('split')}
-            className={`px-4 py-2 text-xs font-black rounded-lg cursor-pointer transition-all border-none ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 hover:bg-gray-250 dark:hover:bg-slate-800/50'}`}
+            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
           >
             {t.workoutSplit || 'Weekly Split'}
           </button>
           <button 
             onClick={() => setActiveTab('library')}
-            className={`px-4 py-2 text-xs font-black rounded-lg cursor-pointer transition-all border-none ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 hover:bg-gray-250 dark:hover:bg-slate-800/50'}`}
+            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
           >
             {t.exerciseLibrary || 'Exercise Library'}
           </button>
           <button 
             onClick={() => setActiveTab('progress')}
-            className={`px-4 py-2 text-xs font-black rounded-lg cursor-pointer transition-all border-none ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 hover:bg-gray-250 dark:hover:bg-slate-800/50'}`}
+            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
           >
             {t.workoutAnalytics || 'Analytics'}
           </button>
@@ -375,73 +373,77 @@ export default function Workouts() {
       </div>
 
       {/* Stats Cards Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 select-none">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-4 select-none">
         
         {/* Current Workout Streak */}
-        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-orange-500/20 dark:border-orange-500/15 shadow-lg shadow-orange-500/5">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-500 rounded-t-2xl" />
-          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-orange-500/10 dark:bg-orange-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-widest">Active Streak</span>
-            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">
-              {streak?.currentStreak || 0}
-              <span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Days</span>
-            </span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Consecutive workout days</span>
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/60 border border-gray-150/40 dark:border-slate-800/80 shadow-sm transition-all duration-255 hover:shadow-md hover:shadow-orange-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-500" />
+          <div className="flex justify-between items-start">
+            <div className="space-y-0.5">
+              <span className="text-[9px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider block">Active Streak</span>
+              <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight block mt-1">
+                {streak?.currentStreak || 0}
+                <span className="text-xs font-bold text-gray-450 dark:text-slate-500 ml-1">Days</span>
+              </span>
+            </div>
+            <div className="p-2 rounded-xl bg-orange-500/10 dark:bg-orange-500/20 border border-orange-500/10 shrink-0">
+              <Flame size={16} fill="currentColor" className="text-orange-500 animate-pulse" />
+            </div>
           </div>
-          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-orange-500/10 dark:bg-orange-500/20 border border-orange-500/15">
-            <Flame size={18} fill="currentColor" className="text-orange-500 animate-pulse" />
-          </div>
+          <p className="text-[9px] font-semibold text-gray-400 dark:text-slate-500 mt-3 select-none leading-none">Consecutive workout days</p>
         </div>
 
         {/* Longest Streak */}
-        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-emerald-500/20 dark:border-emerald-500/15 shadow-lg shadow-emerald-500/5">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-t-2xl" />
-          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Longest Streak</span>
-            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">
-              {streak?.longestStreak || 0}
-              <span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Days</span>
-            </span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Best personal record</span>
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/60 border border-gray-150/40 dark:border-slate-800/80 shadow-sm transition-all duration-255 hover:shadow-md hover:shadow-emerald-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
+          <div className="flex justify-between items-start">
+            <div className="space-y-0.5">
+              <span className="text-[9px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider block">Longest Streak</span>
+              <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight block mt-1">
+                {streak?.longestStreak || 0}
+                <span className="text-xs font-bold text-gray-450 dark:text-slate-500 ml-1">Days</span>
+              </span>
+            </div>
+            <div className="p-2 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/10 shrink-0">
+              <Award size={16} className="text-emerald-500" />
+            </div>
           </div>
-          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/15">
-            <Award size={18} className="text-emerald-500" />
-          </div>
+          <p className="text-[9px] font-semibold text-gray-400 dark:text-slate-500 mt-3 select-none leading-none">Best personal record</p>
         </div>
 
         {/* Today's Target Muscle */}
-        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-blue-500/20 dark:border-blue-500/15 shadow-lg shadow-blue-500/5">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-2xl" />
-          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-blue-500/10 dark:bg-blue-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Today's Target</span>
-            <span className="text-xl md:text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-2.5">
-              {sessionDraft?.muscleGroup || 'Loading...'}
-            </span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-1">Via weekly split builder</span>
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/60 border border-gray-150/40 dark:border-slate-800/80 shadow-sm transition-all duration-255 hover:shadow-md hover:shadow-blue-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500" />
+          <div className="flex justify-between items-start">
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <span className="text-[9px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider block">Today's Target</span>
+              <span className="text-xl md:text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight block mt-1 truncate">
+                {sessionDraft?.muscleGroup || 'Loading...'}
+              </span>
+            </div>
+            <div className="p-2 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/10 shrink-0 ml-2">
+              <Dumbbell size={16} className="text-blue-500" />
+            </div>
           </div>
-          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/15">
-            <Dumbbell size={18} className="text-blue-500" />
-          </div>
+          <p className="text-[9px] font-semibold text-gray-400 dark:text-slate-500 mt-3 select-none leading-none">Via weekly split builder</p>
         </div>
 
         {/* Monthly Workouts Logged */}
-        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-purple-500/20 dark:border-purple-500/15 shadow-lg shadow-purple-500/5">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-t-2xl" />
-          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-purple-500/10 dark:bg-purple-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
-            <span className="text-[9px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">Total Logs</span>
-            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">
-              {history?.filter(s => s.completed).length || 0}
-              <span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Workouts</span>
-            </span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Recorded in past 30 days</span>
+        <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/60 border border-gray-150/40 dark:border-slate-800/80 shadow-sm transition-all duration-255 hover:shadow-md hover:shadow-purple-500/5">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500" />
+          <div className="flex justify-between items-start">
+            <div className="space-y-0.5">
+              <span className="text-[9px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider block">Total Logs</span>
+              <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight block mt-1">
+                {history?.filter(s => s.completed).length || 0}
+                <span className="text-xs font-bold text-gray-450 dark:text-slate-500 ml-1">Workouts</span>
+              </span>
+            </div>
+            <div className="p-2 rounded-xl bg-purple-500/10 dark:bg-purple-500/20 border border-purple-500/10 shrink-0">
+              <Activity size={16} className="text-purple-500" />
+            </div>
           </div>
-          <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-purple-500/10 dark:bg-purple-500/20 border border-purple-500/15">
-            <Activity size={18} className="text-purple-500" />
-          </div>
+          <p className="text-[9px] font-semibold text-gray-400 dark:text-slate-500 mt-3 select-none leading-none">Recorded in past 30 days</p>
         </div>
 
       </div>
@@ -451,27 +453,29 @@ export default function Workouts() {
         <div className="space-y-6 select-none animate-fade-in">
           
           {/* Day selection header */}
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-150/80 dark:border-gray-800 shadow-sm">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900/60 p-3.5 rounded-2xl border border-gray-150/40 dark:border-slate-800/80 shadow-sm">
+            <div className="flex items-center justify-between w-full">
               <button 
                 onClick={() => shiftDate(-1)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer border-none bg-transparent text-gray-600 dark:text-slate-350"
+                className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-850 rounded-xl transition-all cursor-pointer border-none bg-transparent text-gray-500 dark:text-slate-400"
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={18} />
               </button>
-              <div className="text-center px-2">
-                <span className="text-xs font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-widest block leading-none">
+              
+              <div className="text-center">
+                <span className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest block leading-none">
                   {format(parseISO(targetDateStr), 'EEEE')}
                 </span>
-                <span className="text-sm font-black text-gray-800 dark:text-white mt-1 block">
+                <span className="text-sm font-black text-gray-900 dark:text-white mt-1.5 block">
                   {format(parseISO(targetDateStr), 'MMM d, yyyy')}
                 </span>
               </div>
+              
               <button 
                 onClick={() => shiftDate(1)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer border-none bg-transparent text-gray-600 dark:text-slate-350"
+                className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-850 rounded-xl transition-all cursor-pointer border-none bg-transparent text-gray-500 dark:text-slate-400"
               >
-                <ChevronRight size={16} />
+                <ChevronRight size={18} />
               </button>
             </div>
             
@@ -480,7 +484,7 @@ export default function Workouts() {
               <Button 
                 onClick={() => setTargetDateStr(activeDate)}
                 variant="outline"
-                className="py-1 px-3 text-[10px] uppercase font-black"
+                className="py-1 px-3 text-[10px] uppercase font-black ml-4"
                 icon={<RefreshCw size={10} />}
               >
                 Go to Today
@@ -575,8 +579,13 @@ export default function Workouts() {
                                 className="w-12 h-12 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0" 
                               />
                               <div>
-                                <h4 className="text-sm font-black text-gray-900 dark:text-white leading-tight">
+                                <h4 className="text-sm font-black text-gray-900 dark:text-white leading-tight flex items-center gap-2">
                                   {exercise.name}
+                                  {ex.sets.every((s: any) => s.completed) && ex.sets.length > 0 && (
+                                    <span className="inline-flex items-center gap-0.5 text-[8px] font-black text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded-md uppercase tracking-wider border border-emerald-500/10 shrink-0">
+                                      <Check size={8} strokeWidth={4} /> Done
+                                    </span>
+                                  )}
                                 </h4>
                                 <div className="flex items-center gap-1.5 mt-1.5">
                                   <PillBadge label={exercise.equipment} color="blue" />

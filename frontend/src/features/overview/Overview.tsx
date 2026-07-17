@@ -360,39 +360,44 @@ export default function Overview() {
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
             {t.todayOverview}
           </h1>
-          <div className="flex items-center gap-1 mt-1.5 text-sm text-gray-500 dark:text-slate-400">
+          
+          {/* Mobile date switcher pill */}
+          <div className="flex items-center gap-1 mt-2.5 text-sm text-gray-500 dark:text-slate-400 bg-white/60 dark:bg-slate-900/50 border border-gray-150/50 dark:border-slate-800/50 rounded-xl px-2 py-1 max-w-fit shadow-sm">
             <button 
               onClick={handlePrevDay}
-              className="md:hidden p-1 -ml-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-850 text-gray-400 hover:text-gray-655 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/60 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer border-none bg-transparent shrink-0"
               aria-label="Previous day"
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={14} />
             </button>
-            <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
+            <div className="flex items-center gap-1.5 px-1.5 font-bold text-gray-800 dark:text-slate-200">
+              <Calendar size={13} className="text-emerald-500/70" />
+              <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
+            </div>
             <button 
               onClick={handleNextDay}
-              className="md:hidden p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-855 text-gray-400 hover:text-gray-655 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/60 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer border-none bg-transparent shrink-0"
               aria-label="Next day"
             >
-              <ChevronRight size={16} />
+              <ChevronRight size={14} />
             </button>
           </div>
         </div>
         
         {/* Toggle Comparison mode */}
-        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-full px-4 py-2.5 shadow-sm transition-all">
-          <span className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+        <div className="flex items-center justify-between md:justify-start gap-4 bg-white/60 dark:bg-slate-900/50 border border-gray-150/40 dark:border-slate-800/80 rounded-2xl px-4 py-2.5 shadow-sm select-none transition-all duration-200 hover:border-gray-200 dark:hover:border-slate-700 w-full md:w-auto">
+          <span className="text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-widest leading-none">
             Compare to Yesterday
           </span>
           <button
             onClick={() => setCompareMode(!compareMode)}
-            className={`w-11 h-6 rounded-full relative transition-all duration-300 focus:outline-none cursor-pointer
-              ${compareMode ? 'bg-primary-blue shadow-sm shadow-emerald-500/10' : 'bg-gray-200 dark:bg-slate-800'}
+            className={`w-12 h-6.5 rounded-full relative transition-all duration-355 focus:outline-none cursor-pointer select-none shrink-0 border-none
+              ${compareMode ? 'bg-primary-blue shadow-sm shadow-emerald-500/20' : 'bg-gray-200 dark:bg-slate-800'}
             `}
           >
             <div 
-              className={`w-4.5 h-4.5 rounded-full bg-white absolute top-0.75 shadow-sm transition-all duration-300
-                ${compareMode ? 'left-5.75' : 'left-0.75'}
+              className={`w-5 h-5 rounded-full bg-white absolute top-0.75 shadow-sm transition-all duration-355
+                ${compareMode ? 'left-6.25' : 'left-0.75'}
               `}
             />
           </button>
