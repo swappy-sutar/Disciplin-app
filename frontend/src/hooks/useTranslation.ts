@@ -18,6 +18,7 @@ const translations = {
     overview: 'Overview',
     applications: 'Applications',
     topics: 'Topics',
+    workout: 'Workout',
 
     // Hero Section
     planYourDay: 'Plan your day.',
@@ -153,6 +154,7 @@ const translations = {
     overview: 'डैशबोर्ड',
     applications: 'आवेदन',
     topics: 'अध्ययन',
+    workout: 'व्यायाम',
 
     // Hero Section
     planYourDay: 'अपने दिन की योजना बनाएं।',
@@ -288,6 +290,7 @@ const translations = {
     overview: 'डॅशबोर्ड',
     applications: 'अर्ज',
     topics: 'अभ्यास',
+    workout: 'व्यायाम',
 
     // Hero Section
     planYourDay: 'आपल्या दिवसाचे नियोजन करा.',

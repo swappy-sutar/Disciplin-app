@@ -5,7 +5,11 @@ import type {
   HabitLog,
   Topic,
   Application,
-  Quote
+  Quote,
+  Exercise,
+  WorkoutSplit,
+  WorkoutSession,
+  WorkoutStreak
 } from '../types';
 
 let apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api/v1';
@@ -349,5 +353,25 @@ export const apiClient = {
       }
       return data;
     })
+  },
+
+  // Workouts Operations
+  workouts: {
+    getExercises: (params?: { muscleGroup?: string; equipment?: string }) => {
+      let query = '';
+      if (params) {
+        const parts = [];
+        if (params.muscleGroup) parts.push(`muscleGroup=${params.muscleGroup}`);
+        if (params.equipment) parts.push(`equipment=${params.equipment}`);
+        if (parts.length > 0) query = `?${parts.join('&')}`;
+      }
+      return request<Exercise[]>('GET', `/workouts/exercises${query}`);
+    },
+    getSplit: () => request<WorkoutSplit>('GET', '/workouts/split'),
+    updateSplit: (weekMap: WorkoutSplit['weekMap']) => request<WorkoutSplit>('PUT', '/workouts/split', { weekMap }),
+    getTodaySession: (date: string) => request<WorkoutSession>('GET', `/workouts/session/today?date=${date}`),
+    saveSession: (body: WorkoutSession) => request<WorkoutSession>('POST', '/workouts/session', body),
+    getHistory: (startDate: string, endDate: string) => request<WorkoutSession[]>('GET', `/workouts/sessions?startDate=${startDate}&endDate=${endDate}`),
+    getStreak: (today: string) => request<WorkoutStreak>('GET', `/workouts/streak?today=${today}`)
   }
 };

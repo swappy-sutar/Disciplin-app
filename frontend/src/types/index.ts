@@ -113,3 +113,60 @@ export interface DashboardSummary {
   };
   quote: Quote;
 }
+
+export interface Exercise {
+  _id: string;
+  name: string;
+  muscleGroup: string;
+  secondaryMuscles?: string[];
+  equipment: string;
+  imageUrl: string;
+  gifUrl?: string;
+  instructions: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  slug: string;
+}
+
+export interface WorkoutSplit {
+  _id: string;
+  userId: string;
+  weekMap: {
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+  };
+  updatedAt?: string;
+}
+
+export interface WorkoutSet {
+  setNumber: number;
+  reps: number;
+  weightKg: number;
+  completed: boolean;
+}
+
+export interface LoggedExercise {
+  exerciseId: Exercise;
+  sets: WorkoutSet[];
+  notes?: string;
+}
+
+export interface WorkoutSession {
+  _id?: string;
+  userId?: string;
+  date: string;
+  muscleGroup: string;
+  exercises: LoggedExercise[];
+  durationMinutes?: number;
+  completed: boolean;
+  createdAt?: string;
+}
+
+export interface WorkoutStreak {
+  currentStreak: number;
+  longestStreak: number;
+}

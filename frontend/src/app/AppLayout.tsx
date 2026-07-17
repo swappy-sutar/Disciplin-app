@@ -7,6 +7,7 @@ import {
   Target, 
   Briefcase, 
   BookOpen, 
+  Dumbbell,
   Bell, 
   ChevronLeft, 
   ChevronRight, 
@@ -105,22 +106,22 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     navigate('/login');
   };
 
-  // Nav items details
   const navItems = [
     { name: t.overview, path: '/overview', icon: LayoutDashboard },
     { name: t.habits, path: '/habits', icon: CheckSquare },
     { name: t.goals, path: '/goals', icon: Target },
     { name: t.applications, path: '/applications', icon: Briefcase },
     { name: t.topics, path: '/topics', icon: BookOpen },
+    { name: t.workout || 'Workout', path: '/workout', icon: Dumbbell },
   ];
 
   // Mobile navigation items (Overview centered)
   const mobileNavItems = [
     { name: t.habits, path: '/habits', icon: CheckSquare },
-    { name: t.goals, path: '/goals', icon: Target },
+    { name: t.workout || 'Workout', path: '/workout', icon: Dumbbell },
     { name: t.overview, path: '/overview', icon: LayoutDashboard },
+    { name: t.goals, path: '/goals', icon: Target },
     { name: t.applications, path: '/applications', icon: Briefcase },
-    { name: t.topics, path: '/topics', icon: BookOpen },
   ];
 
   // Shifting dates

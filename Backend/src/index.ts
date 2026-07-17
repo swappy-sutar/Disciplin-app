@@ -1,7 +1,7 @@
 import app from './app';
 import { connectDB } from './config/db';
 import { env } from './config/env';
-import { seedGlobalQuotes } from './utils/seed-data';
+import { seedGlobalQuotes, seedExercises } from './utils/seed-data';
 import { User } from './models/User';
 import { WeeklyGoal } from './models/WeeklyGoal';
 import { TimetableBlock } from './models/TimetableBlock';
@@ -17,6 +17,7 @@ const startServer = async () => {
     await User.updateMany({ isVerified: { $exists: false } }, { $set: { isVerified: true } });
 
     await seedGlobalQuotes();
+    await seedExercises();
 
     app.listen(env.PORT, () => {
       console.log(`🚀 Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);

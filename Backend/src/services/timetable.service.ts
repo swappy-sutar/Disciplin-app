@@ -9,22 +9,30 @@ export const getOrCreateBlocks = async (userId: Types.ObjectId | string, dateStr
     return existingBlocks;
   }
 
-  // 2. Check if this date was already initialized/visited
-  const meta = await TimetableDayMeta.findOne({ userId, date: dateStr });
-  if (meta) {
-    // Already visited/initialized, and currently has 0 blocks (user might have cleared it)
-    return [];
-  }
-
-  // 3. Not initialized yet. Mark it as initialized.
+  // 2. Atomically create the meta record — only ONE concurrent request will succeed in creating it
+  // (upsert: false here means we try insert; if duplicate key → another request already claimed it)
+  let metaCreated = false;
   try {
-    await TimetableDayMeta.create({ userId, date: dateStr });
+    const result = await TimetableDayMeta.findOneAndUpdate(
+      { userId, date: dateStr },
+      { $setOnInsert: { userId, date: dateStr } },
+      { upsert: true, new: false } // new:false → returns null when document was just inserted (didn't exist before)
+    );
+    // result is null  → document was freshly inserted (we are the one who should copy blocks)
+    // result is a doc → document already existed (another request beat us, or user cleared it)
+    metaCreated = result === null;
   } catch (err) {
-    // Catch potential duplicate key error from concurrent queries
+    // Duplicate key from a true race condition — another request created it first
+    metaCreated = false;
   }
 
-  // 4. Find the most recent date with timetable blocks
-  const latestBlock = await TimetableBlock.findOne({ userId }).sort({ date: -1 });
+  if (!metaCreated) {
+    // Another concurrent request is handling the copy, or the user already visited this day
+    return await TimetableBlock.find({ userId, date: dateStr }).sort({ order: 1, startTime: 1 });
+  }
+
+  // 3. We are the sole owner of the copy operation. Find the most recent date with timetable blocks.
+  const latestBlock = await TimetableBlock.findOne({ userId, date: { $ne: dateStr } }).sort({ date: -1 });
   if (!latestBlock) {
     // No templates/blocks exist at all in database yet
     return [];

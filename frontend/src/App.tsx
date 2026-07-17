@@ -20,6 +20,7 @@ import VerifyEmail from './features/auth/VerifyEmail';
 import NotFound from './components/NotFound';
 import ContactUs from './features/contact/ContactUs';
 import AboutUs from './features/about/AboutUs';
+import Workouts from './features/workout/Workouts';
 
 import { Logo } from './components/ui/Logo';
 
@@ -269,6 +270,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Topics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/workout"
+            element={
+              <ProtectedRoute>
+                <Workouts />
               </ProtectedRoute>
             }
           />

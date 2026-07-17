@@ -46,6 +46,7 @@ Disciplin-app/
 1. **🔒 Secure Authentication Flow**
    - User registration with email verification and password reset workflows.
    - JWT-based auth utilizing short-lived access tokens and secure, HTTP-only refresh tokens.
+   - **Google Sign-In Integration:** Seamless single sign-on (SSO) powered by Google Identity Services SDK, featuring custom buttons with transparent overlay frames and secure backend verification.
    
 2. **📅 Daily Timetable & Schedule Planner**
    - Hourly schedule block creation, task completion check-offs, and daily progress analytics.
@@ -65,7 +66,22 @@ Disciplin-app/
    - Category-wise learning topics with modular sub-topic check-offs and percentage-based completion trackers.
 
 7. **✉️ Daily Motivational Quotes**
-   - Curated quotes displayed daily, with ability to custom-add quotes or toggle favorites.
+   - Curated quotes displayed daily, with the ability to custom-add quotes or toggle favorites.
+
+8. **📊 Performance Analytics**
+   - Visualized habit trends, application pipelines, and curriculum study progress in real-time.
+
+9. **❓ Interactive FAQ Section**
+   - Accordion FAQ component on the landing page addressing common topics from data safety to PWA support.
+
+10. **💬 Premium Contact Us Form**
+    - Full-featured contact form with client/server validation via Zod, error handling, and clean contact info cards.
+
+11. **ℹ️ Brand Story & About Us Page**
+    - A dedicated page showcasing the core values, story, vision, and team behind the application.
+
+12. **📱 Mobile-First Layout & UX Polish**
+    - Optimizations including a mobile bottom navigation bar, click-outside dropdown/menu behaviors, and standard Sun/Moon light/dark mode toggling.
 
 ---
 
