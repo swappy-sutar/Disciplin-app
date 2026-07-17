@@ -19,6 +19,7 @@ import ResetPassword from './features/auth/ResetPassword';
 import VerifyEmail from './features/auth/VerifyEmail';
 import NotFound from './components/NotFound';
 import ContactUs from './features/contact/ContactUs';
+import AboutUs from './features/about/AboutUs';
 
 import { Logo } from './components/ui/Logo';
 
@@ -222,6 +223,14 @@ function App() {
           <Route
             path="/contact-us"
             element={<ContactUs />}
+          />
+          <Route
+            path="/about"
+            element={<AboutUs />}
+          />
+          <Route
+            path="/about-us"
+            element={<AboutUs />}
           />
           <Route
             path="/overview"

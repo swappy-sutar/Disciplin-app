@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Logo } from './Logo';
 
 export const Footer: React.FC = () => {
@@ -60,10 +61,20 @@ export const Footer: React.FC = () => {
         {/* Column 2: Platform / Product */}
         <div className="col-span-1 md:col-span-2 space-y-3 text-left">
           <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest block mb-2.5">Product</span>
-          <a href="#features" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Features</a>
-          <a href="#demo" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Solutions</a>
-          <a href="#faq" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">FAQ</a>
-          <a href="/contact" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Contact Us</a>
+          <Link
+            to="/"
+            onClick={() => {
+              if (window.location.pathname === '/') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold"
+          >
+            Home
+          </Link>
+          <a href="/#features" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Features</a>
+          <Link to="/about" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">About Us</Link>
+          <Link to="/contact" className="block text-slate-450 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:translate-x-0.5 transition-all duration-300 font-bold">Contact Us</Link>
         </div>
 
         {/* Column 3: Legal */}

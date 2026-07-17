@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Moon, Menu, X, CheckSquare, Shield, HelpCircle, Award, ChevronRight, Check } from 'lucide-react';
+import { Sun, Moon, Menu, X, CheckSquare, ChevronRight, Check, Info, Mail, Home } from 'lucide-react';
 import { useStore } from '../../app/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LanguageSelector } from './LanguageSelector';
 
+const MotionLink = motion(Link);
+
 const navLinks = [
+  { label: 'Home', href: '/', icon: Home },
   { label: 'Features', href: '/#features', icon: CheckSquare },
-  { label: 'Solutions', href: '/#demo', icon: Shield },
-  { label: 'FAQ', href: '/#faq', icon: HelpCircle },
-  { label: 'Testimonials', href: '/#testimonials', icon: Award },
+  { label: 'About Us', href: '/about', icon: Info },
+  { label: 'Contact Us', href: '/contact', icon: Mail },
 ];
 
 const languages = [
@@ -54,6 +56,11 @@ export const Navbar: React.FC = () => {
         {/* Logo - Made significantly bigger */}
         <Link
           to="/"
+          onClick={() => {
+            if (window.location.pathname === '/') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
           className="flex-shrink-0 hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] -ml-5 sm:-ml-7 md:-ml-8"
           aria-label="Disciplin home"
         >
@@ -67,16 +74,33 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-semibold" aria-label="Main navigation">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="relative py-2 text-slate-650 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white transition-colors duration-250 cursor-pointer group"
-            >
-              {link.label}
-              <span className="absolute bottom-0 left-0 w-full h-[2.5px] rounded-full bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-250 origin-center" />
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isHash = link.href.includes('#');
+            return isHash ? (
+              <a
+                key={link.label}
+                href={link.href}
+                className="relative py-2 text-slate-650 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white transition-colors duration-250 cursor-pointer group"
+              >
+                {link.label}
+                <span className="absolute bottom-0 left-0 w-full h-[2.5px] rounded-full bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-250 origin-center" />
+              </a>
+            ) : (
+              <Link
+                key={link.label}
+                to={link.href}
+                onClick={() => {
+                  if (link.href === '/' && window.location.pathname === '/') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+                className="relative py-2 text-slate-650 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white transition-colors duration-250 cursor-pointer group"
+              >
+                {link.label}
+                <span className="absolute bottom-0 left-0 w-full h-[2.5px] rounded-full bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-250 origin-center" />
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right controls */}
@@ -171,7 +195,8 @@ export const Navbar: React.FC = () => {
                 {/* Nav links with refined boxes and chevrons */}
                 {navLinks.map((link, i) => {
                   const LinkIcon = link.icon;
-                  return (
+                  const isHash = link.href.includes('#');
+                  return isHash ? (
                     <motion.a
                       key={link.label}
                       href={link.href}
@@ -189,6 +214,29 @@ export const Navbar: React.FC = () => {
                       </div>
                       <ChevronRight size={15} className="text-slate-400 dark:text-slate-550 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200" />
                     </motion.a>
+                  ) : (
+                    <MotionLink
+                      key={link.label}
+                      to={link.href}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        if (link.href === '/' && window.location.pathname === '/') {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                      }}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03, duration: 0.15 }}
+                      className="flex items-center justify-between py-2 px-2.5 text-[14.5px] font-semibold text-slate-850 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-450 hover:bg-emerald-500/8 dark:hover:bg-emerald-500/8 rounded-xl transition-all duration-150 active:scale-[0.98] group/item"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-slate-100/60 dark:bg-slate-900 flex items-center justify-center text-slate-500 dark:text-slate-450 group-hover/item:bg-emerald-500/10 group-hover/item:text-emerald-500 transition-colors duration-200">
+                          <LinkIcon size={16} />
+                        </div>
+                        <span>{link.label}</span>
+                      </div>
+                      <ChevronRight size={15} className="text-slate-400 dark:text-slate-550 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200" />
+                    </MotionLink>
                   );
                 })}
 

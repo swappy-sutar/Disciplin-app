@@ -212,6 +212,11 @@ export const apiClient = {
     resendVerification: (email: string) => request<any>('POST', '/auth/resend-verification', { email }),
   },
 
+  // Contact Operations
+  contact: {
+    submit: (body: { name: string; email: string; subject: string; message: string }) => request<any>('POST', '/contact', body),
+  },
+
   // Timetable Operations
   timetable: {
     list: (date: string) => request<any[]>('GET', `/timetable?date=${date}`).then(res => {

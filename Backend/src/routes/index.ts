@@ -10,6 +10,7 @@ import dashboardRoutes from './dashboard.routes';
 import noteRoutes from './note.routes';
 import qaRoutes from './qa.routes';
 import codingRoutes from './coding.routes';
+import contactRoutes from './contact.routes';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/dashboard', dashboardRoutes);
 router.use('/notes', noteRoutes);
 router.use('/qa', qaRoutes);
 router.use('/coding', codingRoutes);
+router.use('/contact', contactRoutes);
 
 export default router;

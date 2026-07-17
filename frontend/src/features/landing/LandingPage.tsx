@@ -74,6 +74,32 @@ function CountUp({
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
+const renderFaqTitle = (title: string) => {
+  if (title.endsWith('Questions')) {
+    const base = title.substring(0, title.length - 'Questions'.length);
+    return (
+      <>
+        {base}
+        <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+          Questions
+        </span>
+      </>
+    );
+  }
+  if (title.endsWith('प्रश्न')) {
+    const base = title.substring(0, title.length - 'प्रश्न'.length);
+    return (
+      <>
+        {base}
+        <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+          प्रश्न
+        </span>
+      </>
+    );
+  }
+  return title;
+};
+
 export default function LandingPage() {
   const { token } = useStore();
   const { t } = useTranslation();
@@ -1031,103 +1057,155 @@ export default function LandingPage() {
 
       {/* 9. FAQ Section */}
       <section id="faq" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-2.5 mb-12 text-center">
-          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
-            FAQ
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
-            {t.faqTitle}
-          </h2>
-          <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold leading-relaxed">
-            {t.faqSubtitle}
-          </p>
-        </div>
-
-        <div className="w-full space-y-4 text-left">
-          {[
-            { q: t.faq1Q, a: t.faq1A },
-            { q: t.faq2Q, a: t.faq2A },
-            { q: t.faq3Q, a: t.faq3A },
-            { q: t.faq4Q, a: t.faq4A },
-            { q: t.faq5Q, a: t.faq5A },
-            { q: t.faq6Q, a: t.faq6A },
-            { q: t.faq7Q, a: t.faq7A },
-            { q: t.faq8Q, a: t.faq8A },
-          ].map((item, idx) => {
-            const isOpen = activeFaqIndex === idx;
-            return (
-              <div 
-                key={idx}
-                className="bg-white/60 dark:bg-slate-950/40 backdrop-blur-sm border border-gray-100 dark:border-slate-850/80 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:border-gray-200 dark:hover:border-slate-800"
-              >
-                <button
-                  onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between p-5 text-left font-bold text-sm md:text-base text-gray-900 dark:text-white transition-colors cursor-pointer select-none focus:outline-none border-none bg-transparent"
-                >
-                  <span>{item.q}</span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-gray-400 dark:text-slate-500 flex-shrink-0 ml-4"
-                  >
-                    <ChevronDown size={18} />
-                  </motion.span>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
-                    >
-                      <div className="px-5 pb-5 pt-0 text-xs md:text-sm font-semibold text-gray-500 dark:text-slate-400 leading-relaxed border-t border-gray-50/50 dark:border-slate-900/60 select-none">
-                        {item.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
+          {/* Left Column: Title and Subtitle / CTA */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24 flex flex-col gap-6 text-center lg:text-left h-fit self-start">
+            <div className="space-y-3.5">
+              <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
+                FAQ
               </div>
-            );
-          })}
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-950 dark:text-white tracking-tight leading-tight">
+                {renderFaqTitle(t.faqTitle)}
+              </h2>
+              <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold leading-relaxed max-w-md mx-auto lg:mx-0">
+                {t.faqSubtitle}
+              </p>
+            </div>
+
+            {/* Glowing support / help card */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-900/60 dark:to-slate-950/80 p-6 rounded-3xl border border-slate-200/60 dark:border-slate-800/80 shadow-md max-w-md mx-auto lg:mx-0 select-none group hover:border-emerald-500/20 transition-all duration-300 h-fit">
+              <div className="absolute top-0 right-0 -mt-6 -mr-6 w-24 h-24 bg-emerald-500/5 dark:bg-emerald-500/10 blur-xl rounded-full group-hover:scale-150 transition-transform duration-500" />
+              <h3 className="text-base font-extrabold text-gray-900 dark:text-white mb-2 flex items-center justify-center lg:justify-start gap-2">
+                <span>Still have questions?</span>
+              </h3>
+              <p className="text-[12.5px] font-semibold text-slate-450 dark:text-slate-500 leading-relaxed mb-5">
+                Can't find the answer you're looking for? Reach out to our team and we'll get back to you as soon as possible.
+              </p>
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-50 rounded-full transition-all duration-200 shadow-md shadow-emerald-500/15 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Contact Support</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: Accordion Items */}
+          <div className="lg:col-span-7 space-y-4">
+            {[
+              { q: t.faq1Q, a: t.faq1A },
+              { q: t.faq2Q, a: t.faq2A },
+              { q: t.faq3Q, a: t.faq3A },
+              { q: t.faq4Q, a: t.faq4A },
+              { q: t.faq5Q, a: t.faq5A },
+              { q: t.faq6Q, a: t.faq6A },
+              { q: t.faq7Q, a: t.faq7A },
+              { q: t.faq8Q, a: t.faq8A },
+            ].map((item, idx) => {
+              const isOpen = activeFaqIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`group relative overflow-hidden transition-all duration-300 rounded-2xl border ${
+                    isOpen
+                      ? 'bg-white dark:bg-slate-900/90 border-emerald-500/30 dark:border-emerald-500/40 shadow-lg shadow-emerald-500/5'
+                      : 'bg-white/60 dark:bg-slate-950/40 backdrop-blur-sm border-gray-100 dark:border-slate-850/80 hover:border-gray-200 dark:hover:border-slate-800 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                  }`}
+                >
+                  {/* Glowing left bar active indicator */}
+                  <div
+                    className={`absolute top-0 left-0 bottom-0 w-[4px] bg-gradient-to-b from-emerald-400 to-teal-500 transition-all duration-300 ${
+                      isOpen ? 'opacity-100 h-full' : 'opacity-0 h-0'
+                    }`}
+                  />
+
+                  <button
+                    onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
+                    className={`w-full flex items-center justify-between p-5 md:px-6 md:py-5 text-left font-bold text-sm md:text-base transition-colors cursor-pointer select-none focus:outline-none border-none bg-transparent ${
+                      isOpen ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'
+                    }`}
+                  >
+                    <span className="pr-4">{item.q}</span>
+                    <motion.span
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={`flex-shrink-0 ml-2 transition-colors ${
+                        isOpen ? 'text-emerald-500 dark:text-emerald-400' : 'text-gray-400 dark:text-slate-500'
+                      }`}
+                    >
+                      <ChevronDown size={18} />
+                    </motion.span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      >
+                        <div className="px-5 pb-5 md:px-6 md:pb-5 pt-0 text-xs md:text-sm font-semibold text-slate-500 dark:text-slate-400 leading-relaxed border-t border-gray-50/50 dark:border-slate-900/60 select-none">
+                          <motion.div
+                            initial={{ y: -4, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.2, delay: 0.05 }}
+                            className="pt-4"
+                          >
+                            {item.a}
+                          </motion.div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* 10. CTA Section Banner */}
-      <section className="py-16 md:py-20 mb-4 select-none relative overflow-hidden">
-        {/* Soft glowing ambient background radial gradient */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 dark:bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none -z-10" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-teal-500/5 dark:bg-teal-500/10 blur-[80px] rounded-full pointer-events-none -z-10" />
+      <section className="py-16 md:py-20 mb-4 select-none relative z-10 px-6 md:px-12">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-950 dark:from-[#0a1510] dark:via-[#05110c] dark:to-[#020705] text-white p-10 md:p-16 text-center max-w-4xl mx-auto shadow-2xl border border-emerald-500/15 group">
+          {/* Subtle mesh background grid */}
+          <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none" />
+          
+          {/* Glowing colorful ambient orbs */}
+          <div className="absolute top-[-30%] left-[-20%] w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+          <div className="absolute bottom-[-30%] right-[-20%] w-96 h-96 bg-teal-500/10 rounded-full blur-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+          
+          <div className="relative z-10 max-w-2xl mx-auto space-y-6 flex flex-col items-center">
+            <div className="px-3.5 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm select-none">
+              Start Today
+            </div>
 
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 text-center space-y-5 flex flex-col justify-center items-center">
-          <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-450 border border-emerald-500/15 dark:border-emerald-500/30 shadow-sm inline-flex select-none">
-            Start Today
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+              Start building momentum today
+            </h2>
+            
+            <p className="text-xs md:text-sm font-semibold text-slate-350 leading-relaxed max-w-xl">
+              Join 10,000+ developers landing their dream roles with Disciplin's high-performance habit and applications tracking.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+              <Link to="/register" className="select-none">
+                <button className="bg-white hover:bg-emerald-50 text-slate-950 text-xs md:text-sm font-black px-8 py-4 rounded-full transition-all duration-300 shadow-xl shadow-emerald-950/20 hover:scale-[1.03] active:scale-[0.97] cursor-pointer inline-flex items-center gap-2 group/btn">
+                  <span>Get Started for Free</span>
+                  <ArrowRight size={15} className="group-hover/btn:translate-x-1 transition-transform duration-250" />
+                </button>
+              </Link>
+
+              <a href="#features" className="text-xs font-bold text-slate-300 hover:text-white transition-colors px-6 py-3 rounded-full hover:bg-white/10 transition-all cursor-pointer">
+                Explore Features
+              </a>
+            </div>
+
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block select-none pt-2">
+              No credit card required • Instant setup
+            </span>
           </div>
-
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gray-950 dark:text-white leading-none max-w-3xl">
-            Start building momentum today
-          </h2>
-
-          <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-semibold max-w-xl leading-relaxed">
-            Join 10,000+ developers landing their dream roles with Disciplin's high-performance habit and applications tracking.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-            <Link to="/register" className="select-none">
-              <button className="bg-primary-blue hover:bg-emerald-600 text-white text-sm font-extrabold px-10 py-4 rounded-full transition-all cursor-pointer shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 duration-200 select-none border border-emerald-500/30">
-                Get Started for Free
-              </button>
-            </Link>
-
-            <a href="#features" className="text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-primary-blue transition-colors px-6 py-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
-              Explore Features
-            </a>
-          </div>
-
-          <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider block select-none">
-            No credit card required • Instant setup
-          </span>
         </div>
       </section>
 
