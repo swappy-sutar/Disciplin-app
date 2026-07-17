@@ -19,6 +19,10 @@ const translations = {
     applications: 'Applications',
     topics: 'Topics',
     workout: 'Workout',
+    todayWorkout: "Today's Lift",
+    workoutSplit: 'Weekly Split',
+    exerciseLibrary: 'Exercise Library',
+    workoutAnalytics: 'Analytics',
 
     // Hero Section
     planYourDay: 'Plan your day.',
@@ -155,6 +159,10 @@ const translations = {
     applications: 'आवेदन',
     topics: 'अध्ययन',
     workout: 'व्यायाम',
+    todayWorkout: 'आजचे व्यायाम',
+    workoutSplit: 'साप्ताहिक वेळापत्रक',
+    exerciseLibrary: 'व्यायाम लायब्ररी',
+    workoutAnalytics: 'विश्लेषण',
 
     // Hero Section
     planYourDay: 'अपने दिन की योजना बनाएं।',
@@ -291,6 +299,10 @@ const translations = {
     applications: 'अर्ज',
     topics: 'अभ्यास',
     workout: 'व्यायाम',
+    todayWorkout: 'आजचे व्यायाम',
+    workoutSplit: 'साप्ताहिक वेळापत्रक',
+    exerciseLibrary: 'व्यायाम लायब्ररी',
+    workoutAnalytics: 'विश्लेषण',
 
     // Hero Section
     planYourDay: 'आपल्या दिवसाचे नियोजन करा.',

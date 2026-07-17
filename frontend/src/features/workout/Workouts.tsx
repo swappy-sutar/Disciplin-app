@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useWorkouts } from '../../hooks/useWorkouts';
 import { useStore } from '../../app/store';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { PillBadge } from '../../components/ui/PillBadge';
-import { ProgressBar } from '../../components/ui/ProgressBar';
-import { format, parseISO, addDays, startOfWeek, endOfWeek, subDays } from 'date-fns';
+import { format, parseISO, addDays, subDays } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
 import confetti from 'canvas-confetti';
 import { 
   Flame, 
   Dumbbell, 
   Calendar, 
-  ListFilter, 
   Check, 
   Plus, 
   Trash2, 
-  History, 
   Award, 
   Search, 
   ChevronLeft, 
@@ -63,8 +60,6 @@ export default function Workouts() {
     isLoadingExercises,
     isLoadingSplit,
     isLoadingTodaySession,
-    isLoadingHistory,
-    isLoadingStreak,
     updateSplit, 
     saveSession 
   } = useWorkouts({ 
@@ -82,8 +77,7 @@ export default function Workouts() {
   const [libEquipment, setLibEquipment] = useState<string>('All');
   const [selectedExDetail, setSelectedExDetail] = useState<any>(null);
 
-  // Manual split override for Today's view
-  const [overrideMuscle, setOverrideMuscle] = useState<string>('');
+
 
   // Sync draft when todaySession arrives
   useEffect(() => {
@@ -180,7 +174,6 @@ export default function Workouts() {
     };
     setSessionDraft(customSession);
     saveSession(customSession);
-    setOverrideMuscle('');
   };
 
   // Complete workout button
@@ -588,8 +581,8 @@ export default function Workouts() {
                                   )}
                                 </h4>
                                 <div className="flex items-center gap-1.5 mt-1.5">
-                                  <PillBadge label={exercise.equipment} color="blue" />
-                                  <PillBadge label={exercise.difficulty} color="gray" />
+                                  <PillBadge variant="blue">{exercise.equipment}</PillBadge>
+                                  <PillBadge variant="gray">{exercise.difficulty}</PillBadge>
                                 </div>
                               </div>
                             </div>
@@ -987,8 +980,8 @@ export default function Workouts() {
                   {selectedExDetail.name}
                 </h3>
                 <div className="flex gap-1.5 mt-2">
-                  <PillBadge label={selectedExDetail.muscleGroup} color="emerald" />
-                  <PillBadge label={selectedExDetail.equipment} color="blue" />
+                  <PillBadge variant="green">{selectedExDetail.muscleGroup}</PillBadge>
+                  <PillBadge variant="blue">{selectedExDetail.equipment}</PillBadge>
                 </div>
               </div>
             </div>
