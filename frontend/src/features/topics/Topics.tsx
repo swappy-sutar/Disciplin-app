@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTopics } from '../../hooks/useTopics';
-import { notifySuccessCelebration } from '../../utils/celebration';
+import { toast } from 'react-hot-toast';
 import { useStore } from '../../app/store';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -174,7 +174,7 @@ export default function Topics() {
             setQuizRevealed(false);
           } else {
             setIsQuizOpen(false);
-            notifySuccessCelebration("Awesome job completing today's study review deck!");
+            toast.success("Awesome job completing today's study review deck!");
             addNotification('Mastery Deck Finished! 🏆', 'Completed daily coding review quiz.', 'topic');
           }
         }
@@ -211,7 +211,7 @@ export default function Topics() {
     if (checked) {
       const isTopicNowComplete = updatedSubtopics.every(sub => sub.isDone);
       if (isTopicNowComplete) {
-        notifySuccessCelebration(`You have mastered the topic: "${topic.title}"!`);
+        toast.success(`You have mastered the topic: "${topic.title}"!`);
         addNotification('Topic Mastered! 📚', `You completed all subtopics for: "${topic.title}"`, 'topic');
       }
     }
@@ -389,7 +389,7 @@ export default function Topics() {
               icon={<Award size={15} />}
               className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-95 transition-all"
               onClick={() => {
-                notifySuccessCelebration(`Congratulations! You marked "${selectedTopic.title}" as Mastered!`);
+                toast.success(`You marked "${selectedTopic.title}" as Mastered!`);
                 addNotification('Topic Completed! 🎉', `You have completed study curriculum for ${selectedTopic.title}`, 'topic');
               }}
             >
@@ -1004,7 +1004,7 @@ export default function Topics() {
                           setQuizRevealed(false);
                         } else {
                           setIsQuizOpen(false);
-                          notifySuccessCelebration('Awesome job completing today\'s study review deck!');
+                          toast.success('Awesome job completing today\'s study review deck!');
                           addNotification('Mastery Deck Finished! 🏆', 'Completed daily coding review quiz.', 'topic');
                         }
                       }}
@@ -1019,7 +1019,7 @@ export default function Topics() {
                           setQuizRevealed(false);
                         } else {
                           setIsQuizOpen(false);
-                          notifySuccessCelebration('Awesome job completing today\'s study review deck!');
+                          toast.success('Awesome job completing today\'s study review deck!');
                           addNotification('Mastery Deck Finished! 🏆', 'Completed daily coding review quiz.', 'topic');
                         }
                       }}
@@ -1034,7 +1034,7 @@ export default function Topics() {
                           setQuizRevealed(false);
                         } else {
                           setIsQuizOpen(false);
-                          notifySuccessCelebration('Awesome job completing today\'s study review deck!');
+                          toast.success('Awesome job completing today\'s study review deck!');
                           addNotification('Mastery Deck Finished! 🏆', 'Completed daily coding review quiz.', 'topic');
                         }
                       }}

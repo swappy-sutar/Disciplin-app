@@ -19,7 +19,7 @@ import { OverviewSkeleton } from '../../components/ui/Skeleton';
 import { Link } from 'react-router-dom';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { CalendarPicker } from '../../components/ui/CalendarPicker';
-import { notifySuccessCelebration } from '../../utils/celebration';
+import { toast } from 'react-hot-toast';
 import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Heart, 
@@ -495,7 +495,7 @@ export default function Overview() {
                                updateBlock({ id: block._id, body: { isDone: done } });
                                if (done) {
                                  const cleanTitle = block.title;
-                                 notifySuccessCelebration(`You completed schedule block: "${cleanTitle}"!`);
+                                 toast.success(`You completed schedule block: "${cleanTitle}"!`);
                                  addNotification('Schedule Block Completed! ⏰', `You finished: "${cleanTitle}"`, 'timetable');
                                }
                              }
@@ -677,7 +677,7 @@ export default function Overview() {
                                onConfirm: () => {
                                  toggleLog({ habitId: habit._id, date: dateStr, isDone: checked });
                                  if (checked) {
-                                   notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
+                                   toast.success(`You completed habit: "${habit.name}"!`);
                                    addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
                                  }
                                }
@@ -848,7 +848,7 @@ export default function Overview() {
                                const cleanTitle = hasTag 
                                  ? goal.title.replace(/\[.*?\]/, '').trim() 
                                  : goal.title;
-                               notifySuccessCelebration(`You completed goal: "${cleanTitle}"!`);
+                               toast.success(`You completed goal: "${cleanTitle}"!`);
                                addNotification('Goal Completed! 🎯', `You finished: "${cleanTitle}"`, 'goal');
                              }
                            }}

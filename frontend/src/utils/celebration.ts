@@ -1,5 +1,4 @@
 import confetti from 'canvas-confetti';
-import { toast } from 'react-hot-toast';
 
 export const triggerConfetti = () => {
   const duration = 2.5 * 1000;
@@ -32,7 +31,3 @@ export const triggerConfetti = () => {
   frame();
 };
 
-export const notifySuccessCelebration = (message: string) => {
-  // Play standard success toast using only toaster notifications
-  toast.success(message);
-};

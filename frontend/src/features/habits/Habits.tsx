@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHabits } from '../../hooks/useHabits';
 import { useStore } from '../../app/store';
-import { notifySuccessCelebration } from '../../utils/celebration';
+import { toast } from 'react-hot-toast';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
@@ -334,7 +334,7 @@ export default function Habits() {
                                 onConfirm: () => {
                                   toggleLog({ habitId: habit._id, date: day.dateStr, isDone: checked });
                                   if (checked) {
-                                    notifySuccessCelebration(`You completed habit: "${habit.name}"!`);
+                                    toast.success(`You completed habit: "${habit.name}"!`);
                                     addNotification('Habit Completed! 💪', `Logged: "${habit.name}"`, 'habit');
                                   }
                                 }

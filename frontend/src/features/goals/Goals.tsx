@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGoals } from '../../hooks/useGoals';
 import { useStore } from '../../app/store';
-import { notifySuccessCelebration } from '../../utils/celebration';
+import { toast } from 'react-hot-toast';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
@@ -254,7 +254,7 @@ export default function Goals() {
                               onConfirm: () => {
                                 updateGoal({ id: goal._id, body: { isDone: done } });
                                 if (done) {
-                                  notifySuccessCelebration(`You have completed the goal: "${cleanTitle}"!`);
+                                  toast.success(`You have completed the goal: "${cleanTitle}"!`);
                                   addNotification('Goal Completed! 🎯', `You finished: "${cleanTitle}"`, 'goal');
                                 }
                               }
