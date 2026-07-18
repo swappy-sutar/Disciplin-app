@@ -10,14 +10,14 @@
     <stop offset="0" stop-color="#A7F3D0"/>
     <stop offset="1" stop-color="#14B8A6"/>
   </linearGradient>
-  <symbol id="mark" viewBox="0 0 200 200">
-    <polygon points="30,35 100,100 30,165 58,165 128,100 58,35" fill="url(#gradDeep)"/>
-    <polygon points="78,50 138,100 78,150 100,150 160,100 100,50" fill="url(#gradLight)"/>
-    <path d="M100,30 C145,30 178,60 178,100 C178,140 145,170 100,170" fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round"/>
-  </symbol>
 </defs>
 
-<use href="#mark" x="90" y="42" width="96" height="96" color="#FFFFFF"/>
+<g transform="translate(90, 42) scale(0.48)" color="#FFFFFF">
+  <polygon points="30,35 100,100 30,165 58,165 128,100 58,35" fill="url(#gradDeep)"/>
+  <polygon points="78,50 138,100 78,150 100,150 160,100 100,50" fill="url(#gradLight)"/>
+  <path d="M100,30 C145,30 178,60 178,100 C178,140 145,170 100,170" fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round"/>
+</g>
+
 <text x="200" y="105" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="900" letter-spacing="-1.5" fill="#FFFFFF">Disciplin</text>
 <text x="330" y="142" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="#9A9AA5">
   <tspan fill="#A3A3A9">focus. consistency. </tspan><tspan fill="#34D399">growth.</tspan>

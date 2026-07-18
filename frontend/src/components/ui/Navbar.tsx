@@ -4,6 +4,7 @@ import { Sun, Moon, Menu, X, CheckSquare, ChevronRight, Check, Info, Mail, Home 
 import { useStore } from '../../app/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LanguageSelector } from './LanguageSelector';
+import { Logo } from './Logo';
 
 const MotionLink = motion(Link);
 
@@ -24,7 +25,6 @@ export const Navbar: React.FC = () => {
   const { token, theme, toggleTheme, language, setLanguage } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isDark = theme === 'dark';
-  const logoSrc = isDark ? '/disciplin-logo.svg' : '/disciplin-logo-light.svg';
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerBtnRef = useRef<HTMLButtonElement>(null);
@@ -64,12 +64,7 @@ export const Navbar: React.FC = () => {
           className="flex-shrink-0 hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] -ml-5 sm:-ml-7 md:-ml-8"
           aria-label="Disciplin home"
         >
-          <img
-            src={logoSrc}
-            alt="Disciplin"
-            className="h-12 sm:h-15 md:h-16 w-auto object-contain"
-            draggable={false}
-          />
+          <Logo className="h-10 sm:h-12 md:h-14" />
         </Link>
 
         {/* Desktop Nav Links */}

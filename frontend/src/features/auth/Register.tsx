@@ -56,7 +56,7 @@ export default function Register() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignUpButton'),
           { 
-            theme: 'outline', 
+            theme: theme === 'dark' ? 'filled_black' : 'outline', 
             size: 'large',
             shape: 'pill',
             logo_alignment: 'left',
@@ -257,32 +257,8 @@ export default function Register() {
             </div>
 
             {/* Google Sign-in Button */}
-            <div className="w-full flex justify-center items-center select-none">
-              <motion.div 
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.985 }}
-                className={`w-[240px] h-[40px] relative flex items-center justify-center rounded-full shadow-sm border transition-all cursor-pointer overflow-hidden ${
-                  theme === 'dark'
-                    ? 'bg-slate-900 hover:bg-slate-850 border-slate-800 text-slate-200'
-                    : 'bg-[#f2f2f2] hover:bg-[#e8e8e8] border-[#e0e0e0]/60 text-gray-700'
-                }`}
-              >
-                {/* Visual Custom Google Button */}
-                <div className="flex items-center gap-3 font-semibold select-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" className="select-none pointer-events-none">
-                    <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.48 14.98 0 12 0 7.35 0 3.37 2.67 1.42 6.56l3.89 3.02c.9-2.72 3.44-4.54 6.69-4.54z"/>
-                    <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.35H12v4.51h6.48c-.29 1.48-1.14 2.73-2.42 3.57v2.99h3.89c2.28-2.1 3.54-5.19 3.54-8.72z"/>
-                    <path fill="#FBBC05" d="M5.31 9.58c-.23-.69-.36-1.42-.36-2.18s.13-1.49.36-2.18L1.42 6.2C.51 8 .01 10 0 12c.01 2 .51 4 1.42 5.8l3.89-3.02c-.23-.69-.36-1.42-.36-2.18s.13-1.49-.36-2.18L5.31 9.58z"/>
-                    <path fill="#34A853" d="M12 24c3.24 0 5.97-1.07 7.96-2.91l-3.89-2.99c-1.08.72-2.47 1.16-4.07 1.16-3.25 0-5.79-1.82-6.69-4.54H1.42v3.02C3.37 21.33 7.35 24 12 24z"/>
-                  </svg>
-                  <span className="text-sm font-semibold tracking-wide">Google</span>
-                </div>
-
-                {/* Invisible Google Authentication Overlay */}
-                <div className="absolute inset-0 opacity-0 cursor-pointer">
-                  <div id="googleSignUpButton" className="w-[240px] h-[40px] opacity-0 cursor-pointer" />
-                </div>
-              </motion.div>
+            <div className="w-full flex justify-center items-center select-none min-h-[40px]">
+              <div id="googleSignUpButton" className="w-[240px] h-[40px]" />
             </div>
 
             {/* Redirect link */}
