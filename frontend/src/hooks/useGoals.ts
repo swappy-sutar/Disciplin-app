@@ -63,8 +63,10 @@ export const useGoals = (weekStartDate?: string) => {
 
       return { prevGoals, prevSummary };
     },
-    onSuccess: () => {
-      toast.success('Goal updated!');
+    onSuccess: (_, variables) => {
+      if (!variables.body.isDone) {
+        toast.success('Goal updated!');
+      }
     },
     onError: (_err, _vars, context) => {
       toast.error('Failed to update goal');

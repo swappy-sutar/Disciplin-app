@@ -63,8 +63,10 @@ export const useTimetable = (date: string) => {
 
       return { prevTimetable, prevSummary };
     },
-    onSuccess: () => {
-      toast.success('Event updated!');
+    onSuccess: (_, variables) => {
+      if (!variables.body.isDone) {
+        toast.success('Event updated!');
+      }
     },
     onError: (_err, _vars, context) => {
       toast.error('Failed to update event');

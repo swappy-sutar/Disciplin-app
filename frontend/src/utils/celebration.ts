@@ -33,11 +33,6 @@ export const triggerConfetti = () => {
 };
 
 export const notifySuccessCelebration = (message: string) => {
-  // 1. Play paper blaster confetti
-  triggerConfetti();
-
-  // 2. Play standard success toast (unified under style 2)
-  toast.success(`Congratulations! 🎉 ${message}`, {
-    duration: 4500,
-  });
+  // Play standard success toast using only toaster notifications
+  toast.success(message);
 };

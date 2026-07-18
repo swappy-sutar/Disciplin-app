@@ -112,8 +112,10 @@ export const useHabits = (weekStart?: string, weekEnd?: string) => {
 
       return { prevLogs, prevSummary, prevHabits };
     },
-    onSuccess: () => {
-      toast.success('Habit status toggled!');
+    onSuccess: (_, variables) => {
+      if (!variables.isDone) {
+        toast.success('Habit status updated!');
+      }
     },
     onError: (_err, _vars, context) => {
       toast.error('Failed to log habit');
