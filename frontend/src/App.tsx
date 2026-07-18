@@ -90,19 +90,19 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Toaster 
-          position="top-right" 
+          position="top-center" 
           toastOptions={{ 
             duration: 4000,
             style: {
               background: 'var(--card-bg, #FFFFFF)',
               color: 'var(--text-main, #1F2937)',
-              borderRadius: '20px',
+              borderRadius: '12px',
               border: '1.5px solid var(--border-main, #E5E7EB)',
-              fontSize: '13px',
+              fontSize: '12.5px',
               fontWeight: 650,
               boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03)',
-              padding: '12px 20px',
-              maxWidth: '420px',
+              padding: '8px 16px',
+              maxWidth: '350px',
             },
             success: {
               iconTheme: {
