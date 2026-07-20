@@ -56,10 +56,10 @@ export default function Register() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignUpButton'),
           { 
-            theme: 'outline', 
+            theme: theme === 'dark' ? 'filled_black' : 'outline', 
             size: 'large',
             shape: 'rectangular',
-            logo_alignment: 'left',
+            logo_alignment: 'center',
             width: 320
           }
         );
@@ -258,7 +258,9 @@ export default function Register() {
 
             {/* Google Sign-in Button */}
             <div className="w-full flex justify-center items-center select-none py-1">
-              <div id="googleSignUpButton" className="flex justify-center" />
+              <div className="p-[1px] rounded-[11px] bg-gradient-to-r from-emerald-500/30 via-teal-500/20 to-indigo-500/30 dark:from-emerald-500/25 dark:via-teal-500/20 dark:to-indigo-500/25 shadow-xs transition-all duration-300 hover:scale-[1.015] hover:shadow-md hover:shadow-emerald-500/10">
+                <div id="googleSignUpButton" className="flex justify-center rounded-[10px] overflow-hidden" />
+              </div>
             </div>
 
             {/* Redirect link */}
