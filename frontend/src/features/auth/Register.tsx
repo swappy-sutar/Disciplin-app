@@ -56,11 +56,12 @@ export default function Register() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignUpButton'),
           { 
-            theme: theme === 'dark' ? 'filled_black' : 'outline', 
+            theme: 'outline', 
             size: 'large',
-            shape: 'rectangular',
-            logo_alignment: 'center',
-            width: 320
+            shape: 'pill',
+            text: 'signin',
+            logo_alignment: 'left',
+            width: 200
           }
         );
       }
@@ -249,18 +250,16 @@ export default function Register() {
             </form>
 
             {/* Google OAuth Divider */}
-            <div className="relative my-5 flex items-center justify-center">
-              <hr className="w-full border-t border-gray-200 dark:border-slate-800" />
-              <span className="absolute px-3 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 text-[10px] uppercase font-bold tracking-wider select-none">
-                Or continue with
+            <div className="relative my-6 flex items-center justify-center">
+              <div className="w-full border-t border-gray-200 dark:border-slate-800" />
+              <span className="absolute px-4 bg-white dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs font-medium select-none">
+                Or Sign in With
               </span>
             </div>
 
             {/* Google Sign-in Button */}
             <div className="w-full flex justify-center items-center select-none py-1">
-              <div className="p-[1px] rounded-[11px] bg-gradient-to-r from-emerald-500/30 via-teal-500/20 to-indigo-500/30 dark:from-emerald-500/25 dark:via-teal-500/20 dark:to-indigo-500/25 shadow-xs transition-all duration-300 hover:scale-[1.015] hover:shadow-md hover:shadow-emerald-500/10">
-                <div id="googleSignUpButton" className="flex justify-center rounded-[10px] overflow-hidden" />
-              </div>
+              <div id="googleSignUpButton" className="flex justify-center" />
             </div>
 
             {/* Redirect link */}
