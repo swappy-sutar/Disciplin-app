@@ -60,10 +60,12 @@ export default function Login() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignInButton'),
           { 
-            type: 'icon',
+            type: 'standard',
             theme: 'outline', 
             size: 'large',
-            shape: 'circle'
+            shape: 'pill',
+            logo_alignment: 'left',
+            width: 180
           }
         );
       }
