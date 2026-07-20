@@ -60,7 +60,7 @@ export default function Login() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignInButton'),
           { 
-            theme: theme === 'dark' ? 'filled_black' : 'outline', 
+            theme: 'outline', 
             size: 'large',
             shape: 'pill',
             text: 'signin',
@@ -350,14 +350,14 @@ export default function Login() {
                 {/* Google OAuth Divider */}
                 <div className="relative my-6 flex items-center justify-center">
                   <div className="w-full border-t border-gray-200 dark:border-slate-800" />
-                  <span className="absolute px-4 bg-white dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs font-medium select-none">
+                  <span className="absolute px-4 bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-300 text-xs font-semibold select-none">
                     Or Sign in With
                   </span>
                 </div>
 
                 {/* Google Sign-in Button */}
                 <div className="w-full flex justify-center items-center select-none py-1">
-                  <div className="rounded-full border border-emerald-500/25 dark:border-emerald-500/35 hover:border-emerald-500 dark:hover:border-emerald-400 transition-all duration-200 shadow-xs hover:shadow-emerald-500/10">
+                  <div className="rounded-full border border-gray-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-400 transition-all duration-200 shadow-xs">
                     <div id="googleSignInButton" className="flex justify-center rounded-full overflow-hidden" />
                   </div>
                 </div>
