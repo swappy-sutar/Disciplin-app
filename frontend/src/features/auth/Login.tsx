@@ -60,11 +60,10 @@ export default function Login() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignInButton'),
           { 
+            type: 'icon',
             theme: 'outline', 
             size: 'large',
-            shape: 'pill',
-            logo_alignment: 'center',
-            width: 200
+            shape: 'circle'
           }
         );
       }

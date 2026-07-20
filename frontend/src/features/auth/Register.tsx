@@ -56,11 +56,10 @@ export default function Register() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignUpButton'),
           { 
+            type: 'icon',
             theme: 'outline', 
             size: 'large',
-            shape: 'pill',
-            logo_alignment: 'center',
-            width: 200
+            shape: 'circle'
           }
         );
       }
