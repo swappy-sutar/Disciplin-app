@@ -351,7 +351,7 @@ export default function Login() {
                 <div className="relative my-6 flex items-center justify-center">
                   <div className="w-full border-t border-gray-200 dark:border-slate-800" />
                   <span className="absolute px-4 bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-300 text-xs font-semibold select-none">
-                    Or Sign in With
+                    or
                   </span>
                 </div>
 
