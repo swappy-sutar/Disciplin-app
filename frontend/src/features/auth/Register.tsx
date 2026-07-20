@@ -60,8 +60,8 @@ export default function Register() {
             size: 'large',
             shape: 'pill',
             text: 'signin',
-            logo_alignment: 'left',
-            width: 200
+            logo_alignment: 'center',
+            width: 170
           }
         );
       }
