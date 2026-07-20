@@ -60,10 +60,10 @@ export default function Login() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignInButton'),
           { 
-            theme: theme === 'dark' ? 'filled_blue' : 'outline', 
+            theme: 'outline', 
             size: 'large',
             shape: 'rectangular',
-            logo_alignment: 'center',
+            logo_alignment: 'left',
             width: 320
           }
         );
@@ -355,8 +355,8 @@ export default function Login() {
                 </div>
 
                 {/* Google Sign-in Button */}
-                <div className="w-full flex justify-center items-center select-none min-h-[44px]">
-                  <div id="googleSignInButton" className="w-[320px] h-[44px] overflow-hidden rounded-xl" />
+                <div className="w-full flex justify-center items-center select-none py-1">
+                  <div id="googleSignInButton" className="flex justify-center" />
                 </div>
 
                 {/* Redirect link */}
