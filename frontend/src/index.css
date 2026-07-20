@@ -8,6 +8,8 @@
   --color-text-main: var(--text-main);
   --color-border-main: var(--border-main);
   
+  --color-primary-accent: var(--primary-accent);
+  --color-primary-accent-hover: var(--primary-accent-hover);
   --color-primary-blue: var(--primary-accent);
   --color-primary-blue-hover: var(--primary-accent-hover);
   --color-success-green: #10B981;
@@ -91,8 +93,8 @@ html, body {
 }
 
 /* Dark mode style overrides to automatically theme light utility variables */
-.dark .bg-white {
-  background-color: var(--color-card-bg) !important;
+.dark .bg-white:not([class*="dark:bg-"]) {
+  background-color: var(--color-card-bg);
   color: var(--color-text-main);
 }
 .dark .bg-canvas-bg {

@@ -498,25 +498,25 @@ export default function Workouts() {
             <>
               {sessionDraft.muscleGroup === 'rest' ? (
                 /* Rest Day Card */
-                <Card className="text-center py-12 md:py-16 max-w-lg mx-auto bg-gradient-to-br from-emerald-500/[0.02] to-teal-500/[0.01] border-emerald-500/10">
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center mx-auto mb-6 text-emerald-500 border border-emerald-500/20">
+                <Card className="text-center py-12 md:py-16 max-w-lg mx-auto bg-gradient-to-br from-emerald-500/[0.04] to-teal-500/[0.02] dark:from-emerald-950/20 dark:to-teal-950/10 border-emerald-500/15">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center mx-auto mb-6 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                     <Calendar size={28} />
                   </div>
                   <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
                     Today is scheduled as a Rest Day!
                   </h3>
-                  <p className="text-xs font-semibold text-gray-450 dark:text-slate-400 mt-3 max-w-xs mx-auto">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 mt-3 max-w-xs mx-auto">
                     Muscles grow when you rest. Recover well, stay hydrated, and focus on clean nutrition today.
                   </p>
                   
-                  <div className="mt-8 border-t border-gray-150/40 dark:border-gray-800/80 pt-6">
+                  <div className="mt-8 border-t border-gray-200/60 dark:border-slate-800 pt-6">
                     <span className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 uppercase">Or lift anyway:</span>
                     <div className="flex flex-wrap justify-center gap-1.5 mt-3">
                       {muscleGroups.map(muscle => (
                         <button
                           key={muscle}
                           onClick={() => handleStartCustomSession(muscle)}
-                          className="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 hover:border-primary-accent dark:hover:border-primary-accent hover:text-primary-accent cursor-pointer transition-all dark:text-slate-350"
+                          className="px-3 py-1.5 text-[10px] font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer transition-all"
                         >
                           {muscle}
                         </button>
@@ -529,26 +529,30 @@ export default function Workouts() {
                 <div className="space-y-6">
                   
                   {/* Top Header Card */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-primary-accent to-emerald-600 text-white rounded-2xl p-6 shadow-md shadow-emerald-600/15">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-700 dark:to-teal-900 text-white rounded-2xl p-6 shadow-md shadow-emerald-600/15">
                     <div>
-                      <span className="text-[10px] font-black uppercase tracking-widest opacity-80">Today's Target Routine</span>
-                      <h2 className="text-2xl font-black tracking-tight leading-none mt-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-100 dark:text-emerald-200">Today's Target Routine</span>
+                      <h2 className="text-2xl font-black tracking-tight leading-none mt-1 text-white">
                         {sessionDraft.muscleGroup} Split
                       </h2>
-                      <p className="text-xs font-medium opacity-90 mt-2">
+                      <p className="text-xs font-medium text-emerald-100 dark:text-emerald-200 mt-2">
                         {sessionDraft.exercises.length} exercises matched from your reference library.
                       </p>
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <Button 
+                      <button 
                         onClick={handleCompleteWorkout}
                         disabled={sessionDraft.completed}
-                        className={`font-black select-none text-xs border-none shadow-md ${sessionDraft.completed ? 'bg-white/20 text-white/60 cursor-not-allowed' : 'bg-white text-emerald-600 hover:bg-gray-100'}`}
-                        icon={sessionDraft.completed ? <Check size={14} /> : <Dumbbell size={14} />}
+                        className={`font-black select-none text-xs px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer ${
+                          sessionDraft.completed 
+                            ? 'bg-emerald-800/50 text-emerald-200 cursor-not-allowed border border-emerald-500/30' 
+                            : 'bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 border-none'
+                        }`}
                       >
-                        {sessionDraft.completed ? 'Workout Logged' : 'Finish Workout'}
-                      </Button>
+                        {sessionDraft.completed ? <Check size={14} /> : <Dumbbell size={14} />}
+                        <span>{sessionDraft.completed ? 'Workout Logged' : 'Finish Workout'}</span>
+                      </button>
                     </div>
                   </div>
 
