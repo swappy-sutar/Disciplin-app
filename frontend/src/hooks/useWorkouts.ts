@@ -57,7 +57,27 @@ export const useWorkouts = (options?: { date?: string; startDate?: string; endDa
 
   // 7. Save session mutation
   const saveSessionMutation = useMutation({
-    mutationFn: (body: WorkoutSession) => apiClient.workouts.saveSession(body),
+    mutationFn: (body: WorkoutSession) => {
+      // Normalize session payload so backend Zod validation schema passes cleanly
+      const cleanedBody = {
+        ...body,
+        durationMinutes: Math.max(0, Math.round(Number(body.durationMinutes) || 0)),
+        completed: Boolean(body.completed),
+        exercises: (body.exercises || []).map((ex: any) => ({
+          exerciseId: typeof ex.exerciseId === 'object' && ex.exerciseId !== null
+            ? (ex.exerciseId._id || ex.exerciseId.id)
+            : String(ex.exerciseId || ''),
+          notes: String(ex.notes || ''),
+          sets: (ex.sets || []).map((s: any, idx: number) => ({
+            setNumber: Number(s.setNumber) || (idx + 1),
+            reps: Math.max(0, Math.round(Number(s.reps) || 0)),
+            weightKg: Math.max(0, Number(s.weightKg) || 0),
+            completed: Boolean(s.completed)
+          }))
+        }))
+      };
+      return apiClient.workouts.saveSession(cleanedBody as WorkoutSession);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workoutToday'] });
       queryClient.invalidateQueries({ queryKey: ['workoutHistory'] });

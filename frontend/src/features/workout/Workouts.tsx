@@ -155,7 +155,8 @@ export default function Workouts() {
     if (!muscle) return;
     // Find matching exercises
     const matching = exercises.filter(ex => ex.muscleGroup === muscle);
-    const exercisesTemplate = matching.map(ex => ({
+    const selectedExercises = matching.length > 0 ? matching.slice(0, 4) : exercises.slice(0, 3);
+    const exercisesTemplate = selectedExercises.map(ex => ({
       exerciseId: ex,
       sets: [
         { setNumber: 1, reps: 10, weightKg: 15, completed: false },
