@@ -56,7 +56,7 @@ export default function Register() {
         (window as any).google.accounts.id.renderButton(
           document.getElementById('googleSignUpButton'),
           { 
-            theme: theme === 'dark' ? 'filled_black' : 'outline', 
+            theme: 'outline', 
             size: 'large',
             shape: 'pill',
             logo_alignment: 'left',
