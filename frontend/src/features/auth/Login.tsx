@@ -63,9 +63,8 @@ export default function Login() {
             theme: 'outline', 
             size: 'large',
             shape: 'pill',
-            text: 'signin',
             logo_alignment: 'center',
-            width: 170
+            width: 200
           }
         );
       }
@@ -357,7 +356,7 @@ export default function Login() {
 
                 {/* Google Sign-in Button */}
                 <div className="w-full flex justify-center items-center select-none py-1">
-                  <div className="rounded-full border border-gray-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-400 transition-all duration-200 shadow-xs">
+                  <div className="rounded-full shadow-xs hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
                     <div id="googleSignInButton" className="flex justify-center rounded-full overflow-hidden" />
                   </div>
                 </div>
