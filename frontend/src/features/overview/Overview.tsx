@@ -33,13 +33,17 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Calendar,
   CheckCircle,
   Target,
   Activity,
   Briefcase,
   Edit2,
-  Check
+  Check,
+  WifiOff,
+  RotateCcw
 } from 'lucide-react';
 
 const formatTo12Hour = (timeStr?: string): string => {
@@ -107,6 +111,7 @@ export default function Overview() {
   const { createApplication, applications: dailyApps } = useApplications({ date: activeDate });
 
   // Modals Local State
+  const [isTimetableCollapsed, setIsTimetableCollapsed] = useState(true);
   const [isAddTimetableOpen, setAddTimetableOpen] = useState(false);
   const [isAddGoalOpen, setAddGoalOpen] = useState(false);
   const [isAddAppOpen, setAddAppOpen] = useState(false);
@@ -164,15 +169,32 @@ export default function Overview() {
 
   if (isError || !summary) {
     return (
-      <div className="text-center p-12 select-none">
-        <div className="inline-flex p-4 rounded-full bg-red-50 text-red-500 mb-4">
-          <Award size={32} />
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-4 md:p-6 select-none my-auto">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 shadow-xl backdrop-blur-xl space-y-5 flex flex-col items-center justify-center mx-auto">
+          {/* Glowing WifiOff Icon Pill */}
+          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/20 text-rose-500 flex items-center justify-center shadow-lg shadow-rose-500/10">
+            <WifiOff size={28} className="animate-pulse" />
+          </div>
+
+          <div className="space-y-1.5 max-w-sm">
+            <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+              Unable to Load Dashboard
+            </h2>
+            <p className="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
+              We couldn't connect to the server. Please check your network connection and try again.
+            </p>
+          </div>
+
+          <div className="w-full flex justify-center pt-1">
+            <Button 
+              onClick={() => refetch()}
+              icon={<RotateCcw size={15} />}
+              className="w-full max-w-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 shadow-md shadow-emerald-500/15 hover:scale-[1.02] active:scale-95 transition-all text-xs"
+            >
+              Retry Connection
+            </Button>
+          </div>
         </div>
-        <h2 className="text-lg font-bold text-gray-800">Failed to load dashboard</h2>
-        <p className="text-sm text-gray-400 mt-1">Please try checking your network connection.</p>
-        <Button variant="outline" className="mt-4" onClick={() => refetch()}>
-          Retry Loading
-        </Button>
       </div>
     );
   }
@@ -416,15 +438,28 @@ export default function Overview() {
             className="order-1 md:order-none"
             icon={Calendar}
             iconColor="text-blue-500 bg-blue-500/10 border-blue-500/20"
-            showMenu 
+            showMenu={false} 
             headerAction={
-              <button 
-                onClick={() => setAddTimetableOpen(true)}
-                className="p-1 rounded-lg text-primary-blue hover:bg-blue-50 transition-colors cursor-pointer"
-                aria-label="Add slot"
-              >
-                <PlusCircle size={19} />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button 
+                  onClick={() => setAddTimetableOpen(true)}
+                  className="p-1 rounded-lg text-primary-blue hover:bg-blue-50/80 dark:hover:bg-slate-800/80 transition-colors cursor-pointer"
+                  aria-label="Add slot"
+                  title="Add new schedule slot"
+                >
+                  <PlusCircle size={19} />
+                </button>
+                {timetable.length > 4 && (
+                  <button
+                    onClick={() => setIsTimetableCollapsed(!isTimetableCollapsed)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    aria-label={isTimetableCollapsed ? "Expand schedule" : "Collapse schedule"}
+                    title={isTimetableCollapsed ? `Show all ${timetable.length} slots` : "Collapse schedule (show 4)"}
+                  >
+                    {isTimetableCollapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
+                  </button>
+                )}
+              </div>
             }
           >
             {timetable.length === 0 ? (
@@ -433,100 +468,126 @@ export default function Overview() {
                 <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Use the + button to plan your day</span>
               </div>
             ) : (
-              <div className="relative border-l border-slate-100 dark:border-slate-800/60 pl-4 ml-2 py-1.5 space-y-6">
-                {timetable.map((block) => {
-                  const hasTag = block.title.includes('[') && block.title.includes(']');
-                  let cleanTitle = block.title;
-                  let tag = 'General';
-                  if (hasTag) {
-                    const match = block.title.match(/\[(.*?)\]/);
-                    tag = match ? match[1] : 'General';
-                    cleanTitle = block.title.replace(/\[.*?\]/, '').trim();
-                  }
+              <div>
+                <div className="relative border-l border-slate-200 dark:border-slate-800/60 ml-4 pl-5 py-1.5 space-y-3.5">
+                  {(isTimetableCollapsed ? timetable.slice(0, 4) : timetable).map((block) => {
+                    const hasTag = block.title.includes('[') && block.title.includes(']');
+                    let cleanTitle = block.title;
+                    let tag = 'General';
+                    if (hasTag) {
+                      const match = block.title.match(/\[(.*?)\]/);
+                      tag = match ? match[1] : 'General';
+                      cleanTitle = block.title.replace(/\[.*?\]/, '').trim();
+                    }
 
-                  const tagColors: Record<string, string> = {
-                    Health: 'bg-emerald-50 text-emerald-600',
-                    Work: 'bg-blue-50 text-blue-600',
-                    Study: 'bg-pink-50 text-pink-600',
-                    Personal: 'bg-amber-50 text-amber-600'
-                  };
-                  const colorClass = tagColors[tag] || 'bg-gray-100 text-gray-600';
+                    const tagColors: Record<string, string> = {
+                      Health: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400',
+                      Work: 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
+                      Study: 'bg-pink-50 text-pink-600 dark:bg-pink-950/40 dark:text-pink-400',
+                      Personal: 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400'
+                    };
+                    const colorClass = tagColors[tag] || 'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-slate-300';
 
-                  return (
-                    <div key={block._id} className="relative group flex items-start justify-between gap-4 p-2.5 -m-2.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300">
-                      {/* Circle Dot Marker */}
-                      <div 
-                        className={`absolute -left-[23px] top-[15.5px] w-3.5 h-3.5 rounded-full border transition-all duration-300 flex items-center justify-center z-10
-                          ${block.isDone 
-                            ? 'border-primary-blue bg-primary-blue scale-110 shadow-sm shadow-primary-blue/20' 
-                            : 'border-gray-300 bg-white dark:bg-slate-900 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-500'
-                          }
-                        `}
-                      >
-                        {block.isDone && <Check className="w-2 h-2 text-white stroke-[4.5] animate-scale-up" />}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-gray-400 dark:text-slate-550 select-none">
-                            {formatTo12Hour(block.startTime)} - {formatTo12Hour(block.endTime)}
-                          </span>
-                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${colorClass}`}>
-                            {tag}
-                          </span>
-                        </div>
-                        <p className={`text-xs md:text-sm font-bold mt-1 select-none transition-colors truncate
-                          ${block.isDone ? 'text-gray-400 dark:text-slate-500 line-through' : 'text-gray-700 dark:text-slate-200'}
-                        `}>
-                          {cleanTitle}
-                        </p>
-                      </div>
-
-                      {/* Checklist Toggle and delete actions */}
-                      <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                         <Checkbox 
-                           checked={block.isDone} 
-                           onChange={(done) => setConfirmModal({
-                             type: 'update',
-                             id: block._id,
-                             title: done ? 'Complete Schedule Block' : 'Undo Completion',
-                             message: `Are you sure you want to mark the timetable block "${block.title}" as ${done ? 'completed' : 'incomplete'}?`,
-                             onConfirm: () => {
-                               updateBlock({ id: block._id, body: { isDone: done } });
-                               if (done) {
-                                 const cleanTitle = block.title;
-                                 toast.success(`You completed schedule block: "${cleanTitle}"!`);
-                                 addNotification('Schedule Block Completed! ⏰', `You finished: "${cleanTitle}"`, 'timetable');
-                               }
-                             }
-                           })}
-                           size={18}
-                         />
-                        <button
-                          onClick={() => handleEditClick(block)}
-                          className="text-gray-400 hover:text-primary-blue dark:text-slate-400 dark:hover:text-primary-blue transition-colors p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-lg cursor-pointer"
-                          aria-label="Edit slot"
-                        >
-                          <Edit2 size={14} />
-                        </button>
-                        <button
+                    return (
+                      <div key={block._id} className="relative group flex items-start justify-between gap-2.5 p-1.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-300">
+                        {/* Interactive Timeline Tick Box / Circle Button */}
+                        <button 
+                          type="button"
                           onClick={() => setConfirmModal({
-                            type: 'delete',
+                            type: 'update',
                             id: block._id,
-                            title: 'Confirm Deletion',
-                            message: `Are you sure you want to delete the schedule block "${block.title}"? This action cannot be undone.`,
-                            onConfirm: () => deleteBlock(block._id)
+                            title: block.isDone ? 'Undo Completion' : 'Complete Schedule Block',
+                            message: `Are you sure you want to mark the timetable block "${cleanTitle}" as ${!block.isDone ? 'completed' : 'incomplete'}?`,
+                            onConfirm: () => {
+                              updateBlock({ id: block._id, body: { isDone: !block.isDone } });
+                              if (!block.isDone) {
+                                toast.success(`You completed schedule block: "${cleanTitle}"!`);
+                                addNotification('Schedule Block Completed! ⏰', `You finished: "${cleanTitle}"`, 'timetable');
+                              }
+                            }
                           })}
-                          className="text-gray-400 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 transition-colors p-1.5 hover:bg-red-50/60 dark:hover:bg-red-950/30 rounded-lg cursor-pointer"
-                          aria-label="Delete slot"
+                          className={`absolute -left-[28.5px] top-[9px] w-[18px] h-[18px] rounded-full border-2 transition-all duration-300 flex items-center justify-center z-10 cursor-pointer focus:outline-none select-none
+                            ${block.isDone 
+                              ? 'border-emerald-500 bg-emerald-500 scale-110 shadow-md shadow-emerald-500/30' 
+                              : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-500 dark:hover:border-emerald-400 hover:scale-115 hover:shadow-sm'
+                            }
+                          `}
+                          title={block.isDone ? 'Mark as incomplete' : 'Mark as completed'}
+                          aria-label={block.isDone ? 'Mark slot incomplete' : 'Mark slot completed'}
                         >
-                          <Trash2 size={14} />
+                          {block.isDone ? (
+                            <Check className="w-2.5 h-2.5 text-white stroke-[3.5] animate-scale-up" />
+                          ) : (
+                            <span className="w-1 h-1 rounded-full bg-transparent group-hover:bg-emerald-500/50 transition-colors" />
+                          )}
                         </button>
-                      </div>
 
-                    </div>
-                  );
-                })}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-gray-400 dark:text-slate-400 select-none">
+                              {formatTo12Hour(block.startTime)} - {formatTo12Hour(block.endTime)}
+                            </span>
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${colorClass}`}>
+                              {tag}
+                            </span>
+                          </div>
+                          <p className={`text-xs md:text-sm font-bold mt-1 select-none transition-colors truncate
+                            ${block.isDone ? 'text-gray-400 dark:text-slate-500 line-through' : 'text-gray-700 dark:text-slate-200'}
+                          `}>
+                            {cleanTitle}
+                          </p>
+                        </div>
+
+                        {/* Edit and delete actions */}
+                        <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleEditClick(block)}
+                            className="text-gray-400 hover:text-primary-blue dark:text-slate-400 dark:hover:text-primary-blue transition-colors p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-lg cursor-pointer"
+                            aria-label="Edit slot"
+                            title="Edit slot"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => setConfirmModal({
+                              type: 'delete',
+                              id: block._id,
+                              title: 'Confirm Deletion',
+                              message: `Are you sure you want to delete the schedule block "${cleanTitle}"? This action cannot be undone.`,
+                              onConfirm: () => deleteBlock(block._id)
+                            })}
+                            className="text-gray-400 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 transition-colors p-1.5 hover:bg-red-50/60 dark:hover:bg-red-950/30 rounded-lg cursor-pointer"
+                            aria-label="Delete slot"
+                            title="Delete slot"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Show More / Show Less Toggle Button */}
+                {timetable.length > 4 && (
+                  <button
+                    onClick={() => setIsTimetableCollapsed(!isTimetableCollapsed)}
+                    className="w-full mt-3 pt-2 text-center text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors cursor-pointer flex items-center justify-center gap-1.5 border-t border-slate-100 dark:border-slate-800/60 select-none"
+                  >
+                    {isTimetableCollapsed ? (
+                      <>
+                        <span>Show {timetable.length - 4} More Slots</span>
+                        <ChevronDown size={14} />
+                      </>
+                    ) : (
+                      <>
+                        <span>Show Less</span>
+                        <ChevronUp size={14} />
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
           </Card>

@@ -24,7 +24,8 @@ export default function Login() {
   const navigate = useNavigate();
   const { setAuth, theme } = useStore();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFormLoading, setIsFormLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isForgotMode, setIsForgotMode] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [showResend, setShowResend] = useState(false);
@@ -33,19 +34,19 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleGoogleCredentialResponse = async (response: any) => {
-    setIsLoading(true);
+    setIsGoogleLoading(true);
     const toastId = toast.loading('Signing in with Google...');
     try {
       const res = await apiClient.auth.googleLogin(response.credential);
       setAuth(res.user, res.token);
-      toast.success(`Welcome back, ${res.user.name}!`, { id: toastId });
+      toast.success(`Welcome back, ${res.user.name}!`, { id: toastId, duration: 4000 });
       navigate('/overview');
     } catch (e: any) {
       const err = e.message || 'Google authentication failed';
       setErrorMsg(err);
-      toast.error(err, { id: toastId });
+      toast.error(err, { id: toastId, duration: 5000 });
     } finally {
-      setIsLoading(false);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -89,41 +90,43 @@ export default function Login() {
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!forgotEmail.trim()) return;
-    setIsLoading(true);
+    setIsFormLoading(true);
     setErrorMsg(null);
+    const toastId = toast.loading('Sending reset link...');
     try {
       const res = await apiClient.auth.forgotPassword(forgotEmail);
       if (res?.emailError) {
-        toast.error(res.message, { duration: 6000 });
+        toast.error(res.message, { id: toastId, duration: 6000 });
       } else {
-        toast.success(res?.message || 'Password reset link sent! Check your inbox.');
+        toast.success(res?.message || 'Password reset link sent! Check your inbox.', { id: toastId, duration: 5000 });
       }
       setIsForgotMode(false);
       setForgotEmail('');
     } catch (e: any) {
       const err = e.message || 'Failed to send reset link';
       setErrorMsg(err);
-      toast.error(err);
+      toast.error(err, { id: toastId, duration: 5000 });
     } finally {
-      setIsLoading(false);
+      setIsFormLoading(false);
     }
   };
 
   const handleResendVerification = async () => {
     if (!resendEmail.trim() || isResending) return;
     setIsResending(true);
+    const toastId = toast.loading('Resending verification email...');
     try {
       const res = await apiClient.auth.resendVerification(resendEmail);
       if (res?.emailError) {
-        toast.error(res.message || 'Failed to send verification email.', { duration: 6000 });
+        toast.error(res.message || 'Failed to send verification email.', { id: toastId, duration: 6000 });
       } else {
-        toast.success(res?.message || 'Verification link sent! Check your inbox.');
+        toast.success(res?.message || 'Verification link sent! Check your inbox.', { id: toastId, duration: 5000 });
         setShowResend(false);
         setResendEmail('');
         setErrorMsg(null);
       }
     } catch (e: any) {
-      toast.error(e.message || 'Failed to resend verification email.');
+      toast.error(e.message || 'Failed to resend verification email.', { id: toastId, duration: 5000 });
     } finally {
       setIsResending(false);
     }
@@ -145,26 +148,26 @@ export default function Login() {
   };
 
   const onSubmit = async (data: LoginFormValues) => {
-    setIsLoading(true);
+    setIsFormLoading(true);
     setErrorMsg(null);
     setShowResend(false);
     const toastId = toast.loading('Signing in...');
     try {
       const res = await apiClient.auth.login(data);
       setAuth(res.user, res.token);
-      toast.success(`Welcome back, ${res.user.name}!`, { id: toastId });
+      toast.success(`Welcome back, ${res.user.name}!`, { id: toastId, duration: 4000 });
       navigate('/overview');
     } catch (e: any) {
       const err = e.message || 'Invalid email or password';
       setErrorMsg(err);
-      toast.error(err, { id: toastId });
+      toast.error(err, { id: toastId, duration: 5000 });
       // Show resend option when email is unverified
       if (err.toLowerCase().includes('verify')) {
         setResendEmail(data.email);
         setShowResend(true);
       }
     } finally {
-      setIsLoading(false);
+      setIsFormLoading(false);
     }
   };
 
@@ -339,10 +342,17 @@ export default function Login() {
                     variant="gradient"
                     fullWidth
                     size="lg"
-                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md"
-                    disabled={isLoading}
+                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
+                    disabled={isFormLoading || isGoogleLoading}
                   >
-                    {isLoading ? 'Signing In...' : 'Sign In'}
+                    {isFormLoading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Signing In...</span>
+                      </>
+                    ) : (
+                      'Sign In'
+                    )}
                   </Button>
 
                 </form>
@@ -356,10 +366,16 @@ export default function Login() {
                 </div>
 
                 {/* Google Sign-in Button */}
-                <div className="w-full flex justify-center items-center select-none py-1">
-                  <div className="rounded-full shadow-xs hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
+                <div className="w-full flex flex-col justify-center items-center select-none py-1 relative">
+                  <div className={`rounded-full shadow-xs transition-all duration-200 ${isGoogleLoading ? 'opacity-50 pointer-events-none' : 'hover:shadow-md hover:scale-[1.02]'}`}>
                     <div id="googleSignInButton" className="flex justify-center rounded-full overflow-hidden" />
                   </div>
+                  {isGoogleLoading && (
+                    <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-emerald-500 animate-pulse">
+                      <span className="w-3.5 h-3.5 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+                      Authenticating with Google...
+                    </div>
+                  )}
                 </div>
 
                 {/* Redirect link */}
@@ -417,10 +433,17 @@ export default function Login() {
                     variant="gradient"
                     fullWidth
                     size="lg"
-                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md"
-                    disabled={isLoading}
+                    className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
+                    disabled={isFormLoading}
                   >
-                    {isLoading ? 'Sending Link...' : 'Send Reset Link'}
+                    {isFormLoading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Sending Link...</span>
+                      </>
+                    ) : (
+                      'Send Reset Link'
+                    )}
                   </Button>
 
                   <button

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigate, Link } from 'react-router-dom';
+import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, 
@@ -42,6 +42,8 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isOverviewPage = location.pathname === '/overview';
   const { 
     user, 
     logout, 
@@ -65,6 +67,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top automatically whenever route changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -121,7 +128,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { name: t.workout || 'Workout', path: '/workout', icon: Dumbbell },
     { name: t.overview, path: '/overview', icon: LayoutDashboard },
     { name: t.goals, path: '/goals', icon: Target },
-    { name: t.applications, path: '/applications', icon: Briefcase },
+    { name: t.topics || 'Studies', path: '/topics', icon: BookOpen },
   ];
 
   // Shifting dates
@@ -429,7 +436,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </nav>
 
       {/* Go to Top Button */}
-      <GoToTop className="bottom-20 md:bottom-6 right-20" />
+      <GoToTop 
+        className={
+          isOverviewPage 
+            ? "bottom-36 md:bottom-20 right-5 md:right-6" 
+            : "bottom-20 md:bottom-6 right-5 md:right-6"
+        } 
+      />
 
     </div>
   );

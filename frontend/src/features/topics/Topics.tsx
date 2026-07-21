@@ -437,40 +437,64 @@ export default function Topics() {
                   <span className="text-xs font-bold text-emerald-500">{selectedTopic.progressPercent}% Completed</span>
                 </div>
                 <ProgressBar value={selectedTopic.progressPercent} color="green" />
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
-                  You have {selectedTopic.subTopics.filter(s => !s.isDone).length} sub-topics remaining to master the core {selectedTopic.title} architecture. Focus on review items next.
-                </p>
+                {(() => {
+                  const title = selectedTopic.title.trim();
+                  const hasArch = /architecture$/i.test(title);
+                  const topicPhrase = hasArch ? title : `${title} architecture`;
+                  const remainingCount = selectedTopic.subTopics.filter(s => !s.isDone).length;
+                  return (
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
+                      You have {remainingCount} {remainingCount === 1 ? 'sub-topic' : 'sub-topics'} remaining to master the core {topicPhrase}. Focus on review items next.
+                    </p>
+                  );
+                })()}
               </Card>
 
               {/* Sub-topics Grid cards list */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(selectedTopic.subTopics.length > 0 ? selectedTopic.subTopics : DEFAULT_NODE_SUBTOPICS).map((sub, idx) => {
                   const subDone = selectedTopic.subTopics[idx]?.isDone ?? sub.isDone;
-                  // Map custom properties from mock subtopics for visual richness
-                  const custom = DEFAULT_NODE_SUBTOPICS[idx % DEFAULT_NODE_SUBTOPICS.length];
+                  const isNodeTopic = selectedTopic.title.toLowerCase().includes('node');
+                  
+                  // Parse subtopic title if it contains pipe '|' separators (e.g., "3.1 Title | Desc 1 | Desc 2")
+                  const rawTitle = sub.title || '';
+                  const parts = rawTitle.split('|').map(s => s.trim()).filter(Boolean);
+                  const displayTitle = parts[0] || rawTitle;
+                  
+                  // Description logic:
+                  // 1. If pipes exist in title, use parts.slice(1)
+                  // 2. Otherwise use sub.desc if present
+                  // 3. Otherwise if Node.js topic, use DEFAULT_NODE_SUBTOPICS desc
+                  // 4. Otherwise use dynamic topic description
+                  const descFromTitle = parts.length > 1 ? parts.slice(1).join(' • ') : '';
+                  const nodeDescFallback = isNodeTopic ? DEFAULT_NODE_SUBTOPICS[idx % DEFAULT_NODE_SUBTOPICS.length]?.desc : '';
+                  const subDesc = descFromTitle || (sub as any).desc || nodeDescFallback || `Key concepts and core architecture principles for ${displayTitle}.`;
+
+                  const confidence = (sub as any).confidence || (isNodeTopic ? DEFAULT_NODE_SUBTOPICS[idx % DEFAULT_NODE_SUBTOPICS.length]?.confidence : 'high');
+                  const badgeType = (sub as any).type || (isNodeTopic ? DEFAULT_NODE_SUBTOPICS[idx % DEFAULT_NODE_SUBTOPICS.length]?.type : (subDone ? 'COMPLETED' : 'STUDY ITEM'));
                   
                   return (
-                    <Card key={idx} className="p-5 flex flex-col justify-between h-48 relative border-slate-200/60 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-shadow">
+                    <Card key={idx} className="p-5 flex flex-col justify-between min-h-[190px] h-full relative border-slate-200/60 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-shadow">
                       <div className="space-y-2">
                         {/* Header card indicator dots */}
                         <div className="flex items-center justify-between">
-                          {renderConfidenceDots(custom.confidence)}
+                          {renderConfidenceDots(confidence)}
                           <PillBadge variant={subDone ? 'green' : 'pink'} className="text-[8px] font-black uppercase tracking-wider scale-90">
-                            {custom.type}
+                            {badgeType}
                           </PillBadge>
                         </div>
                         
-                        <h4 className="text-sm font-bold text-gray-900 dark:text-white pt-1">
-                          {sub.title}
+                        <h4 className="text-sm font-bold text-gray-900 dark:text-white pt-1 leading-snug">
+                          {displayTitle}
                         </h4>
                         
-                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-normal line-clamp-2">
-                          {custom.desc}
+                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-normal line-clamp-3">
+                          {subDesc}
                         </p>
                       </div>
 
                       {/* Bottom status trigger checkbox */}
-                      <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/60 pt-3 mt-auto">
+                      <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/60 pt-3 mt-4">
                         <span className={`text-[10px] font-bold uppercase tracking-wider ${subDone ? 'text-emerald-500' : 'text-slate-400'}`}>
                           {subDone ? 'Completed' : 'Study Pending'}
                         </span>
@@ -1094,10 +1118,10 @@ export default function Topics() {
         <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-emerald-500/20 dark:border-emerald-500/15 shadow-lg shadow-emerald-500/5">
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
+          <div className="flex flex-col gap-0.5 relative pr-12">
             <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">{t.totalTopics}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{totalTopicsCount}</span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{t.curriculumModules}</span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5 leading-tight">{t.curriculumModules}</span>
           </div>
           <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 dark:from-emerald-500/25 dark:to-teal-500/15 border border-emerald-500/15">
             <BookOpen size={18} className="text-emerald-500" />
@@ -1108,9 +1132,12 @@ export default function Topics() {
         <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-blue-500/20 dark:border-blue-500/15 shadow-lg shadow-blue-500/5">
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-blue-500/10 dark:bg-blue-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
+          <div className="flex flex-col gap-0.5 relative pr-12">
             <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest">{t.topicsCompleted}</span>
-            <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{completedTopicsCount}<span className="text-base font-bold text-gray-400 dark:text-slate-500 ml-1">Topics</span></span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight">{completedTopicsCount}</span>
+              <span className="text-xs font-bold text-gray-400 dark:text-slate-400 select-none">Topics</span>
+            </div>
             <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">{totalTopicsCount - completedTopicsCount} remaining</span>
           </div>
           <div className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/10 dark:from-blue-500/25 dark:to-indigo-500/15 border border-blue-500/15">
@@ -1122,10 +1149,10 @@ export default function Topics() {
         <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/80 border border-violet-500/20 dark:border-violet-500/15 shadow-lg shadow-violet-500/5 col-span-2 lg:col-span-1">
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-400 to-purple-400 rounded-t-2xl" />
           <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-violet-500/10 dark:bg-violet-500/15 blur-2xl pointer-events-none" />
-          <div className="flex flex-col gap-0.5 relative">
+          <div className="flex flex-col gap-0.5 relative pr-14">
             <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">{t.overallTopicsProgress}</span>
             <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-none tracking-tight mt-1">{overallProgressPercent}<span className="text-lg">%</span></span>
-            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5">Curriculum coverage rate</span>
+            <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-0.5 leading-tight">Curriculum coverage rate</span>
           </div>
           <div className="absolute bottom-3 right-3">
             <div className="relative">
@@ -1266,26 +1293,29 @@ export default function Topics() {
 
                       {isExpanded && (
                         <div className="space-y-2.5 pt-2 animate-scale-up border-t border-slate-50 dark:border-slate-800/40">
-                          {topic.subTopics.map((sub, sIdx) => (
-                            <div key={sIdx} className="flex items-center gap-2.5 justify-between">
-                              <span className={`text-xs select-none leading-snug
-                                ${sub.isDone ? 'text-gray-400 line-through' : 'text-gray-700 dark:text-slate-350'}
-                              `}>
-                                {sub.title}
-                              </span>
-                              <Checkbox 
-                                checked={sub.isDone} 
-                                size={16}
-                                onChange={(checked) => setConfirmModal({
-                                  type: 'update',
-                                  id: `${topic._id}-${sIdx}`,
-                                  title: checked ? 'Complete Subtopic' : 'Undo Subtopic Completion',
-                                  message: `Are you sure you want to mark "${sub.title}" as ${checked ? 'completed' : 'incomplete'}?`,
-                                  onConfirm: () => handleToggleSubtopic(topic._id, sIdx, checked)
-                                })}
-                              />
-                            </div>
-                          ))}
+                          {topic.subTopics.map((sub, sIdx) => {
+                            const cleanSubTitle = sub.title ? sub.title.split('|')[0].trim() : '';
+                            return (
+                              <div key={sIdx} className="flex items-center gap-2.5 justify-between">
+                                <span className={`text-xs select-none leading-snug
+                                  ${sub.isDone ? 'text-gray-400 line-through' : 'text-gray-700 dark:text-slate-350'}
+                                `}>
+                                  {cleanSubTitle}
+                                </span>
+                                <Checkbox 
+                                  checked={sub.isDone} 
+                                  size={16}
+                                  onChange={(checked) => setConfirmModal({
+                                    type: 'update',
+                                    id: `${topic._id}-${sIdx}`,
+                                    title: checked ? 'Complete Subtopic' : 'Undo Subtopic Completion',
+                                    message: `Are you sure you want to mark "${cleanSubTitle}" as ${checked ? 'completed' : 'incomplete'}?`,
+                                    onConfirm: () => handleToggleSubtopic(topic._id, sIdx, checked)
+                                  })}
+                                />
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>

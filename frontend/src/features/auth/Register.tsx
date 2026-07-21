@@ -24,24 +24,25 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 export default function Register() {
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFormLoading, setIsFormLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth, theme } = useStore();
 
   const handleGoogleCredentialResponse = async (response: any) => {
-    setIsLoading(true);
+    setIsGoogleLoading(true);
     const toastId = toast.loading('Signing up with Google...');
     try {
       const res = await apiClient.auth.googleLogin(response.credential);
       setAuth(res.user, res.token);
-      toast.success(`Welcome to Disciplin, ${res.user.name}! 🚀`, { id: toastId });
+      toast.success(`Welcome to Disciplin, ${res.user.name}! 🚀`, { id: toastId, duration: 4000 });
       navigate('/overview');
     } catch (e: any) {
       const err = e.message || 'Google signup failed';
       setErrorMsg(err);
-      toast.error(err, { id: toastId });
+      toast.error(err, { id: toastId, duration: 5000 });
     } finally {
-      setIsLoading(false);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -98,7 +99,7 @@ export default function Register() {
   };
 
   const onSubmit = async (data: RegisterFormValues) => {
-    setIsLoading(true);
+    setIsFormLoading(true);
     setErrorMsg(null);
     const toastId = toast.loading('Creating account...');
     try {
@@ -106,15 +107,15 @@ export default function Register() {
       if (res?.emailError) {
         toast.error(res.message, { id: toastId, duration: 6000 });
       } else {
-        toast.success(res.message || 'Registration successful! Check your inbox to verify your account.', { id: toastId });
+        toast.success(res.message || 'Registration successful! Check your inbox to verify your account.', { id: toastId, duration: 4000 });
       }
       navigate('/login');
     } catch (e: any) {
       const err = e.message || 'Registration failed';
       setErrorMsg(err);
-      toast.error(err, { id: toastId });
+      toast.error(err, { id: toastId, duration: 5000 });
     } finally {
-      setIsLoading(false);
+      setIsFormLoading(false);
     }
   };
 
@@ -241,10 +242,18 @@ export default function Register() {
                 type="submit"
                 fullWidth
                 size="lg"
-                variant="gradient" className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md"
-                disabled={isLoading}
+                variant="gradient"
+                className="mt-6 font-semibold py-3 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
+                disabled={isFormLoading || isGoogleLoading}
               >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+                {isFormLoading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Creating Account...</span>
+                  </>
+                ) : (
+                  'Create Account'
+                )}
               </Button>
 
             </form>
@@ -258,10 +267,16 @@ export default function Register() {
             </div>
 
             {/* Google Sign-in Button */}
-            <div className="w-full flex justify-center items-center select-none py-1">
-              <div className="rounded-full shadow-xs hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
+            <div className="w-full flex flex-col justify-center items-center select-none py-1 relative">
+              <div className={`rounded-full shadow-xs transition-all duration-200 ${isGoogleLoading ? 'opacity-50 pointer-events-none' : 'hover:shadow-md hover:scale-[1.02]'}`}>
                 <div id="googleSignUpButton" className="flex justify-center rounded-full overflow-hidden" />
               </div>
+              {isGoogleLoading && (
+                <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-emerald-500 animate-pulse">
+                  <span className="w-3.5 h-3.5 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+                  Authenticating with Google...
+                </div>
+              )}
             </div>
 
             {/* Redirect link */}

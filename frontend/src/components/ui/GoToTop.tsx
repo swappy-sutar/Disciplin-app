@@ -34,10 +34,11 @@ export const GoToTop: React.FC<GoToTopProps> = ({ className = '', offset = 300 }
   return (
     <button
       onClick={scrollToTop}
-      className={`fixed z-40 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center animate-scale-up ${className}`}
+      className={`fixed z-40 w-10 h-10 md:w-11 md:h-11 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-200 hover:text-emerald-500 dark:hover:text-emerald-400 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 rounded-full shadow-lg hover:shadow-emerald-500/10 hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center animate-scale-up select-none ${className}`}
       aria-label="Scroll to top"
+      title="Scroll back to top"
     >
-      <ChevronUp size={20} className="animate-bounce" style={{ animationDuration: '2s' }} />
+      <ChevronUp size={18} className="transition-transform group-hover:-translate-y-0.5" />
     </button>
   );
 };

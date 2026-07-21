@@ -17,7 +17,7 @@ const translations = {
     goals: 'Goals',
     overview: 'Overview',
     applications: 'Applications',
-    topics: 'Topics',
+    topics: 'Studies',
     workout: 'Workout',
     todayWorkout: "Today's Lift",
     workoutSplit: 'Weekly Split',
