@@ -17,6 +17,7 @@ const setAuthCookie = (res: Response, token: string) => {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
     sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
     maxAge: 15 * 60 * 1000, // 15 mins (access token)
   });
 };
@@ -26,6 +27,7 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
     sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (refresh token)
   });
 };
@@ -121,11 +123,13 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
       sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
     });
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
       sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
     });
     res.status(200).json({ success: true, message: 'Logged out successfully' });
   } catch (error) {

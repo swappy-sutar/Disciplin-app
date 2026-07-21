@@ -7,12 +7,15 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     let token: string | undefined;
 
     // Primary: Authorization: Bearer <token>
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      const parts = req.headers.authorization.split(' ');
+      if (parts.length === 2 && parts[1] && parts[1] !== 'null' && parts[1] !== 'undefined') {
+        token = parts[1];
+      }
     }
 
-    // Fallback: httpOnly jwt cookie set during login
-    if (!token && req.cookies?.jwt) {
+    // Fallback: httpOnly jwt cookie set during login ONLY if no Authorization header was sent
+    if (!token && !req.headers.authorization && req.cookies?.jwt) {
       token = req.cookies.jwt;
     }
 

@@ -21,18 +21,11 @@ import NotFound from './components/NotFound';
 import ContactUs from './features/contact/ContactUs';
 import AboutUs from './features/about/AboutUs';
 import Workouts from './features/workout/Workouts';
+import { AdminPanel } from './features/admin/AdminPanel';
 
 import { Logo } from './components/ui/Logo';
 
-// Initialize TanStack Query Client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+import { queryClient } from './lib/query-client';
 
 // Protected Route Wrapper
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -50,6 +43,17 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const token = useStore((state) => state.token);
   
   if (token) {
+    return <Navigate to="/overview" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+// Admin Route Wrapper (Redirects non-admin users to Overview)
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const user = useStore((state) => state.user);
+  
+  if (user?.role !== 'admin') {
     return <Navigate to="/overview" replace />;
   }
 
@@ -286,6 +290,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <AdminPanel />
+                </AdminRoute>
               </ProtectedRoute>
             }
           />

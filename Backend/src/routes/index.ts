@@ -13,6 +13,7 @@ import codingRoutes from './coding.routes';
 import contactRoutes from './contact.routes';
 import workoutRoutes from './workout.routes';
 import reviewRoutes from './review.routes';
+import adminRoutes from './admin.routes';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/coding', codingRoutes);
 router.use('/contact', contactRoutes);
 router.use('/workouts', workoutRoutes);
 router.use('/reviews', reviewRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;

@@ -181,7 +181,7 @@ export const apiClient = {
     login: (body: any) => request<any>('POST', '/auth/login', body).then(res => {
       const userRes = res.user || res.data?.user || res.data || res;
       const token = res.token || res.data?.token;
-      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email };
+      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email, role: userRes.role };
       localStorage.setItem('disciplin_user', JSON.stringify(user));
       if (token) {
         localStorage.setItem('disciplin_token', token);
@@ -192,7 +192,7 @@ export const apiClient = {
     googleLogin: (idToken: string) => request<any>('POST', '/auth/google-login', { idToken }).then(res => {
       const userRes = res.user || res.data?.user || res.data || res;
       const token = res.token || res.data?.token;
-      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email };
+      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email, role: userRes.role };
       localStorage.setItem('disciplin_user', JSON.stringify(user));
       if (token) {
         localStorage.setItem('disciplin_token', token);
@@ -200,7 +200,12 @@ export const apiClient = {
       window.dispatchEvent(new Event('auth_change'));
       return { token, user };
     }),
-    register: (body: any) => request<any>('POST', '/auth/register', body),
+    register: (body: any) => request<any>('POST', '/auth/register', body).then(res => {
+      localStorage.removeItem('disciplin_token');
+      localStorage.removeItem('disciplin_user');
+      window.dispatchEvent(new Event('auth_change'));
+      return res;
+    }),
     logout: async () => {
       try {
         await request<any>('POST', '/auth/logout');
@@ -213,7 +218,7 @@ export const apiClient = {
     },
     updateProfile: (body: { name?: string; email?: string; password?: string }) => request<any>('PUT', '/auth/profile', body).then(res => {
       const userRes = res.user || res.data?.user || res.data || res;
-      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email };
+      const user = { id: userRes.id || userRes._id, name: userRes.name, email: userRes.email, role: userRes.role };
       localStorage.setItem('disciplin_user', JSON.stringify(user));
       window.dispatchEvent(new Event('auth_change'));
       return user;
@@ -234,6 +239,17 @@ export const apiClient = {
     list: () => request<any[]>('GET', '/reviews'),
     create: (body: { name: string; role: string; comment: string; rating?: number; avatarUrl?: string }) =>
       request<any>('POST', '/reviews', body),
+  },
+
+  // Admin Operations
+  admin: {
+    stats: () => request<any>('GET', '/admin/stats'),
+    users: (search?: string) => request<any[]>('GET', `/admin/users${search ? '?search=' + encodeURIComponent(search) : ''}`),
+    updateUserRole: (id: string, role: string) => request<any>('PATCH', `/admin/users/${id}/role`, { role }),
+    deleteUser: (id: string) => request<any>('DELETE', `/admin/users/${id}`),
+    reviews: () => request<any[]>('GET', '/admin/reviews'),
+    toggleReviewApproval: (id: string, isApproved: boolean) => request<any>('PATCH', `/admin/reviews/${id}/approve`, { isApproved }),
+    deleteReview: (id: string) => request<any>('DELETE', `/admin/reviews/${id}`),
   },
 
   // Timetable Operations

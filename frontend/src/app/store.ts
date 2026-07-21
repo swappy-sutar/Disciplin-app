@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { User } from '../types';
 import { sendSystemNotification } from '../utils/notifications';
+import { clearQueryCache } from '../lib/query-client';
 
 export const colorsMap = {
   blue: { primary: '#3B82F6', hover: '#2563EB' },
@@ -145,6 +146,7 @@ export const useStore = create<UIState>((set) => {
     setMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
     
     setAuth: (user, token) => {
+      clearQueryCache();
       if (user && token) {
         localStorage.setItem('disciplin_user', JSON.stringify(user));
         localStorage.setItem('disciplin_token', token);
@@ -155,6 +157,7 @@ export const useStore = create<UIState>((set) => {
       set({ user, token });
     },
     logout: () => {
+      clearQueryCache();
       localStorage.removeItem('disciplin_user');
       localStorage.removeItem('disciplin_token');
       set({ user: null, token: null });
@@ -210,6 +213,7 @@ export const useStore = create<UIState>((set) => {
 // Setup event listener to handle external logout
 if (typeof window !== 'undefined') {
   window.addEventListener('auth_change', () => {
+    clearQueryCache();
     const user = localStorage.getItem('disciplin_user');
     const token = localStorage.getItem('disciplin_token');
     useStore.setState({ 

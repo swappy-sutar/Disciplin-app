@@ -17,7 +17,8 @@ import {
   User as UserIcon,
   Clock,
   Sparkles,
-  Check
+  Check,
+  ShieldCheck
 } from 'lucide-react';
 import { useStore } from './store';
 
@@ -390,6 +391,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       <UserIcon size={14} className="text-gray-400 dark:text-slate-450" />
                       {t.accountSettings}
                     </Link>
+
+                    {user?.role === 'admin' && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block my-0.5"
+                      >
+                        <ShieldCheck size={14} className="text-purple-500" />
+                        Admin Control Panel
+                      </Link>
+                    )}
                     <button
                       onClick={() => {
                         setIsUserMenuOpen(false);
