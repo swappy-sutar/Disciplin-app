@@ -378,7 +378,7 @@ export default function Overview() {
   return (
     <div className="space-y-6 md:space-y-8 select-none">
            {/* Title Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-30">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
             {t.todayOverview}
@@ -389,7 +389,7 @@ export default function Overview() {
         </div>
         
         {/* Upgraded Date Switcher Pill */}
-        <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl select-none max-w-fit shrink-0 relative z-30">
+        <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl select-none max-w-fit shrink-0 relative z-10">
           <button 
             onClick={handlePrevDay}
             className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"

@@ -163,7 +163,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-canvas-bg flex flex-col pb-16 md:pb-0 pt-16">
       {/* Top Navbar */}
-      <header className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/40 fixed top-0 left-0 right-0 z-30 select-none transition-all duration-300">
+      <header className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/40 fixed top-0 left-0 right-0 z-50 select-none transition-all duration-300">
         {/* Glow underside line */}
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
         
@@ -333,7 +333,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* User Avatar & Logout */}
-            <div className="relative" ref={userMenuRef}>
+            <div className="relative z-[9999]" ref={userMenuRef}>
               <button 
                 onClick={handleToggleUserMenu}
                 className="flex items-center justify-center p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer focus:outline-none"
@@ -345,7 +345,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               
               {/* Dropdown Menu on Click */}
               {isUserMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100/80 dark:border-slate-800/80 p-2 min-w-[220px] z-50 animate-in fade-in slide-in-from-top-2 duration-150 select-none">
+                <div className="absolute right-0 top-full mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100/80 dark:border-slate-800/80 p-2 min-w-[220px] z-[9999] animate-in fade-in slide-in-from-top-2 duration-150 select-none">
                     <div className="px-3 py-2.5 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl mb-1.5 border border-slate-100/30 dark:border-slate-800/20">
                       <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate">{user?.name || ''}</p>
                       <p className="text-[10px] text-gray-450 dark:text-slate-450 font-semibold truncate mt-0.5">{user?.email || ''}</p>
