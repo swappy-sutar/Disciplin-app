@@ -257,15 +257,15 @@ export default function Habits() {
                 {weekDays.map((day, idx) => (
                   <th 
                     key={idx} 
-                    className={`pb-3 text-center font-bold px-2
+                    className={`text-center font-bold px-2 transition-all
                       ${day.isToday 
-                        ? 'bg-emerald-500/[0.06] dark:bg-emerald-400/[0.06] border-x border-t border-emerald-500/20 dark:border-emerald-400/20 text-emerald-600 dark:text-emerald-400 font-extrabold' 
-                        : 'text-gray-400 dark:text-slate-500'
+                        ? 'bg-emerald-500/[0.07] dark:bg-emerald-400/[0.07] border-x border-t border-emerald-500/25 dark:border-emerald-400/25 rounded-t-2xl text-emerald-600 dark:text-emerald-400 font-extrabold pt-3 pb-2.5' 
+                        : 'text-gray-400 dark:text-slate-500 pb-3'
                       }
                     `}
                   >
                     {day.isToday ? (
-                      <span className="inline-block py-0.5 px-2 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-wider border border-emerald-500/20 dark:border-emerald-400/20 select-none shadow-sm animate-pulse">
+                      <span className="inline-block py-1 px-2.5 rounded-full bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-wider border border-emerald-500/30 dark:border-emerald-400/30 select-none shadow-sm animate-pulse my-0.5">
                         {day.label}
                       </span>
                     ) : (
@@ -316,7 +316,7 @@ export default function Habits() {
                           key={idx} 
                           className={`py-3.5 text-center transition-colors duration-200
                             ${day.isToday 
-                              ? `bg-emerald-500/[0.06] dark:bg-emerald-400/[0.06] border-x border-emerald-500/20 dark:border-emerald-400/20 px-2 ${isLastRow ? 'border-b border-emerald-500/20 dark:border-emerald-400/20 rounded-b-xl' : ''}` 
+                              ? `bg-emerald-500/[0.07] dark:bg-emerald-400/[0.07] border-x border-emerald-500/25 dark:border-emerald-400/25 px-2 ${isLastRow ? 'border-b border-emerald-500/25 dark:border-emerald-400/25 rounded-b-2xl pb-4' : ''}` 
                               : ''
                             }
                           `}
