@@ -689,14 +689,16 @@ export default function Overview() {
             }
           >
             {/* Streak Indicator */}
-            <div className="bg-emerald-50 rounded-xl p-3 flex items-center justify-between mb-4 border border-emerald-100/30">
-              <div className="flex items-center gap-2">
-                <div className="p-1 rounded bg-emerald-500 text-white animate-pulse">
-                  <Flame size={16} />
+            <div className="bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 rounded-2xl p-3 flex items-center justify-between mb-5 backdrop-blur-sm select-none">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-xl bg-emerald-500 text-white shadow-md shadow-emerald-500/20 flex items-center justify-center">
+                  <Flame size={15} className="animate-pulse" />
                 </div>
-                <span className="text-xs font-semibold text-emerald-800 select-none">Weekly Habit Consistency</span>
+                <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200">Weekly Habit Consistency</span>
               </div>
-              <span className="text-xs font-black text-emerald-600 uppercase tracking-wider">Active Run</span>
+              <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                Active Run
+              </span>
             </div>
 
             {habits.list.length === 0 ? (
@@ -705,23 +707,27 @@ export default function Overview() {
                 <span className="text-[10px] text-gray-450 dark:text-slate-600 mt-0.5 font-semibold">Build consistency in the Habits tab</span>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Header days */}
-                <div className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 text-center font-bold text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100/50 dark:border-slate-800/40 pb-2">
-                  <div className="text-left font-medium select-none">Habit</div>
+                <div className="grid grid-cols-[1fr_repeat(7,32px)] gap-1 text-center font-bold text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100/50 dark:border-slate-800/40 pb-2.5 items-center">
+                  <div className="text-left font-bold text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider select-none px-1">Habit</div>
                   {weekdayShortNames.map((day, idx) => (
-                    <div key={idx}>{day}</div>
+                    <div key={idx} className="flex flex-col items-center justify-center select-none">
+                      <span>{day}</span>
+                    </div>
                   ))}
                 </div>
                 
                 {/* Habits list */}
                 {habits.list.slice(0, 3).map((habit: any) => (
-                  <div key={habit._id} className="grid grid-cols-[1fr_repeat(7,30px)] gap-1 items-center p-1.5 -mx-1.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-all duration-300">
-                    <span className="text-xs font-bold text-gray-700 dark:text-slate-300 truncate select-none">{habit.name}</span>
+                  <div key={habit._id} className="grid grid-cols-[1fr_repeat(7,32px)] gap-1 items-center p-2 -mx-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all duration-200">
+                    <span className="text-xs font-bold text-gray-800 dark:text-slate-200 truncate select-none px-1" title={habit.name}>
+                      {habit.name}
+                    </span>
                     {weekDayDates.map((dateStr, idx) => {
                       const isLogged = (habits.logs || []).some(l => l.habitId === habit._id && l.date === dateStr && l.isDone);
                       return (
-                        <div key={idx} className="flex justify-center">
+                        <div key={idx} className="flex items-center justify-center">
                            <Checkbox
                              checked={isLogged}
                              color={habit.color}
@@ -747,6 +753,10 @@ export default function Overview() {
                 ))}
               </div>
             )}
+
+            <Link to="/habits" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900/50 dark:hover:bg-slate-800/50 text-gray-600 dark:text-slate-300 text-xs font-bold py-2 rounded-xl transition-all border border-gray-100/50 dark:border-slate-800/50 shadow-sm">
+              Manage Habits
+            </Link>
           </Card>
 
           {/* Application Tracker */}
@@ -957,6 +967,10 @@ export default function Overview() {
 
               </div>
             )}
+
+            <Link to="/goals" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900/50 dark:hover:bg-slate-800/50 text-gray-600 dark:text-slate-300 text-xs font-bold py-2 rounded-xl transition-all border border-gray-100/50 dark:border-slate-800/50 shadow-sm">
+              Manage Goals
+            </Link>
           </Card>
 
         </div>

@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import type {
   User,
   WeeklyGoal,
@@ -12,7 +13,7 @@ import type {
   WorkoutStreak
 } from '../types';
 
-let apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api/v1';
+let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
 // Clean up trailing slash
 if (apiBase.endsWith('/')) {
@@ -153,7 +154,14 @@ async function request<T>(
 
   if (!response.ok) {
     const errJson = await response.json().catch(() => ({}));
-    throw new Error(errJson.message || 'Request failed');
+    const message = errJson.message || errJson.error || (response.status === 429 ? 'Too many requests, please try again after 15 minutes' : 'Request failed');
+
+    // Trigger toast alert for rate-limiting 429 response
+    if (response.status === 429) {
+      toast.error(message, { id: 'rate-limit-error', duration: 6000 });
+    }
+
+    throw new Error(message);
   }
 
   const resJson = await response.json();
