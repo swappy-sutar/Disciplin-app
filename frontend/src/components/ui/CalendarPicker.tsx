@@ -95,14 +95,14 @@ export const CalendarPicker: React.FC<CalendarPickerProps> = ({ dateRangeLabel, 
       {/* Trigger Capsule */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2 min-w-[110px] md:min-w-[140px] justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg py-0.5 transition-colors text-gray-655 dark:text-gray-300 font-semibold"
+        className="flex items-center gap-1.5 px-1.5 py-0.5 justify-center cursor-pointer hover:bg-slate-200/50 dark:hover:bg-slate-800/60 rounded-lg transition-colors text-slate-700 dark:text-slate-200 font-semibold text-xs"
       >
-        <CalendarIcon size={14} className="text-gray-400" />
-        <span className="select-none">{dateRangeLabel}</span>
+        <CalendarIcon size={13} className="text-emerald-500 shrink-0" />
+        <span className="select-none tracking-tight">{dateRangeLabel}</span>
       </div>
 
       {isOpen && (
-        <div className={`absolute mt-2.5 z-[999] w-72 bg-white dark:bg-card-bg border border-gray-100 dark:border-gray-800 rounded-2xl shadow-xl p-4 select-none ${getAlignClass()}`}>
+        <div className={`absolute mt-2.5 z-[999] w-72 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-2xl p-4 select-none backdrop-blur-xl ${getAlignClass()}`}>
           {/* Calendar Header */}
           <div className="flex items-center justify-between mb-4">
             <button 

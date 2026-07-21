@@ -112,6 +112,7 @@ export default function Overview() {
 
   // Modals Local State
   const [isTimetableCollapsed, setIsTimetableCollapsed] = useState(true);
+  const [isCompletionRateCollapsed, setIsCompletionRateCollapsed] = useState(false);
   const [isAddTimetableOpen, setAddTimetableOpen] = useState(false);
   const [isAddGoalOpen, setAddGoalOpen] = useState(false);
   const [isAddAppOpen, setAddAppOpen] = useState(false);
@@ -377,52 +378,47 @@ export default function Overview() {
   return (
     <div className="space-y-6 md:space-y-8 select-none">
            {/* Title Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-30">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
             {t.todayOverview}
           </h1>
-          
-          {/* Mobile date switcher pill */}
-          <div className="flex items-center gap-1 mt-2.5 text-sm text-gray-500 dark:text-slate-400 bg-white/60 dark:bg-slate-900/50 border border-gray-150/50 dark:border-slate-800/50 rounded-xl px-2 py-1 max-w-fit shadow-sm">
-            <button 
-              onClick={handlePrevDay}
-              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/60 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer border-none bg-transparent shrink-0"
-              aria-label="Previous day"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <div className="flex items-center gap-1.5 px-1.5 font-bold text-gray-800 dark:text-slate-200">
-              <Calendar size={13} className="text-emerald-500/70" />
-              <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
-            </div>
-            <button 
-              onClick={handleNextDay}
-              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/60 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer border-none bg-transparent shrink-0"
-              aria-label="Next day"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1.5 select-none">
+            Track your daily focus hours, habit compliance & schedule
+          </p>
         </div>
         
-        {/* Toggle Comparison mode */}
-        <div className="flex items-center justify-between md:justify-start gap-4 bg-white/60 dark:bg-slate-900/50 border border-gray-150/40 dark:border-slate-800/80 rounded-2xl px-4 py-2.5 shadow-sm select-none transition-all duration-200 hover:border-gray-200 dark:hover:border-slate-700 w-full md:w-auto">
-          <span className="text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-widest leading-none">
-            Compare to Yesterday
-          </span>
-          <button
-            onClick={() => setCompareMode(!compareMode)}
-            className={`w-12 h-6.5 rounded-full relative transition-all duration-355 focus:outline-none cursor-pointer select-none shrink-0 border-none
-              ${compareMode ? 'bg-primary-blue shadow-sm shadow-emerald-500/20' : 'bg-gray-200 dark:bg-slate-800'}
-            `}
+        {/* Upgraded Date Switcher Pill */}
+        <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl select-none max-w-fit shrink-0 relative z-30">
+          <button 
+            onClick={handlePrevDay}
+            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            aria-label="Previous day"
+            title="Previous day"
           >
-            <div 
-              className={`w-5 h-5 rounded-full bg-white absolute top-0.75 shadow-sm transition-all duration-355
-                ${compareMode ? 'left-6.25' : 'left-0.75'}
-              `}
-            />
+            <ChevronLeft size={16} />
           </button>
+          
+          <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
+          
+          <button 
+            onClick={handleNextDay}
+            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            aria-label="Next day"
+            title="Next day"
+          >
+            <ChevronRight size={16} />
+          </button>
+
+          {activeDate !== format(new Date(), 'yyyy-MM-dd') && (
+            <button
+              onClick={() => setActiveDate(format(new Date(), 'yyyy-MM-dd'))}
+              className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all cursor-pointer ml-0.5"
+              title="Go to Today"
+            >
+              Today
+            </button>
+          )}
         </div>
       </div>
 
@@ -833,6 +829,10 @@ export default function Overview() {
                 </tbody>
               </table>
             </div>
+
+            <Link to="/applications" className="block text-center mt-3 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900/50 dark:hover:bg-slate-800/50 text-gray-600 dark:text-slate-300 text-xs font-bold py-2 rounded-xl transition-all border border-gray-100/50 dark:border-slate-800/50 shadow-sm">
+              Manage Applications
+            </Link>
           </Card>
 
         </div>
@@ -846,22 +846,34 @@ export default function Overview() {
             className="order-2 md:order-none"
             icon={Activity}
             iconColor="text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+            headerAction={
+              <button
+                onClick={() => setIsCompletionRateCollapsed(!isCompletionRateCollapsed)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                aria-label={isCompletionRateCollapsed ? "Expand Completion Rate" : "Collapse Completion Rate"}
+                title={isCompletionRateCollapsed ? "Expand card" : "Collapse card"}
+              >
+                {isCompletionRateCollapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
+              </button>
+            }
           >
-            <div className="flex flex-col items-center py-2">
-              <RadialProgress 
-                percentage={progress.todayPercent} 
-                trend={progress.delta >= 0 ? `▲ +${progress.delta}%` : `▼ ${progress.delta}%`}
-                subtext="Timetable Completion"
-              />
-              
-              <div className="w-full mt-6 pt-5 border-t border-gray-100/50 dark:border-slate-800/40 flex flex-col gap-1.5">
-                <div className="flex justify-between items-center text-xs text-gray-500 dark:text-slate-400 font-semibold select-none">
-                  <span>Focus Hours</span>
-                  <span>{completedFocusHours.toFixed(1)} / {totalFocusTarget.toFixed(1)} hrs</span>
+            {!isCompletionRateCollapsed && (
+              <div className="flex flex-col items-center py-2 animate-in fade-in duration-200">
+                <RadialProgress 
+                  percentage={progress.todayPercent} 
+                  trend={progress.delta >= 0 ? `▲ +${progress.delta}%` : `▼ ${progress.delta}%`}
+                  subtext="Timetable Completion"
+                />
+                
+                <div className="w-full mt-6 pt-5 border-t border-gray-100/50 dark:border-slate-800/40 flex flex-col gap-1.5">
+                  <div className="flex justify-between items-center text-xs text-gray-500 dark:text-slate-400 font-semibold select-none">
+                    <span>Focus Hours</span>
+                    <span>{completedFocusHours.toFixed(1)} / {totalFocusTarget.toFixed(1)} hrs</span>
+                  </div>
+                  <ProgressBar value={completedFocusHours} max={totalFocusTarget} color="blue" />
                 </div>
-                <ProgressBar value={completedFocusHours} max={totalFocusTarget} color="blue" />
               </div>
-            </div>
+            )}
           </Card>
 
           {/* Weekly Goals */}

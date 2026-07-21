@@ -151,10 +151,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     setActiveWeekStart(format(newWeekStart, 'yyyy-MM-dd'));
   };
 
-  // Get active week range label e.g. "Oct 12 - Oct 18"
+  // Get active week range label e.g. "Jul 20 - 26"
   const currentWeekStart = parseISO(activeWeekStart);
   const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
-  const dateRangeLabel = `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'MMM d')}`;
+  const isSameMonthWeek = currentWeekStart.getMonth() === currentWeekEnd.getMonth();
+  const dateRangeLabel = isSameMonthWeek
+    ? `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'd')}`
+    : `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'MMM d')}`;
 
 
   return (
@@ -199,21 +202,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-4">
             
             {/* Date Switcher */}
-            <div className="hidden md:flex items-center bg-gray-50 border border-gray-100 rounded-full px-2 py-1 gap-1 text-xs md:text-sm font-medium text-gray-700 shadow-sm">
+            <div className="hidden md:flex items-center bg-slate-100/70 dark:bg-slate-900/70 border border-slate-200/60 dark:border-slate-800/60 rounded-full px-1.5 py-0.5 gap-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm">
               <button 
                 onClick={handlePrevDay}
-                className="p-1 rounded-full hover:bg-white text-gray-500 transition-colors cursor-pointer"
+                className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Previous day"
+                title="Previous day"
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={14} />
               </button>
               <CalendarPicker dateRangeLabel={dateRangeLabel} />
               <button 
                 onClick={handleNextDay}
-                className="p-1 rounded-full hover:bg-white text-gray-500 transition-colors cursor-pointer"
+                className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Next day"
+                title="Next day"
               >
-                <ChevronRight size={16} />
+                <ChevronRight size={14} />
               </button>
             </div>
 
