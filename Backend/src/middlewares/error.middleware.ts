@@ -57,10 +57,9 @@ export const errorHandler = (
   }
 
   if (statusCode === 500) {
-    console.error('💥 Unexpected Server Error:', err);
-    if (env.NODE_ENV === 'development') {
-      response.stack = err.stack;
-    }
+    console.error(`💥 [${new Date().toISOString()}] 500 ${req.method} ${req.originalUrl}:`, err);
+  } else {
+    console.warn(`⚠️ [${new Date().toISOString()}] ${statusCode} ${req.method} ${req.originalUrl}: ${message}`);
   }
 
   res.status(statusCode).json(response);

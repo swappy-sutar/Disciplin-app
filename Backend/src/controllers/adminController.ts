@@ -1,12 +1,13 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/User';
 import { Review } from '../models/Review';
 import { Habit } from '../models/Habit';
 import { Application } from '../models/Application';
 import { WeeklyGoal } from '../models/WeeklyGoal';
+import { NotFoundError, BadRequestError } from '../utils/custom-errors';
 
 // Get Overview Stats for Admin Dashboard
-export const getAdminStats = async (req: Request, res: Response): Promise<void> => {
+export const getAdminStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const [
       totalUsers,
@@ -35,19 +36,21 @@ export const getAdminStats = async (req: Request, res: Response): Promise<void> 
         totalGoals,
       },
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Get All Registered Users
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { search } = req.query;
     let query: any = {};
 
     if (search) {
-      const searchRegex = new RegExp(String(search), 'i');
+      // Escape special regex characters to prevent ReDoS injection
+      const sanitizedSearch = String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(sanitizedSearch, 'i');
       query.$or = [
         { name: searchRegex },
         { email: searchRegex },
@@ -62,20 +65,19 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
       success: true,
       data: users,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Update User Role (Admin / Moderator / User / Premium)
-export const updateUserRole = async (req: Request, res: Response): Promise<void> => {
+export const updateUserRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
     const { role } = req.body;
 
     if (!['admin', 'moderator', 'user', 'premium'].includes(role)) {
-      res.status(400).json({ success: false, message: 'Invalid role specified.' });
-      return;
+      throw new BadRequestError('Invalid role specified.');
     }
 
     const user = await User.findByIdAndUpdate(
@@ -85,8 +87,7 @@ export const updateUserRole = async (req: Request, res: Response): Promise<void>
     ).select('-passwordHash');
 
     if (!user) {
-      res.status(404).json({ success: false, message: 'User not found.' });
-      return;
+      throw new NotFoundError('User not found.');
     }
 
     res.json({
@@ -94,20 +95,19 @@ export const updateUserRole = async (req: Request, res: Response): Promise<void>
       data: user,
       message: `User role updated to ${role} successfully.`,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Delete User Account
-export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
 
     const user = await User.findByIdAndDelete(id);
     if (!user) {
-      res.status(404).json({ success: false, message: 'User not found.' });
-      return;
+      throw new NotFoundError('User not found.');
     }
 
     // Clean up user data
@@ -122,13 +122,13 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
       success: true,
       message: 'User and all associated data deleted successfully.',
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Get All Reviews (Both Approved & Pending)
-export const getAllReviewsAdmin = async (req: Request, res: Response): Promise<void> => {
+export const getAllReviewsAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const reviews = await Review.find()
       .sort({ createdAt: -1 });
@@ -137,13 +137,13 @@ export const getAllReviewsAdmin = async (req: Request, res: Response): Promise<v
       success: true,
       data: reviews,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Approve or Unapprove Review
-export const toggleReviewApproval = async (req: Request, res: Response): Promise<void> => {
+export const toggleReviewApproval = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
     const { isApproved } = req.body;
@@ -155,8 +155,7 @@ export const toggleReviewApproval = async (req: Request, res: Response): Promise
     );
 
     if (!review) {
-      res.status(404).json({ success: false, message: 'Review not found.' });
-      return;
+      throw new NotFoundError('Review not found.');
     }
 
     res.json({
@@ -164,27 +163,26 @@ export const toggleReviewApproval = async (req: Request, res: Response): Promise
       data: review,
       message: `Review ${review.isApproved ? 'approved' : 'unapproved'} successfully.`,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Delete Review
-export const deleteReview = async (req: Request, res: Response): Promise<void> => {
+export const deleteReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
 
     const review = await Review.findByIdAndDelete(id);
     if (!review) {
-      res.status(404).json({ success: false, message: 'Review not found.' });
-      return;
+      throw new NotFoundError('Review not found.');
     }
 
     res.json({
       success: true,
       message: 'Review deleted successfully.',
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };

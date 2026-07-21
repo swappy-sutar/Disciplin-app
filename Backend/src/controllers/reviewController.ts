@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Review } from '../models/Review';
+import { BadRequestError } from '../utils/custom-errors';
 
-export const getReviews = async (req: Request, res: Response): Promise<void> => {
+export const getReviews = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const reviews = await Review.find({ isApproved: true })
       .sort({ createdAt: -1 })
@@ -11,21 +12,17 @@ export const getReviews = async (req: Request, res: Response): Promise<void> => 
       success: true,
       data: reviews,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const createReview = async (req: Request, res: Response): Promise<void> => {
+export const createReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, role, comment, rating, avatarUrl } = req.body;
 
     if (!name || !role || !comment) {
-      res.status(400).json({
-        success: false,
-        message: 'Name, role, and comment are required.',
-      });
-      return;
+      throw new BadRequestError('Name, role, and comment are required.');
     }
 
     const review = await Review.create({
@@ -43,7 +40,7 @@ export const createReview = async (req: Request, res: Response): Promise<void> =
       data: review,
       message: 'Thank you! Your review has been submitted successfully.',
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (error) {
+    next(error);
   }
 };

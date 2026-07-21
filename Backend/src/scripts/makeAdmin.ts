@@ -4,7 +4,7 @@ import { User } from '../models/User';
 async function makeAdmin() {
   try {
     await connectDB();
-    const targetEmail = 'sutarswapnil322@gmail.com';
+    const targetEmail = process.argv[2] || process.env.ADMIN_EMAIL || 'sutarswapnil322@gmail.com';
     
     const user = await User.findOneAndUpdate(
       { email: targetEmail.toLowerCase() },

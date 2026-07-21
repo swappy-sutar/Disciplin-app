@@ -1,7 +1,16 @@
 import { Router } from 'express';
 import * as authController from '../controllers/auth.controller';
 import { validate } from '../middlewares/validate.middleware';
-import { registerSchema, loginSchema, updateProfileSchema, forgotPasswordSchema, resetPasswordSchema, resendVerificationSchema } from '../validations/auth.validation';
+import {
+  registerSchema,
+  loginSchema,
+  updateProfileSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  resendVerificationSchema,
+  googleLoginSchema,
+  verifyEmailSchema
+} from '../validations/auth.validation';
 import { protect, restrictTo } from '../middlewares/auth.middleware';
 import rateLimit from 'express-rate-limit';
 
@@ -45,12 +54,12 @@ const router = Router();
 
 router.post('/register', registerLimiter, validate(registerSchema), authController.register);
 router.post('/login', loginLimiter, validate(loginSchema), authController.login);
-router.post('/google-login', authController.googleLogin);
+router.post('/google-login', validate(googleLoginSchema), authController.googleLogin);
 router.post('/logout', authController.logout);
 router.post('/refresh', authController.refresh);
 router.post('/forgot-password', forgotPasswordLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
-router.post('/verify-email', authController.verifyEmail);
+router.post('/verify-email', validate(verifyEmailSchema), authController.verifyEmail);
 router.post('/resend-verification', resendVerificationLimiter, validate(resendVerificationSchema), authController.resendVerificationEmail);
 router.get('/me', protect, authController.getMe);
 router.get('/users', protect, restrictTo('admin'), authController.getAllUsers);

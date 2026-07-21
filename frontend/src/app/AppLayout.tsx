@@ -18,7 +18,9 @@ import {
   Clock,
   Sparkles,
   Check,
-  ShieldCheck
+  ShieldCheck,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { useStore } from './store';
 
@@ -64,6 +66,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { t } = useTranslation();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('disciplin_sidebar_collapsed') === 'true';
+    }
+    return false;
+  });
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('disciplin_sidebar_collapsed', String(next));
+      return next;
+    });
+  };
+
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -163,44 +180,148 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-canvas-bg flex flex-col pb-16 md:pb-0 pt-16">
+      
+      {/* Left Sidebar for Desktop */}
+      <aside className={`hidden md:flex flex-col fixed left-0 top-0 bottom-0 bg-white dark:bg-[#0B0F19] border-r border-slate-200/80 dark:border-slate-800/80 z-50 transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-16' : 'w-52'}`}>
+        {/* Sidebar Header with Logo & Toggle Button */}
+        <div className="h-16 flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/70 shrink-0 px-3">
+          {!isSidebarCollapsed ? (
+            <>
+              <Link to="/" className="flex items-center">
+                <Logo className="h-12 shrink-0" />
+              </Link>
+              <button
+                onClick={toggleSidebar}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
+                title="Collapse Sidebar"
+              >
+                <PanelLeftClose size={18} />
+              </button>
+            </>
+          ) : (
+            <div className="w-full flex items-center justify-center">
+              <button
+                onClick={toggleSidebar}
+                className="w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-emerald-500/10 transition-all duration-200 cursor-pointer group relative text-slate-400 hover:text-emerald-500"
+                title="Expand Sidebar"
+              >
+                <Logo showText={false} className="h-9 w-9 shrink-0 group-hover:opacity-20 transition-opacity" />
+                <div className="absolute inset-0 rounded-2xl flex items-center justify-center text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <PanelLeftOpen size={19} />
+                </div>
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                  Expand Sidebar
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation Items */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-4 px-3 space-y-1.5 select-none">
+          {!isSidebarCollapsed && (
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 mb-2">
+              Navigation
+            </div>
+          )}
+
+          {navItems.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) => `
+                flex items-center gap-3 rounded-xl text-xs font-bold transition-all cursor-pointer group relative
+                ${isSidebarCollapsed ? 'w-10 h-10 mx-auto justify-center p-0' : 'w-full px-3 py-2.5 justify-start'}
+                ${isActive 
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm font-extrabold' 
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
+                }
+              `}
+            >
+              <item.icon size={20} className="shrink-0" />
+
+              {!isSidebarCollapsed && (
+                <span className="truncate">{item.name}</span>
+              )}
+
+              {/* Floating Tooltip when Collapsed */}
+              {isSidebarCollapsed && (
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                  {item.name}
+                </div>
+              )}
+            </NavLink>
+          ))}
+
+          {user?.role === 'admin' && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) => `
+                flex items-center gap-3 rounded-xl text-xs font-bold transition-all cursor-pointer group relative mt-4
+                ${isSidebarCollapsed ? 'w-10 h-10 mx-auto justify-center p-0' : 'w-full px-3 py-2.5 justify-start'}
+                ${isActive 
+                  ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 shadow-sm font-extrabold' 
+                  : 'text-purple-600/80 dark:text-purple-400/80 hover:bg-purple-500/10 dark:hover:bg-purple-950/30 border border-transparent'
+                }
+              `}
+            >
+              <ShieldCheck size={20} className="shrink-0 text-purple-500" />
+              
+              {!isSidebarCollapsed && (
+                <span className="truncate">Admin Panel</span>
+              )}
+
+              {/* Floating Tooltip when Collapsed */}
+              {isSidebarCollapsed && (
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-purple-950 text-purple-200 text-xs font-bold shadow-xl border border-purple-800/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                  Admin Control Panel
+                </div>
+              )}
+            </NavLink>
+          )}
+        </div>
+
+        {/* Sidebar Footer - User Profile Snippet */}
+        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0">
+          {!isSidebarCollapsed ? (
+            <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-2.5 border border-slate-100 dark:border-slate-800/40">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                  {getInitials(user?.name)}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.name || 'User'}</p>
+                  <p className="text-[10px] font-medium text-slate-400 truncate">{user?.email || ''}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center group relative">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shadow-sm">
+                {getInitials(user?.name)}
+              </div>
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                {user?.name || 'Profile'}
+              </div>
+            </div>
+          )}
+        </div>
+      </aside>
+
       {/* Top Navbar */}
-      <header className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/40 fixed top-0 left-0 right-0 z-50 select-none transition-all duration-300">
+      <header className={`bg-white dark:bg-[#0B0F19] border-b border-slate-200/80 dark:border-slate-800/80 fixed top-0 left-0 right-0 z-40 select-none transition-all duration-300 ${isSidebarCollapsed ? 'md:left-16' : 'md:left-52'}`}>
         {/* Glow underside line */}
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
         
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           
-          {/* Logo */}
-          <Link to="/" className="hover:opacity-90 transition-opacity flex-shrink-0 -ml-5 sm:-ml-7 md:-ml-8">
-            <Logo className="h-12 md:h-14" />
+          {/* Logo (Mobile only) */}
+          <Link to="/" className="md:hidden hover:opacity-90 transition-opacity flex-shrink-0 -ml-5 sm:-ml-7">
+            <Logo className="h-12" />
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) => `
-                  relative py-2 text-sm font-semibold transition-colors duration-300 cursor-pointer group
-                  ${isActive 
-                    ? 'text-emerald-600 dark:text-emerald-400 font-bold' 
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }
-                `}
-              >
-                {({ isActive }) => (
-                  <>
-                    {item.name}
-                    <span className={`absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 transition-transform duration-300 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
-
           {/* Controls: Date range selector + Bell + User Menu */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-end w-full gap-4">
             
             {/* Date Switcher */}
             <div className="hidden md:flex items-center bg-slate-100/70 dark:bg-slate-900/70 border border-slate-200/60 dark:border-slate-800/60 rounded-full px-1.5 py-0.5 gap-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm">
@@ -422,8 +543,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 md:px-8 py-6 md:py-8 overflow-x-hidden">
-        {children}
+      <main className={`flex-1 min-h-[calc(100vh-4rem)] transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-16' : 'md:ml-52'}`}>
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6 md:py-8">
+          {children}
+        </div>
       </main>
 
       {/* Sticky Bottom Nav Bar for Mobile Devices */}

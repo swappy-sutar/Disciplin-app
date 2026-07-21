@@ -274,7 +274,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       console.error('Failed to send reset password email:', err);
       console.log(`\n[DEBUG] Password reset link for ${user.email}:\n${resetUrl}\n`);
       emailError = true;
-      responseMessage = `Failed to send password reset email. Error: ${err.message || err}`;
+      responseMessage = 'Failed to send password reset email. Please try again later.';
       
       // Clean up reset token since email failed
       user.passwordResetToken = undefined;
@@ -442,7 +442,7 @@ export const resendVerificationEmail = async (req: Request, res: Response, next:
       console.error('Failed to resend verification email:', err);
       console.log(`\n[DEBUG] Resent Verification link for ${user.email}:\n${verifyUrl}\n`);
       emailError = true;
-      responseMessage = `Failed to send verification email. Error: ${err.message || err}`;
+      responseMessage = 'Failed to send verification email. Please try again later.';
     }
 
     if (emailError) {
