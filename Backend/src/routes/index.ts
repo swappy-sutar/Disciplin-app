@@ -12,6 +12,7 @@ import qaRoutes from './qa.routes';
 import codingRoutes from './coding.routes';
 import contactRoutes from './contact.routes';
 import workoutRoutes from './workout.routes';
+import reviewRoutes from './review.routes';
 
 const router = Router();
 
@@ -28,5 +29,6 @@ router.use('/qa', qaRoutes);
 router.use('/coding', codingRoutes);
 router.use('/contact', contactRoutes);
 router.use('/workouts', workoutRoutes);
+router.use('/reviews', reviewRoutes);
 
 export default router;

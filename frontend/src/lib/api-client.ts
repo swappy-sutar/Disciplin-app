@@ -229,6 +229,13 @@ export const apiClient = {
     submit: (body: { name: string; email: string; subject: string; message: string }) => request<any>('POST', '/contact', body),
   },
 
+  // Review Operations
+  reviews: {
+    list: () => request<any[]>('GET', '/reviews'),
+    create: (body: { name: string; role: string; comment: string; rating?: number; avatarUrl?: string }) =>
+      request<any>('POST', '/reviews', body),
+  },
+
   // Timetable Operations
   timetable: {
     list: (date: string) => request<any[]>('GET', `/timetable?date=${date}`).then(res => {

@@ -18,13 +18,16 @@ import {
   BarChart2,
   ChevronDown
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Modal } from '../../components/ui/Modal';
 import { useStore } from '../../app/store';
 import { Footer } from '../../components/ui/Footer';
 import { GoToTop } from '../../components/ui/GoToTop';
 import { Navbar } from '../../components/ui/Navbar';
 import { useTranslation } from '../../hooks/useTranslation';
+import { apiClient } from '../../lib/api-client';
 
 // ─── CountUp: animates a number when it scrolls into view ───────────────────
 function CountUp({
@@ -105,6 +108,105 @@ export default function LandingPage() {
   const { t } = useTranslation();
   const [activeFeature, setActiveFeature] = useState(0);
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
+
+  // Reviews State
+  const [reviews, setReviews] = useState<any[]>([
+    {
+      _id: '1',
+      text: '"Disciplin turned my chaotic job hunt into a scientific process. I went from 2 interviews a week to 5. Highly recommend it."',
+      author: 'Alex Rivera',
+      role: 'Software Engineer @ Stripe',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+      rating: 5,
+      gradient: 'from-blue-500 to-indigo-500'
+    },
+    {
+      _id: '2',
+      text: '"The streak tracker is addictive. I haven\'t missed a LeetCode day in 4 months thanks to the habit consistency rows!"',
+      author: 'Sarah Chen',
+      role: 'Full-stack Developer',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
+      rating: 5,
+      gradient: 'from-emerald-500 to-teal-500'
+    },
+    {
+      _id: '3',
+      text: '"The only tool that balances career goals with personal health/habits seamlessly. The UI looks stunning."',
+      author: 'Mark J',
+      role: 'Product Designer',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
+      rating: 5,
+      gradient: 'from-pink-500 to-purple-500'
+    }
+  ]);
+
+  const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRole, setReviewRole] = useState('');
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    apiClient.reviews.list().then(res => {
+      const listData = Array.isArray(res) ? res : (res as any)?.data || [];
+      if (listData.length > 0) {
+        const gradients = ['from-emerald-500 to-teal-500', 'from-blue-500 to-indigo-500', 'from-pink-500 to-purple-500', 'from-amber-500 to-orange-500'];
+        const apiReviews = listData.map((r: any, idx: number) => ({
+          _id: r._id,
+          text: r.comment.startsWith('"') ? r.comment : `"${r.comment}"`,
+          author: r.name,
+          role: r.role,
+          rating: r.rating || 5,
+          avatar: r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=0D9488&color=fff`,
+          gradient: gradients[idx % gradients.length]
+        }));
+        setReviews(prev => [...apiReviews, ...prev]);
+      }
+    }).catch(err => console.error('Failed to fetch reviews:', err));
+  }, []);
+
+  const handleAddReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewName.trim() || !reviewRole.trim() || !reviewComment.trim()) {
+      toast.error('Please fill in all fields.');
+      return;
+    }
+    setIsSubmittingReview(true);
+    try {
+      const res = await apiClient.reviews.create({
+        name: reviewName.trim(),
+        role: reviewRole.trim(),
+        comment: reviewComment.trim(),
+        rating: reviewRating,
+      });
+
+      const newReview = res.data || res;
+      setReviews(prev => [
+        {
+          _id: newReview._id || Date.now().toString(),
+          text: newReview.comment?.startsWith('"') ? newReview.comment : `"${newReview.comment}"`,
+          author: newReview.name,
+          role: newReview.role,
+          rating: newReview.rating || 5,
+          avatar: newReview.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(newReview.name)}&background=0D9488&color=fff`,
+          gradient: 'from-pink-500 to-purple-500'
+        },
+        ...prev
+      ]);
+
+      toast.success('Thank you! Your review has been added.');
+      setReviewName('');
+      setReviewRole('');
+      setReviewComment('');
+      setReviewRating(5);
+      setIsAddReviewOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to submit review');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   // Always start from the top when the page loads
   useEffect(() => {
@@ -964,9 +1066,9 @@ export default function LandingPage() {
         </h3>
       </section>
 
-      {/* 8. Testimonials Section */}
-      <section id="testimonials" className="max-w-[1440px] mx-auto px-6 md:px-12 py-14 sm:py-16 md:py-20 text-center select-none relative z-10">
-        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center">
+      {/* 8. Testimonials Section (Infinite Marquee) */}
+      <section id="testimonials" className="w-full py-14 sm:py-16 md:py-20 text-center select-none relative z-10 overflow-hidden">
+        <div className="max-w-2xl mx-auto space-y-2.5 mb-10 text-center flex flex-col items-center px-6">
           <div className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest bg-pink-500/10 dark:bg-pink-500/20 text-pink-600 dark:text-pink-405 border border-pink-500/15 dark:border-pink-500/30 shadow-sm inline-flex select-none">
             Social Proof
           </div>
@@ -976,83 +1078,73 @@ export default function LandingPage() {
           <p className="text-sm text-slate-400 dark:text-slate-500 font-semibold max-w-sm mx-auto leading-relaxed">
             Here is what high-performing engineers and designers say about Disciplin.
           </p>
+
+          <button
+            onClick={() => setIsAddReviewOpen(true)}
+            className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer select-none"
+          >
+            <Star size={14} fill="currentColor" />
+            + Add Review
+          </button>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            hidden: {},
-            show: {
-              transition: {
-                staggerChildren: 0.1
-              }
-            }
-          }}
-        >
-          {[
-            {
-              text: '"Disciplin turned my chaotic job hunt into a scientific process. I went from 2 interviews a week to 5. Highly recommend it."',
-              author: 'Alex Rivera',
-              role: 'Software Engineer @ Stripe',
-              avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-              accent: 'border-l-4 border-l-blue-500'
-            },
-            {
-              text: '"The streak tracker is addictive. I haven\'t missed a LeetCode day in 4 months thanks to the habit consistency rows!"',
-              author: 'Sarah Chen',
-              role: 'Full-stack Developer',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-              accent: 'border-l-4 border-l-emerald-500'
-            },
-            {
-              text: '"The only tool that balances career goals with personal health/habits seamlessly. The UI looks stunning."',
-              author: 'Mark J',
-              role: 'Product Designer',
-              avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
-              accent: 'border-l-4 border-l-pink-500'
-            }
-          ].map((item, idx) => (
-            <motion.div
-              key={idx}
-              variants={{
-                hidden: { opacity: 0, y: 25 },
-                show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
-              }}
-              className="h-full"
-            >
-              <Card className={`p-6 md:p-8 flex flex-col justify-between text-left shadow-sm bg-white border border-gray-100 hover:shadow-md transition-shadow h-full ${item.accent}`}>
-                <div className="space-y-4">
-                  <div className="flex gap-0.5 text-amber-400 select-none">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" />
-                    ))}
-                  </div>
-                  <p className="text-xs md:text-sm italic font-semibold text-gray-500 leading-relaxed select-none">
-                    {item.text}
-                  </p>
-                </div>
+        {/* Infinite Marquee Ticker Container */}
+        <div className="relative w-full overflow-hidden py-4">
+          {/* Gradient fade masks on left and right edges */}
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 md:w-40 bg-gradient-to-r from-canvas-bg dark:from-[#0B0F19] to-transparent z-20" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 md:w-40 bg-gradient-to-l from-canvas-bg dark:from-[#0B0F19] to-transparent z-20" />
 
-                <div className="flex items-center gap-3 mt-6 pt-4 border-t border-gray-50 select-none">
-                  <img
-                    src={item.avatar}
-                    alt={item.author}
-                    className="w-9 h-9 rounded-full object-cover border border-gray-100 shadow-sm"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/adventurer/svg?seed=${item.author}`;
-                    }}
-                  />
-                  <div>
-                    <h4 className="text-xs font-black text-gray-800 leading-none">{item.author}</h4>
-                    <span className="text-[10px] text-gray-400 mt-1 block select-none">{item.role}</span>
+          {/* Scrolling Marquee Row */}
+          <div className="animate-marquee flex gap-6 items-stretch px-3">
+            {[...reviews, ...reviews].map((item, idx) => (
+              <div
+                key={`${item._id || idx}-${idx}`}
+                className="w-[300px] sm:w-[340px] md:w-[380px] shrink-0 py-2"
+              >
+                <div className="h-[220px] sm:h-[235px] bg-white dark:bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 shadow-md shadow-slate-200/50 dark:shadow-black/40 border border-slate-200/70 dark:border-slate-800 hover:border-pink-500/40 dark:hover:border-pink-500/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between text-left relative overflow-hidden group">
+                  
+                  {/* Glowing Top Accent Line */}
+                  <div className={`absolute top-0 left-6 right-6 h-1 rounded-b-full bg-gradient-to-r ${item.gradient || 'from-emerald-500 to-teal-500'}`} />
+
+                  <div className="space-y-3.5 pt-1 text-left">
+                    {/* Rating Stars & Verified Badge */}
+                    <div className="flex items-center justify-between text-left">
+                      <div className="flex gap-1 text-amber-400 select-none">
+                        {Array.from({ length: item.rating || 5 }).map((_, i) => (
+                          <Star key={i} size={15} fill="currentColor" />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded-full select-none">
+                        Verified User
+                      </span>
+                    </div>
+
+                    {/* Testimonial Quote */}
+                    <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed italic select-none text-left">
+                      {item.text}
+                    </p>
+                  </div>
+
+                  {/* Author Profile Footer */}
+                  <div className="flex items-center gap-3 mt-auto pt-5 border-t border-slate-100 dark:border-slate-800/80 select-none text-left">
+                    <img
+                      src={item.avatar}
+                      alt={item.author}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-sm shrink-0"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.author)}&background=0D9488&color=fff`;
+                      }}
+                    />
+                    <div className="truncate text-left">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight truncate text-left">{item.author}</h4>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate block mt-0.5 text-left">{item.role}</span>
+                    </div>
                   </div>
                 </div>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* 9. FAQ Section */}
@@ -1211,6 +1303,67 @@ export default function LandingPage() {
 
       {/* 11. Footer Section */}
       <Footer />
+
+      {/* Add Review Modal */}
+      <Modal isOpen={isAddReviewOpen} onClose={() => setIsAddReviewOpen(false)} title="Share Your Review">
+        <form onSubmit={handleAddReview} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-2">Rating</label>
+            <div className="flex items-center gap-1.5 text-amber-400 select-none">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setReviewRating(star)}
+                  className="p-1 hover:scale-125 transition-transform cursor-pointer"
+                >
+                  <Star size={24} fill={star <= reviewRating ? 'currentColor' : 'none'} className={star <= reviewRating ? 'text-amber-400' : 'text-gray-300 dark:text-slate-700'} />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Your Name</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Alex Rivera"
+              value={reviewName}
+              onChange={e => setReviewName(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-pink-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Role / Company</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Software Engineer @ Stripe"
+              value={reviewRole}
+              onChange={e => setReviewRole(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-pink-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Review / Feedback</label>
+            <textarea
+              placeholder="Disciplin turned my chaotic routine into a scientific process..."
+              rows={3}
+              value={reviewComment}
+              onChange={e => setReviewComment(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-pink-500"
+              required
+            />
+          </div>
+
+          <Button type="submit" fullWidth className="py-3 font-bold mt-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white border-none shadow-lg shadow-pink-500/20" disabled={isSubmittingReview}>
+            {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+          </Button>
+        </form>
+      </Modal>
 
       {/* Go to Top Button */}
       <GoToTop className="bottom-6 right-6" />
