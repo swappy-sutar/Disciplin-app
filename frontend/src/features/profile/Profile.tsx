@@ -4,13 +4,19 @@ import { apiClient } from '../../lib/api-client';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { toast } from 'react-hot-toast';
-import { User as UserIcon, Mail, Lock, ArrowLeft, Eye, EyeOff, Bell } from 'lucide-react';
+import { User as UserIcon, Mail, Lock, ArrowLeft, Eye, EyeOff, Bell, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
 
+const languages = [
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
+  { code: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
+] as const;
+
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, token, setAuth } = useStore();
+  const { user, token, setAuth, language, setLanguage } = useStore();
   const { t } = useTranslation();
   const [name, setName] = useState(user?.name || '');
   const email = user?.email || '';
@@ -243,6 +249,42 @@ export default function Profile() {
                   `}
                 />
               </button>
+            </div>
+          </div>
+
+          {/* Language selection section */}
+          <div className="border-t border-gray-50 dark:border-gray-850 pt-6 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Globe size={15} className="text-emerald-500" />
+                <span>Language Settings / भाषा settings</span>
+              </h3>
+              <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold mt-0.5">
+                Choose your preferred interface language.
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              {languages.map((lang) => {
+                const isSelected = lang.code === language;
+                return (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => setLanguage(lang.code)}
+                    className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-2xl border text-xs font-bold transition-all cursor-pointer
+                      ${
+                        isSelected
+                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm'
+                          : 'bg-canvas-bg dark:bg-slate-900 border-gray-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }
+                    `}
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.nativeName}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

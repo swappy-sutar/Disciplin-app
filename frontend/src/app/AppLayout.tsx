@@ -345,51 +345,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               >
                 {/* User info inside popover (useful if sidebar is collapsed) */}
                 {isSidebarCollapsed && (
-                  <div className="px-2.5 py-2 border-b border-slate-100 dark:border-slate-800/40 mb-1">
+                  <div className="px-2.5 py-2 border-b border-slate-100 dark:border-slate-800/40 mb-1.5">
                     <p className="text-[10px] font-bold text-slate-900 dark:text-white truncate">{user?.name || 'User'}</p>
                     <p className="text-[8px] font-semibold text-slate-400 dark:text-slate-500 truncate">{user?.email || ''}</p>
                   </div>
                 )}
 
-                {/* Language Option toggles */}
-                <div className="px-1 py-1 border-b border-slate-100 dark:border-slate-800/60 mb-1 space-y-1">
-                  <div className="pt-0.5">
-                    <p className="text-[8px] font-extrabold text-slate-455 dark:text-slate-500 uppercase tracking-widest px-2.5 mb-1.5 select-none">Language</p>
-                    <div className="flex flex-col gap-0.5">
-                      {languages.map((lang) => {
-                        const isSelected = lang.code === language;
-                        return (
-                          <button
-                            key={lang.code}
-                            onClick={() => setLanguage(lang.code)}
-                            className={`flex items-center justify-between w-full text-left px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-colors duration-155
-                              ${
-                                isSelected
-                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                              }
-                            `}
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <span>{lang.flag}</span>
-                              <span>{lang.name}</span>
-                            </span>
-                            {isSelected && <Check size={10} className="text-emerald-500" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Profile and Logout links */}
-                <div className="px-1 py-0.5 space-y-0.5">
+                <div className="px-0.5 py-0.5 space-y-0.5">
                   <Link
                     to="/profile"
                     onClick={() => setIsProfileMenuOpen(false)}
-                    className="w-full text-left px-2.5 py-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2 cursor-pointer transition-colors block"
+                    className="w-full text-left px-2.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
                   >
-                    <UserIcon size={13} className="text-slate-400 dark:text-slate-500" />
+                    <UserIcon size={14} className="text-slate-400 dark:text-slate-500" />
                     Account Settings
                   </Link>
 
@@ -397,9 +366,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <Link
                       to="/admin"
                       onClick={() => setIsProfileMenuOpen(false)}
-                      className="w-full text-left px-2.5 py-1.5 text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2 cursor-pointer transition-colors block"
+                      className="w-full text-left px-2.5 py-2 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
                     >
-                      <ShieldCheck size={13} className="text-purple-500" />
+                      <ShieldCheck size={14} className="text-purple-500" />
                       Admin Panel
                     </Link>
                   )}
@@ -409,9 +378,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       setIsProfileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="w-full text-left px-2.5 py-1.5 text-[11px] font-bold text-rose-600 dark:text-rose-455 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2 cursor-pointer transition-colors mt-0.5"
+                    className="w-full text-left px-2.5 py-2 text-xs font-bold text-rose-600 dark:text-rose-455 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors mt-0.5"
                   >
-                    <LogOut size={13} className="text-rose-400 dark:text-rose-500" />
+                    <LogOut size={14} className="text-rose-400 dark:text-rose-500" />
                     Sign Out
                   </button>
                 </div>
