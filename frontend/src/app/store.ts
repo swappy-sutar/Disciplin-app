@@ -75,12 +75,21 @@ interface UIState {
   clearNotifications: () => Promise<void>;
 }
 
+// Helper to get local date string in YYYY-MM-DD format
+const getLocalDateString = (d: Date): string => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // Helper to calculate Monday of current week
 const getMondayStr = (date: Date): string => {
   const d = new Date(date);
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff)).toISOString().split('T')[0];
+  const mondayDate = new Date(d.setDate(diff));
+  return getLocalDateString(mondayDate);
 };
 
 export const useStore = create<UIState>((set) => {
@@ -89,7 +98,7 @@ export const useStore = create<UIState>((set) => {
   const storedToken = localStorage.getItem('disciplin_token');
   
   return {
-    activeDate: new Date().toISOString().split('T')[0],
+    activeDate: getLocalDateString(new Date()),
     activeWeekStart: getMondayStr(new Date()),
     compareMode: true,
     isAddGoalOpen: false,
