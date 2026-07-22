@@ -310,24 +310,48 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
         {/* Sidebar Footer - User Profile Snippet */}
         <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0 relative space-y-2" ref={profileMenuRef}>
-          {/* Mode Switcher Button directly in Sidebar */}
+          {/* Mode Switcher & Logout Buttons directly in Sidebar */}
           {!isSidebarCollapsed ? (
-            <button
-              onClick={toggleTheme}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer border border-transparent"
-            >
-              {theme === 'dark' ? <Sun size={18} className="text-yellow-500 shrink-0" /> : <Moon size={18} className="shrink-0" />}
-              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={toggleTheme}
+                className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl text-xs font-bold text-slate-650 dark:text-slate-350 bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? <Sun size={14} className="text-yellow-500 shrink-0" /> : <Moon size={14} className="shrink-0" />}
+                <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl text-xs font-bold text-rose-600 hover:text-white bg-rose-500/10 hover:bg-rose-600 transition-colors cursor-pointer border border-rose-500/20"
+                title="Sign Out"
+              >
+                <LogOut size={14} className="shrink-0" />
+                <span>Logout</span>
+              </button>
+            </div>
           ) : (
-            <div className="flex justify-center">
+            <div className="flex flex-col gap-2 items-center">
+              {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
                 className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-650 dark:hover:text-slate-250 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group relative"
               >
-                {theme === 'dark' ? <Sun size={18} className="text-yellow-500 shrink-0" /> : <Moon size={18} className="shrink-0" />}
+                {theme === 'dark' ? <Sun size={16} className="text-yellow-500 shrink-0" /> : <Moon size={16} className="shrink-0" />}
                 <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
                   {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                </div>
+              </button>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-rose-500 hover:text-white hover:bg-rose-600 transition-colors cursor-pointer group relative"
+              >
+                <LogOut size={16} className="shrink-0" />
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                  Sign Out
                 </div>
               </button>
             </div>
