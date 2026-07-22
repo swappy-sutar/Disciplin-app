@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -65,7 +64,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { t } = useTranslation();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('disciplin_sidebar_collapsed') === 'true';
@@ -85,7 +83,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
-  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const getPageTitle = () => {
     switch (location.pathname) {
@@ -122,9 +119,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       }
       if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
         setIsNotificationsOpen(false);
-      }
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
-        setIsProfileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -309,7 +303,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         {/* Sidebar Footer - User Profile Snippet */}
-        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0 relative space-y-2" ref={profileMenuRef}>
+        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0 relative space-y-2">
           {/* Mode Switcher & Logout Buttons directly in Sidebar */}
           {!isSidebarCollapsed ? (
             <div className="flex gap-2">
@@ -357,64 +351,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
           )}
 
-          {/* Profile Menu Popover */}
-          <AnimatePresence>
-            {isProfileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="absolute bottom-full left-3 mb-2 w-48 bg-white dark:bg-[#111625] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-2xl p-2 z-[9999] select-none"
-              >
-                {/* User info inside popover (useful if sidebar is collapsed) */}
-                {isSidebarCollapsed && (
-                  <div className="px-2.5 py-2 border-b border-slate-100 dark:border-slate-800/40 mb-1.5">
-                    <p className="text-[10px] font-bold text-slate-900 dark:text-white truncate">{user?.name || 'User'}</p>
-                    <p className="text-[8px] font-semibold text-slate-400 dark:text-slate-500 truncate">{user?.email || ''}</p>
-                  </div>
-                )}
-
-                {/* Profile and Logout links */}
-                <div className="px-0.5 py-0.5 space-y-0.5">
-                  <Link
-                    to="/profile"
-                    onClick={() => setIsProfileMenuOpen(false)}
-                    className="w-full text-left px-2.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
-                  >
-                    <UserIcon size={14} className="text-slate-400 dark:text-slate-500" />
-                    Account Settings
-                  </Link>
-
-                  {user?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      onClick={() => setIsProfileMenuOpen(false)}
-                      className="w-full text-left px-2.5 py-2 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
-                    >
-                      <ShieldCheck size={14} className="text-purple-500" />
-                      Admin Panel
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      setIsProfileMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full text-left px-2.5 py-2 text-xs font-bold text-rose-600 dark:text-rose-455 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors mt-0.5"
-                  >
-                    <LogOut size={14} className="text-rose-400 dark:text-rose-500" />
-                    Sign Out
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Trigger profile snippet */}
+          {/* Trigger profile snippet - navigate directly to Settings page */}
           <button
-            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            onClick={() => navigate('/profile')}
             className="w-full text-left block focus:outline-none border-none bg-transparent p-0 cursor-pointer"
           >
             {!isSidebarCollapsed ? (
@@ -424,7 +363,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     {getInitials(user?.name)}
                   </div>
                   <div className="min-w-0 text-left">
-                    <p className="text-xs font-bold text-slate-850 dark:text-slate-100 truncate">{user?.name || 'User'}</p>
+                    <p className="text-xs font-bold text-slate-855 dark:text-slate-100 truncate">{user?.name || 'User'}</p>
                     <p className="text-[10px] font-medium text-slate-400 truncate">{user?.email || ''}</p>
                   </div>
                 </div>
