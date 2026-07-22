@@ -90,7 +90,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto select-none py-2 md:py-4">
+    <div className="select-none py-2 md:py-4">
       {/* Title block at the top corner (matching Habits style) */}
       <div className="mb-5">
         <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
