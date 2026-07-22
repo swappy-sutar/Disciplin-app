@@ -612,69 +612,102 @@ export default function Workouts() {
                               </Button>
                             </div>
                           </div>
+                          {/* Sets logging list */}
+                          <div className="space-y-2 mt-3 select-none">
+                            {/* Column Headers */}
+                            {ex.sets.length > 0 && (
+                              <div className="grid grid-cols-[2.5rem_1fr_1fr_3.5rem_2rem] gap-2 sm:gap-4 px-2 sm:px-3 text-slate-400 dark:text-slate-500 text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-center">
+                                <div>Set</div>
+                                <div className="text-left">Weight (kg)</div>
+                                <div className="text-left">Reps</div>
+                                <div>Done</div>
+                                <div></div>
+                              </div>
+                            )}
 
-                          {/* Sets logging table/grid */}
-                          <div className="overflow-x-auto select-none">
-                            <table className="w-full text-left text-xs min-w-[340px]">
-                              <thead>
-                                <tr className="text-gray-400 dark:text-slate-500 font-bold uppercase tracking-wider border-none">
-                                  <th className="pb-2 w-12 text-center">Set</th>
-                                  <th className="pb-2 w-24">Weight (kg)</th>
-                                  <th className="pb-2 w-24">Reps</th>
-                                  <th className="pb-2 w-16 text-center">Done</th>
-                                  <th className="pb-2 w-10 text-right"></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {ex.sets.map((set: any, setIdx: number) => (
-                                  <tr key={setIdx} className="border-none">
-                                    <td className="py-2 font-black text-gray-500 text-center select-none bg-gray-50 dark:bg-slate-800/40 rounded-lg w-10">
+                            {ex.sets.map((set: any, setIdx: number) => {
+                              const isSetDone = set.completed;
+                              return (
+                                <div 
+                                  key={setIdx} 
+                                  className={`grid grid-cols-[2.5rem_1fr_1fr_3.5rem_2rem] items-center gap-2 sm:gap-4 px-2 sm:px-3 py-1.5 rounded-2xl border transition-all duration-300
+                                    ${isSetDone 
+                                      ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.06] border-emerald-500/20 shadow-sm shadow-emerald-500/[0.01]' 
+                                      : 'bg-slate-50/40 dark:bg-slate-900/40 border-slate-100 dark:border-slate-800/70 hover:border-slate-200/80 dark:hover:border-slate-700/60 hover:bg-slate-50/80 dark:hover:bg-slate-900/60'
+                                    }
+                                  `}
+                                >
+                                  {/* Set Number Badge */}
+                                  <div className="flex justify-center">
+                                    <span className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-black transition-all duration-300
+                                      ${isSetDone
+                                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                                        : 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400'
+                                      }
+                                    `}>
                                       {set.setNumber}
-                                    </td>
-                                    <td className="py-2 px-1">
-                                      <input 
-                                        type="number"
-                                        value={set.weightKg === 0 ? '' : set.weightKg}
-                                        onChange={(e) => handleSetChange(exIdx, setIdx, 'weightKg', Number(e.target.value))}
-                                        placeholder="0"
-                                        disabled={sessionDraft.completed}
-                                        className="w-20 px-2 py-1.5 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 font-bold text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
-                                      />
-                                    </td>
-                                    <td className="py-2 px-1">
-                                      <input 
-                                        type="number"
-                                        value={set.reps === 0 ? '' : set.reps}
-                                        onChange={(e) => handleSetChange(exIdx, setIdx, 'reps', Number(e.target.value))}
-                                        placeholder="0"
-                                        disabled={sessionDraft.completed}
-                                        className="w-20 px-2 py-1.5 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 font-bold text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
-                                      />
-                                    </td>
-                                    <td className="py-2 text-center">
-                                      <div className="flex justify-center select-none">
-                                        <Checkbox 
-                                          checked={set.completed}
-                                          disabled={sessionDraft.completed}
-                                          onChange={(checked) => handleSetChange(exIdx, setIdx, 'completed', checked)}
-                                          color="#10B981"
-                                          size={18}
-                                        />
-                                      </div>
-                                    </td>
-                                    <td className="py-2 text-right">
-                                      <button 
-                                        onClick={() => removeSet(exIdx, setIdx)}
-                                        disabled={sessionDraft.completed}
-                                        className="text-gray-300 hover:text-red-500 p-1 cursor-pointer transition-all border-none bg-transparent disabled:opacity-30 disabled:cursor-not-allowed"
-                                      >
-                                        <Trash2 size={12} />
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                                    </span>
+                                  </div>
+
+                                  {/* Weight Input */}
+                                  <div>
+                                    <input 
+                                      type="number"
+                                      value={set.weightKg === 0 ? '' : set.weightKg}
+                                      onChange={(e) => handleSetChange(exIdx, setIdx, 'weightKg', Number(e.target.value))}
+                                      placeholder="0"
+                                      disabled={sessionDraft.completed}
+                                      className={`w-full max-w-[120px] px-2 py-1.5 rounded-xl border text-center font-black text-xs text-gray-800 dark:text-white transition-all focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent
+                                        ${isSetDone
+                                          ? 'bg-emerald-500/[0.01] border-emerald-500/10 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                                          : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800/80'
+                                        }
+                                      `}
+                                    />
+                                  </div>
+
+                                  {/* Reps Input */}
+                                  <div>
+                                    <input 
+                                      type="number"
+                                      value={set.reps === 0 ? '' : set.reps}
+                                      onChange={(e) => handleSetChange(exIdx, setIdx, 'reps', Number(e.target.value))}
+                                      placeholder="0"
+                                      disabled={sessionDraft.completed}
+                                      className={`w-full max-w-[120px] px-2 py-1.5 rounded-xl border text-center font-black text-xs text-gray-800 dark:text-white transition-all focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent
+                                        ${isSetDone
+                                          ? 'bg-emerald-500/[0.01] border-emerald-500/10 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                                          : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800/80'
+                                        }
+                                      `}
+                                    />
+                                  </div>
+
+                                  {/* Done Toggle */}
+                                  <div className="flex justify-center">
+                                    <Checkbox 
+                                      checked={set.completed}
+                                      disabled={sessionDraft.completed}
+                                      onChange={(checked) => handleSetChange(exIdx, setIdx, 'completed', checked)}
+                                      color="#10B981"
+                                      size={18}
+                                    />
+                                  </div>
+
+                                  {/* Remove Set Button */}
+                                  <div className="flex justify-center">
+                                    <button 
+                                      onClick={() => removeSet(exIdx, setIdx)}
+                                      disabled={sessionDraft.completed}
+                                      className="text-gray-300 hover:text-red-500 dark:text-slate-650 dark:hover:text-red-400 p-1.5 cursor-pointer transition-all border-none bg-transparent disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-800/40 rounded-lg"
+                                      title="Delete set"
+                                    >
+                                      <Trash2 size={13} />
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
 
                         </Card>
