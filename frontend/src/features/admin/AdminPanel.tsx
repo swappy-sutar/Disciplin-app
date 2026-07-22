@@ -6,12 +6,9 @@ import {
   Briefcase, 
   Search, 
   ShieldCheck, 
-  ShieldAlert, 
   Trash2, 
   CheckCircle2, 
   XCircle, 
-  UserCheck, 
-  Sparkles,
   RefreshCw
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -71,7 +68,7 @@ export function AdminPanel() {
     setIsLoadingUsers(true);
     try {
       const res = await apiClient.admin.users(userSearch);
-      setUsers(Array.isArray(res) ? res : res.data || []);
+      setUsers(Array.isArray(res) ? res : (res as any).data || []);
     } catch (err: any) {
       toast.error(err.message || 'Failed to fetch users');
     } finally {
@@ -84,7 +81,7 @@ export function AdminPanel() {
     setIsLoadingReviews(true);
     try {
       const res = await apiClient.admin.reviews();
-      setReviews(Array.isArray(res) ? res : res.data || []);
+      setReviews(Array.isArray(res) ? res : (res as any).data || []);
     } catch (err: any) {
       toast.error(err.message || 'Failed to fetch reviews');
     } finally {

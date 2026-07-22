@@ -84,8 +84,6 @@ export default function Overview() {
     activeDate, 
     activeWeekStart, 
     setActiveDate,
-    compareMode, 
-    setCompareMode,
     addNotification
   } = useStore();
 

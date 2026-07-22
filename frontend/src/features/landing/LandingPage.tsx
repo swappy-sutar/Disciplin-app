@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
 import { Modal } from '../../components/ui/Modal';
 import { useStore } from '../../app/store';
 import { Footer } from '../../components/ui/Footer';
