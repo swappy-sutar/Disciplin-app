@@ -255,16 +255,16 @@ export default function Profile() {
           {/* Language selection section */}
           <div className="border-t border-gray-50 dark:border-gray-850 pt-6 space-y-4">
             <div>
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <h3 className="text-sm font-bold text-gray-950 dark:text-white flex items-center gap-2">
                 <Globe size={15} className="text-emerald-500" />
-                <span>Language Settings / भाषा settings</span>
+                <span>Language / भाषा</span>
               </h3>
-              <p className="text-xs text-gray-400 dark:text-gray-500 font-semibold mt-0.5">
-                Choose your preferred interface language.
+              <p className="text-xs text-gray-400 dark:text-gray-555 font-semibold mt-0.5">
+                Choose your preferred interface language for the dashboard.
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {languages.map((lang) => {
                 const isSelected = lang.code === language;
                 return (
@@ -272,16 +272,48 @@ export default function Profile() {
                     key={lang.code}
                     type="button"
                     onClick={() => setLanguage(lang.code)}
-                    className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-2xl border text-xs font-bold transition-all cursor-pointer
+                    className={`flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer relative overflow-hidden group focus:outline-none
                       ${
                         isSelected
-                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-extrabold shadow-sm'
-                          : 'bg-canvas-bg dark:bg-slate-900 border-gray-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.01] border-emerald-500 dark:border-emerald-500 shadow-sm ring-1 ring-emerald-500'
+                          : 'bg-canvas-bg dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/30'
                       }
                     `}
                   >
-                    <span>{lang.flag}</span>
-                    <span>{lang.nativeName}</span>
+                    {/* Glowing highlight blob */}
+                    {isSelected && (
+                      <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-xl pointer-events-none" />
+                    )}
+
+                    {/* Header line: Flag and Indicator */}
+                    <div className="w-full flex items-center justify-between mb-3 select-none">
+                      <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-850 flex items-center justify-center text-sm shadow-sm border border-gray-100/60 dark:border-slate-800/40">
+                        {lang.flag}
+                      </div>
+
+                      {/* Custom check ring */}
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all duration-200
+                        ${
+                          isSelected
+                            ? 'border-emerald-500 bg-emerald-500 text-white scale-110 shadow-sm'
+                            : 'border-slate-300 dark:border-slate-750 group-hover:border-slate-400'
+                        }
+                      `}>
+                        {isSelected && (
+                          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Labels */}
+                    <p className="text-xs font-black text-slate-800 dark:text-slate-200 leading-none">
+                      {lang.nativeName}
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-450 dark:text-slate-500 mt-1.5 leading-none">
+                      {lang.name}
+                    </p>
                   </button>
                 );
               })}
