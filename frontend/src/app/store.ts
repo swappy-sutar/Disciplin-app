@@ -1,7 +1,19 @@
 import { create } from 'zustand';
-import type { User } from '../types';
+import type { User, AppNotification } from '../types';
 import { sendSystemNotification } from '../utils/notifications';
 import { clearQueryCache } from '../lib/query-client';
+import { apiClient } from '../lib/api-client';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+
+const formatTimestamp = (dateStr?: string): string => {
+  if (!dateStr) return 'Just now';
+  try {
+    const date = typeof dateStr === 'string' ? parseISO(dateStr) : new Date(dateStr);
+    return formatDistanceToNow(date, { addSuffix: true });
+  } catch (err) {
+    return 'Just now';
+  }
+};
 
 export const colorsMap = {
   blue: { primary: '#3B82F6', hover: '#2563EB' },
@@ -57,18 +69,10 @@ interface UIState {
 
   // Notifications State & Actions
   notifications: AppNotification[];
-  addNotification: (title: string, message: string, type: AppNotification['type']) => void;
-  markAllAsRead: () => void;
-  clearNotifications: () => void;
-}
-
-export interface AppNotification {
-  id: string;
-  title: string;
-  message: string;
-  timestamp: string;
-  isRead: boolean;
-  type: 'goal' | 'topic' | 'habit' | 'timetable' | 'system';
+  fetchNotifications: () => Promise<void>;
+  addNotification: (title: string, message: string, type: AppNotification['type']) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  clearNotifications: () => Promise<void>;
 }
 
 // Helper to calculate Monday of current week
@@ -150,6 +154,10 @@ export const useStore = create<UIState>((set) => {
       if (user && token) {
         localStorage.setItem('disciplin_user', JSON.stringify(user));
         localStorage.setItem('disciplin_token', token);
+        // Fetch notifications after auth set
+        setTimeout(() => {
+          useStore.getState().fetchNotifications();
+        }, 50);
       } else {
         localStorage.removeItem('disciplin_user');
         localStorage.removeItem('disciplin_token');
@@ -160,36 +168,56 @@ export const useStore = create<UIState>((set) => {
       clearQueryCache();
       localStorage.removeItem('disciplin_user');
       localStorage.removeItem('disciplin_token');
-      set({ user: null, token: null });
+      set({ user: null, token: null, notifications: [] });
     },
-    notifications: [
-      {
-        id: 'n1',
-        title: 'Welcome to Disciplin! 🚀',
-        message: 'Track habits and schedule blocks to build high-performance momentum.',
-        timestamp: '2 hours ago',
-        isRead: false,
-        type: 'system',
-      },
-      {
-        id: 'n2',
-        title: 'Weekly Goals Set 🎯',
-        message: 'Add focused goals for the week to keep your career tracker active.',
-        timestamp: '4 hours ago',
-        isRead: false,
-        type: 'goal',
-      },
-      {
-        id: 'n3',
-        title: 'Curriculum Ready 📚',
-        message: 'Complete study items in graphs to prepare for System Design.',
-        timestamp: 'Yesterday',
-        isRead: true,
-        type: 'topic',
-      },
-    ],
-    addNotification: (title, message, type) => set((state) => {
-      const newNotification: AppNotification = {
+    notifications: [],
+    fetchNotifications: async () => {
+      try {
+        const token = localStorage.getItem('disciplin_token');
+        if (!token) return;
+        const list = await apiClient.notifications.list();
+        const mappedList: AppNotification[] = (list || []).map((item: any) => ({
+          _id: item._id,
+          id: item._id,
+          title: item.title,
+          message: item.message,
+          type: item.type,
+          isRead: item.isRead,
+          createdAt: item.createdAt,
+          timestamp: formatTimestamp(item.createdAt),
+        }));
+        set({ notifications: mappedList });
+      } catch (err) {
+        console.error('Failed to fetch notifications:', err);
+      }
+    },
+    addNotification: async (title, message, type) => {
+      // Fire native system notification (desktop / mobile notification shade)
+      sendSystemNotification(title, message);
+
+      try {
+        const token = localStorage.getItem('disciplin_token');
+        if (token) {
+          const newNotif = await apiClient.notifications.create({ title, message, type });
+          const mapped: AppNotification = {
+            _id: newNotif._id,
+            id: newNotif._id,
+            title: newNotif.title,
+            message: newNotif.message,
+            type: newNotif.type,
+            isRead: newNotif.isRead,
+            createdAt: newNotif.createdAt,
+            timestamp: formatTimestamp(newNotif.createdAt),
+          };
+          set((state) => ({ notifications: [mapped, ...state.notifications] }));
+          return;
+        }
+      } catch (err) {
+        console.error('Failed to add notification to API:', err);
+      }
+
+      // Fallback local memory-only notification if not logged in
+      const localNotification: AppNotification = {
         id: `n_${Math.random().toString(36).substr(2, 9)}`,
         title,
         message,
@@ -197,16 +225,32 @@ export const useStore = create<UIState>((set) => {
         isRead: false,
         type,
       };
-      
-      // Fire native system notification (desktop / mobile notification shade)
-      sendSystemNotification(title, message);
-
-      return { notifications: [newNotification, ...state.notifications] };
-    }),
-    markAllAsRead: () => set((state) => ({
-      notifications: state.notifications.map((n) => ({ ...n, isRead: true }))
-    })),
-    clearNotifications: () => set({ notifications: [] })
+      set((state) => ({ notifications: [localNotification, ...state.notifications] }));
+    },
+    markAllAsRead: async () => {
+      try {
+        const token = localStorage.getItem('disciplin_token');
+        if (token) {
+          await apiClient.notifications.markAllAsRead();
+        }
+      } catch (err) {
+        console.error('Failed to mark notifications as read on API:', err);
+      }
+      set((state) => ({
+        notifications: state.notifications.map((n) => ({ ...n, isRead: true }))
+      }));
+    },
+    clearNotifications: async () => {
+      try {
+        const token = localStorage.getItem('disciplin_token');
+        if (token) {
+          await apiClient.notifications.clearAll();
+        }
+      } catch (err) {
+        console.error('Failed to clear notifications on API:', err);
+      }
+      set({ notifications: [] });
+    }
   };
 });
 
@@ -245,4 +289,12 @@ if (typeof window !== 'undefined') {
   
   const storedAccent = localStorage.getItem('disciplin_accent_color') as any || 'emerald';
   applyAccentColor(storedAccent);
+
+  // Trigger initial notification fetch if authenticated on startup
+  const token = localStorage.getItem('disciplin_token');
+  if (token) {
+    setTimeout(() => {
+      useStore.getState().fetchNotifications();
+    }, 150);
+  }
 }

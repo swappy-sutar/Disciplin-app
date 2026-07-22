@@ -170,3 +170,14 @@ export interface WorkoutStreak {
   currentStreak: number;
   longestStreak: number;
 }
+
+export interface AppNotification {
+  _id?: string;
+  id?: string;
+  title: string;
+  message: string;
+  type: 'goal' | 'topic' | 'habit' | 'timetable' | 'system';
+  isRead: boolean;
+  createdAt?: string;
+  timestamp?: string;
+}

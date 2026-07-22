@@ -10,7 +10,8 @@ import type {
   Exercise,
   WorkoutSplit,
   WorkoutSession,
-  WorkoutStreak
+  WorkoutStreak,
+  AppNotification
 } from '../types';
 
 let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
@@ -364,6 +365,15 @@ export const apiClient = {
       throw new Error('Quote not found');
     },
     create: (body: any) => request<Quote>('POST', '/quotes', body)
+  },
+
+  // Notifications Operations
+  notifications: {
+    list: () => request<AppNotification[]>('GET', '/notifications'),
+    create: (body: { title: string; message: string; type?: AppNotification['type'] }) => 
+      request<AppNotification>('POST', '/notifications', body),
+    markAllAsRead: () => request<void>('PATCH', '/notifications/mark-read'),
+    clearAll: () => request<void>('DELETE', '/notifications')
   },
 
   // Dashboard Aggregated Summary
