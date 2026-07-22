@@ -999,10 +999,15 @@ export default function Workouts() {
         </div>
       )}
 
-      {/* Instructions Detail Modal */}
       {selectedExDetail && (
-        <div className="fixed inset-0 z-50 bg-black/45 dark:bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs select-none">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-150 dark:border-gray-800 shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+        <div 
+          onClick={() => setSelectedExDetail(null)}
+          className="fixed inset-0 z-50 bg-black/45 dark:bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs select-none"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-150 dark:border-gray-800 shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[85vh] animate-scale-up"
+          >
             
             {/* Modal Header Image */}
             <div className="relative h-48 w-full bg-slate-100 shrink-0">
