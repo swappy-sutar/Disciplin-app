@@ -123,7 +123,7 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
     const quotes = await Quote.find({
       $or: [{ isCustom: false }, { isCustom: true, userId }],
     });
-    let quote = {
+    let quote: any = {
       text: 'Make today your masterpiece.',
       author: 'John Wooden',
       isFavorite: false,
@@ -133,6 +133,7 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
       const idx = getHashIndex(dateStr, quotes.length);
       const todayQ = quotes[idx];
       quote = {
+        _id: todayQ._id,
         text: todayQ.text,
         author: todayQ.author,
         isFavorite: todayQ.isFavorite,
