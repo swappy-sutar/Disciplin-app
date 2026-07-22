@@ -341,7 +341,7 @@ export default function Workouts() {
         </div>
         
         {/* Navigation Tabs & Date Switcher */}
-        <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto sm:justify-end">
+        <div className="flex flex-col-reverse sm:flex-row items-center gap-3.5 w-full sm:w-auto sm:justify-end">
           <div className="flex flex-row overflow-x-auto items-center gap-1 bg-slate-100/70 dark:bg-slate-900/60 p-1 rounded-2xl w-full sm:w-auto border border-slate-150 dark:border-slate-800/80 shadow-inner [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button 
               onClick={() => setActiveTab('today')}
