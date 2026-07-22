@@ -36,7 +36,6 @@ import { CalendarPicker } from '../components/ui/CalendarPicker';
 
 import { Logo } from '../components/ui/Logo';
 import { GoToTop } from '../components/ui/GoToTop';
-import { LanguageSelector } from '../components/ui/LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 
 interface AppLayoutProps {
@@ -66,6 +65,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { t } = useTranslation();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('disciplin_sidebar_collapsed') === 'true';
@@ -85,6 +85,30 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case '/overview':
+        return t.overview || 'Overview';
+      case '/habits':
+        return t.habits || 'Habits';
+      case '/goals':
+        return t.goals || 'Goals';
+      case '/applications':
+        return t.applications || 'Applications';
+      case '/topics':
+        return t.topics || 'Studies';
+      case '/workout':
+        return t.workout || 'Workout';
+      case '/profile':
+        return t.accountSettings || 'Profile';
+      case '/admin':
+        return 'Admin Panel';
+      default:
+        return '';
+    }
+  };
 
   // Scroll to top automatically whenever route changes
   useEffect(() => {
@@ -98,6 +122,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       }
       if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
         setIsNotificationsOpen(false);
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -282,29 +309,133 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         {/* Sidebar Footer - User Profile Snippet */}
-        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0">
-          {!isSidebarCollapsed ? (
-            <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-2.5 border border-slate-100 dark:border-slate-800/40">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0 relative" ref={profileMenuRef}>
+          {/* Profile Menu Popover */}
+          <AnimatePresence>
+            {isProfileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="absolute bottom-full left-3 mb-2 w-48 bg-white dark:bg-[#111625] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-2xl p-2 z-[9999] select-none"
+              >
+                {/* User info inside popover (useful if sidebar is collapsed) */}
+                {isSidebarCollapsed && (
+                  <div className="px-2.5 py-2 border-b border-slate-100 dark:border-slate-800/40 mb-1">
+                    <p className="text-[10px] font-bold text-slate-900 dark:text-white truncate">{user?.name || 'User'}</p>
+                    <p className="text-[8px] font-semibold text-slate-400 dark:text-slate-500 truncate">{user?.email || ''}</p>
+                  </div>
+                )}
+
+                {/* Theme and Language toggles */}
+                <div className="px-1 py-1 border-b border-slate-100 dark:border-slate-800/60 mb-1 space-y-1">
+                  {/* Theme Toggle option */}
+                  <button
+                    onClick={toggleTheme}
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      {theme === 'dark' ? <Sun size={13} className="text-yellow-500" /> : <Moon size={13} />}
+                      {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                    </span>
+                  </button>
+
+                  {/* Language Option sub-menu / selector list */}
+                  <div className="pt-1">
+                    <p className="text-[8px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest px-2.5 mb-1 select-none">Language</p>
+                    <div className="flex flex-col gap-0.5">
+                      {languages.map((lang) => {
+                        const isSelected = lang.code === language;
+                        return (
+                          <button
+                            key={lang.code}
+                            onClick={() => setLanguage(lang.code)}
+                            className={`flex items-center justify-between w-full text-left px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-colors duration-155
+                              ${
+                                isSelected
+                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              }
+                            `}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span>{lang.flag}</span>
+                              <span>{lang.name}</span>
+                            </span>
+                            {isSelected && <Check size={10} className="text-emerald-500" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Profile and Logout links */}
+                <div className="px-1 py-0.5 space-y-0.5">
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                    className="w-full text-left px-2.5 py-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2 cursor-pointer transition-colors block"
+                  >
+                    <UserIcon size={13} className="text-slate-400 dark:text-slate-500" />
+                    Account Settings
+                  </Link>
+
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="w-full text-left px-2.5 py-1.5 text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2 cursor-pointer transition-colors block"
+                    >
+                      <ShieldCheck size={13} className="text-purple-500" />
+                      Admin Panel
+                    </Link>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 text-[11px] font-bold text-rose-600 dark:text-rose-455 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2 cursor-pointer transition-colors mt-0.5"
+                  >
+                    <LogOut size={13} className="text-rose-400 dark:text-rose-500" />
+                    Sign Out
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Trigger profile snippet */}
+          <button
+            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            className="w-full text-left block focus:outline-none border-none bg-transparent p-0 cursor-pointer"
+          >
+            {!isSidebarCollapsed ? (
+              <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-2.5 border border-slate-150/40 dark:border-slate-800/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-colors">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    {getInitials(user?.name)}
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <p className="text-xs font-bold text-slate-850 dark:text-slate-100 truncate">{user?.name || 'User'}</p>
+                    <p className="text-[10px] font-medium text-slate-400 truncate">{user?.email || ''}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-center group relative">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shadow-sm hover:scale-105 transition-transform">
                   {getInitials(user?.name)}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.name || 'User'}</p>
-                  <p className="text-[10px] font-medium text-slate-400 truncate">{user?.email || ''}</p>
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                  {user?.name || 'Profile'}
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex justify-center group relative">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shadow-sm">
-                {getInitials(user?.name)}
-              </div>
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
-                {user?.name || 'Profile'}
-              </div>
-            </div>
-          )}
+            )}
+          </button>
         </div>
       </aside>
 
@@ -315,13 +446,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           
+          {/* Page Title (Desktop only) */}
+          <div className="hidden md:block">
+            <h1 className="text-base font-black text-slate-850 dark:text-slate-100 tracking-tight">
+              {getPageTitle()}
+            </h1>
+          </div>
+
           {/* Logo (Mobile only) */}
           <Link to="/" className="md:hidden hover:opacity-90 transition-opacity flex-shrink-0 -ml-5 sm:-ml-7">
             <Logo className="h-12" />
           </Link>
 
           {/* Controls: Date range selector + Bell + User Menu */}
-          <div className="flex items-center justify-end w-full gap-4">
+          <div className="flex items-center justify-end w-auto gap-4">
             
             {/* Date Switcher */}
             <div className="hidden md:flex items-center bg-slate-100/70 dark:bg-slate-900/70 border border-slate-200/60 dark:border-slate-800/60 rounded-full px-1.5 py-0.5 gap-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm">
@@ -343,32 +481,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <ChevronRight size={14} />
               </button>
             </div>
-
-
-            {/* Language Selector */}
-            <div className="hidden md:block">
-              <LanguageSelector />
-            </div>
-
-            {/* Theme Toggle Button */}
-            <button 
-              onClick={toggleTheme}
-              className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer relative overflow-hidden"
-              aria-label="Toggle Theme Mode"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={theme}
-                  initial={{ y: -15, opacity: 0, rotate: -90 }}
-                  animate={{ y: 0, opacity: 1, rotate: 0 }}
-                  exit={{ y: 15, opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.18, ease: "easeInOut" }}
-                  className="flex items-center justify-center"
-                >
-                  {theme === 'dark' ? <Sun size={19} className="text-yellow-500" /> : <Moon size={19} className="text-slate-750 dark:text-slate-300" />}
-                </motion.div>
-              </AnimatePresence>
-            </button>
 
             {/* Notification Bell */}
             <div className="relative" ref={notificationsRef}>
@@ -455,7 +567,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* User Avatar & Logout */}
-            <div className="relative z-[9999]" ref={userMenuRef}>
+            <div className="relative z-[9999] md:hidden" ref={userMenuRef}>
               <button 
                 onClick={handleToggleUserMenu}
                 className="flex items-center justify-center p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer focus:outline-none"
