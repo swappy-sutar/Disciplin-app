@@ -31,7 +31,8 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z.object({
   body: z.object({
-    password: z.string().min(6, 'Password must be at least 6 characters').max(128, 'Password too long'),
+    token: z.string().trim().min(1, 'Reset token is required'),
+    password: z.string().min(6, 'Password must be at least 6 characters long').max(128, 'Password too long'),
   }),
 });
 
@@ -43,7 +44,7 @@ export const resendVerificationSchema = z.object({
 
 export const googleLoginSchema = z.object({
   body: z.object({
-    token: z.string().trim().min(10, 'Google token is required'),
+    idToken: z.string().trim().min(10, 'Google ID token is required'),
   }),
 });
 

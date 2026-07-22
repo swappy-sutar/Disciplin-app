@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import { env } from '../config/env';
+import crypto from 'crypto';
 
 export interface TokenPayload {
   userId: string;
@@ -18,7 +19,8 @@ export const generateAccessToken = (userId: string | Types.ObjectId, role: strin
 };
 
 export const generateRefreshToken = (userId: string | Types.ObjectId): string => {
-  return jwt.sign({ userId: userId.toString() }, getRefreshSecret(), {
+  const jti = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
+  return jwt.sign({ userId: userId.toString(), jti }, getRefreshSecret(), {
     expiresIn: '7d',
   });
 };
