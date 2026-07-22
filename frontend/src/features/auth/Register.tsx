@@ -269,14 +269,21 @@ export default function Register() {
             {/* Google Sign-in Button */}
             <div className="w-full flex flex-col justify-center items-center select-none py-1 relative">
               <div className={`rounded-full shadow-xs transition-all duration-200 ${isGoogleLoading ? 'opacity-50 pointer-events-none' : 'hover:shadow-md hover:scale-[1.02]'}`}>
-                <div id="googleSignUpButton" className="flex justify-center rounded-full overflow-hidden" />
+                {isGoogleLoading ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-[180px] h-[40px] px-4 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full flex items-center justify-center gap-2 shadow-xs cursor-not-allowed select-none transition-all duration-200"
+                  >
+                    <span className="w-3.5 h-3.5 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin shrink-0" />
+                    <span className="text-[12px] font-semibold text-emerald-600 dark:text-emerald-500 animate-pulse whitespace-nowrap">
+                      Authenticating...
+                    </span>
+                  </button>
+                ) : (
+                  <div id="googleSignUpButton" className="flex justify-center rounded-full overflow-hidden" />
+                )}
               </div>
-              {isGoogleLoading && (
-                <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-emerald-500 animate-pulse">
-                  <span className="w-3.5 h-3.5 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-                  Authenticating with Google...
-                </div>
-              )}
             </div>
 
             {/* Redirect link */}
