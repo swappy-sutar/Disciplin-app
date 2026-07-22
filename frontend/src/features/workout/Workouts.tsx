@@ -340,32 +340,59 @@ export default function Workouts() {
           </p>
         </div>
         
-        {/* Navigation Tabs */}
-        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1.5 bg-gray-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl w-full sm:w-auto border border-gray-150/40 dark:border-slate-800/80">
-          <button 
-            onClick={() => setActiveTab('today')}
-            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
-          >
-            {t.todayWorkout || "Today's Lift"}
-          </button>
-          <button 
-            onClick={() => setActiveTab('split')}
-            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
-          >
-            {t.workoutSplit || 'Weekly Split'}
-          </button>
-          <button 
-            onClick={() => setActiveTab('library')}
-            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
-          >
-            {t.exerciseLibrary || 'Exercise Library'}
-          </button>
-          <button 
-            onClick={() => setActiveTab('progress')}
-            className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
-          >
-            {t.workoutAnalytics || 'Analytics'}
-          </button>
+        {/* Navigation Tabs & Date Switcher */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto sm:justify-end">
+          <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1.5 bg-gray-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl w-full sm:w-auto border border-gray-150/40 dark:border-slate-800/80">
+            <button 
+              onClick={() => setActiveTab('today')}
+              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+            >
+              {t.todayWorkout || "Today's Lift"}
+            </button>
+            <button 
+              onClick={() => setActiveTab('split')}
+              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+            >
+              {t.workoutSplit || 'Weekly Split'}
+            </button>
+            <button 
+              onClick={() => setActiveTab('library')}
+              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+            >
+              {t.exerciseLibrary || 'Exercise Library'}
+            </button>
+            <button 
+              onClick={() => setActiveTab('progress')}
+              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+            >
+              {t.workoutAnalytics || 'Analytics'}
+            </button>
+          </div>
+
+          {/* Upgraded Date Switcher Pill */}
+          {activeTab === 'today' && (
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl select-none max-w-fit shrink-0 relative z-10">
+              <button 
+                onClick={() => shiftDate(-1)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
+                aria-label="Previous day"
+                title="Previous day"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              
+              <CalendarPicker dateRangeLabel={format(parseISO(targetDateStr), 'EEEE, MMMM d, yyyy')} align="right" />
+              
+              <button 
+                onClick={() => shiftDate(1)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
+                aria-label="Next day"
+                title="Next day"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -449,30 +476,7 @@ export default function Workouts() {
       {activeTab === 'today' && (
         <div className="space-y-6 select-none animate-fade-in">
           
-          {/* Upgraded Date Switcher Pill */}
-          <div className="flex justify-center sm:justify-start select-none">
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl max-w-fit shrink-0 relative z-10">
-              <button 
-                onClick={() => shiftDate(-1)}
-                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
-                aria-label="Previous day"
-                title="Previous day"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              
-              <CalendarPicker dateRangeLabel={format(parseISO(targetDateStr), 'EEEE, MMMM d, yyyy')} align="left" />
-              
-              <button 
-                onClick={() => shiftDate(1)}
-                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
-                aria-label="Next day"
-                title="Next day"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
+
 
           {/* If Loading today's session */}
           {isLoadingTodaySession && (
