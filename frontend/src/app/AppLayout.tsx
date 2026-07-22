@@ -309,7 +309,30 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         {/* Sidebar Footer - User Profile Snippet */}
-        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0 relative" ref={profileMenuRef}>
+        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/70 shrink-0 relative space-y-2" ref={profileMenuRef}>
+          {/* Mode Switcher Button directly in Sidebar */}
+          {!isSidebarCollapsed ? (
+            <button
+              onClick={toggleTheme}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer border border-transparent"
+            >
+              {theme === 'dark' ? <Sun size={18} className="text-yellow-500 shrink-0" /> : <Moon size={18} className="shrink-0" />}
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+          ) : (
+            <div className="flex justify-center">
+              <button
+                onClick={toggleTheme}
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-650 dark:hover:text-slate-250 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group relative"
+              >
+                {theme === 'dark' ? <Sun size={18} className="text-yellow-500 shrink-0" /> : <Moon size={18} className="shrink-0" />}
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700/60 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 translate-x-1 group-hover:translate-x-0">
+                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                </div>
+              </button>
+            </div>
+          )}
+
           {/* Profile Menu Popover */}
           <AnimatePresence>
             {isProfileMenuOpen && (
@@ -328,22 +351,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   </div>
                 )}
 
-                {/* Theme and Language toggles */}
+                {/* Language Option toggles */}
                 <div className="px-1 py-1 border-b border-slate-100 dark:border-slate-800/60 mb-1 space-y-1">
-                  {/* Theme Toggle option */}
-                  <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
-                  >
-                    <span className="flex items-center gap-2">
-                      {theme === 'dark' ? <Sun size={13} className="text-yellow-500" /> : <Moon size={13} />}
-                      {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                    </span>
-                  </button>
-
-                  {/* Language Option sub-menu / selector list */}
-                  <div className="pt-1">
-                    <p className="text-[8px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest px-2.5 mb-1 select-none">Language</p>
+                  <div className="pt-0.5">
+                    <p className="text-[8px] font-extrabold text-slate-455 dark:text-slate-500 uppercase tracking-widest px-2.5 mb-1.5 select-none">Language</p>
                     <div className="flex flex-col gap-0.5">
                       {languages.map((lang) => {
                         const isSelected = lang.code === language;
