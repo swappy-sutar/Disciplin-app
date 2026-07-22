@@ -5,8 +5,9 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { PillBadge } from '../../components/ui/PillBadge';
-import { format, parseISO, addDays, subDays } from 'date-fns';
+import { format, parseISO, addDays, subDays, startOfWeek } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
+import { CalendarPicker } from '../../components/ui/CalendarPicker';
 import confetti from 'canvas-confetti';
 import { 
   Flame, 
@@ -20,8 +21,7 @@ import {
   ChevronLeft, 
   ChevronRight, 
   BookOpen, 
-  Activity, 
-  RefreshCw 
+  Activity
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -35,7 +35,7 @@ import {
 } from 'recharts';
 
 export default function Workouts() {
-  const { activeDate, addNotification } = useStore();
+  const { activeDate, setActiveDate, setActiveWeekStart, addNotification } = useStore();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'today' | 'split' | 'library' | 'progress'>('today');
   
@@ -269,7 +269,10 @@ export default function Workouts() {
   const shiftDate = (amount: number) => {
     const curr = parseISO(targetDateStr);
     const shifted = addDays(curr, amount);
-    setTargetDateStr(format(shifted, 'yyyy-MM-dd'));
+    const dateStr = format(shifted, 'yyyy-MM-dd');
+    setActiveDate(dateStr);
+    const newWeekStart = startOfWeek(shifted, { weekStartsOn: 1 });
+    setActiveWeekStart(format(newWeekStart, 'yyyy-MM-dd'));
   };
 
   // Recharts Stats Calculations
@@ -446,44 +449,29 @@ export default function Workouts() {
       {activeTab === 'today' && (
         <div className="space-y-6 select-none animate-fade-in">
           
-          {/* Day selection header */}
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900/60 p-3.5 rounded-2xl border border-gray-150/40 dark:border-slate-800/80 shadow-sm">
-            <div className="flex items-center justify-between w-full">
+          {/* Upgraded Date Switcher Pill */}
+          <div className="flex justify-center sm:justify-start select-none">
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl max-w-fit shrink-0 relative z-10">
               <button 
                 onClick={() => shiftDate(-1)}
-                className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-850 rounded-xl transition-all cursor-pointer border-none bg-transparent text-gray-500 dark:text-slate-400"
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
+                aria-label="Previous day"
+                title="Previous day"
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={16} />
               </button>
               
-              <div className="text-center">
-                <span className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest block leading-none">
-                  {format(parseISO(targetDateStr), 'EEEE')}
-                </span>
-                <span className="text-sm font-black text-gray-900 dark:text-white mt-1.5 block">
-                  {format(parseISO(targetDateStr), 'MMM d, yyyy')}
-                </span>
-              </div>
+              <CalendarPicker dateRangeLabel={format(parseISO(targetDateStr), 'EEEE, MMMM d, yyyy')} align="left" />
               
               <button 
                 onClick={() => shiftDate(1)}
-                className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-850 rounded-xl transition-all cursor-pointer border-none bg-transparent text-gray-500 dark:text-slate-400"
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
+                aria-label="Next day"
+                title="Next day"
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </button>
             </div>
-            
-            {/* Show Quick Reset back to today */}
-            {targetDateStr !== activeDate && (
-              <Button 
-                onClick={() => setTargetDateStr(activeDate)}
-                variant="outline"
-                className="py-1 px-3 text-[10px] uppercase font-black ml-4"
-                icon={<RefreshCw size={10} />}
-              >
-                Go to Today
-              </Button>
-            )}
           </div>
 
           {/* If Loading today's session */}
