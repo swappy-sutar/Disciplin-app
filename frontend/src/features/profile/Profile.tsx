@@ -101,12 +101,13 @@ export default function Profile() {
         </p>
       </div>
 
-      <Card className="p-5 md:p-6 bg-white/95 dark:bg-card-bg/95 border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">
+      <Card className="max-w-3xl p-5 md:p-6 bg-white/95 dark:bg-card-bg/95 border border-gray-100/80 dark:border-gray-800/80 shadow-xl rounded-3xl">
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Section 1: Details & Preferences Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            {/* Left Column: Account Details & Password */}
-            <div className="space-y-4">
+            {/* Left Column: Personal details */}
+            <div className="space-y-3.5">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
                   {t.fullName}
@@ -142,89 +143,24 @@ export default function Profile() {
                   />
                 </div>
               </div>
-
-              {/* Password Section */}
-              <div className="border-t border-gray-50 dark:border-gray-850/60 pt-4 space-y-3">
-                <div>
-                  <h3 className="text-xs font-bold text-gray-900 dark:text-white">Change Password</h3>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold">Leave blank to keep current password.</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
-                      {t.newPassword}
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                        <Lock size={15} />
-                      </div>
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-canvas-bg dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white rounded-2xl pl-9 pr-8 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue transition-all"
-                        placeholder="Min 6 chars"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-400 dark:hover:text-gray-250 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
-                      >
-                        {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
-                      {t.confirmPassword}
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                        <Lock size={15} />
-                      </div>
-                      <input
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full bg-canvas-bg dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white rounded-2xl pl-9 pr-8 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue transition-all"
-                        placeholder="Repeat password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-655 dark:text-gray-400 dark:hover:text-gray-250 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
-                      >
-                        {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
-            {/* Right Column: Notifications, Language & Save Button */}
-            <div className="flex flex-col justify-between space-y-4">
-              
-              {/* Push Notifications Block */}
+            {/* Right Column: Preferences */}
+            <div className="space-y-4">
+              {/* Push Notifications Switch */}
               <div className="space-y-2">
                 <div>
                   <h3 className="text-xs font-bold text-gray-950 dark:text-white flex items-center gap-2">
                     <Bell size={14} className="text-emerald-500" />
                     <span>{t.notificationsTitle}</span>
                   </h3>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-550 font-semibold mt-0.5">
-                    Configure browser-level push updates on your device.
-                  </p>
                 </div>
 
-                <div className="flex items-center justify-between bg-canvas-bg/60 dark:bg-slate-900/50 border border-gray-100/50 dark:border-slate-800/60 p-3 rounded-2xl">
-                  <div className="space-y-0.5 text-left pr-2">
+                <div className="flex items-center justify-between bg-canvas-bg/60 dark:bg-slate-900/50 border border-gray-100/50 dark:border-slate-800/60 p-2.5 rounded-2xl">
+                  <div className="text-left pr-2">
                     <p className="text-xs font-bold text-gray-800 dark:text-slate-200">{t.systemNotifications}</p>
-                    <p className="text-[9px] text-gray-400 dark:text-slate-500 font-semibold leading-relaxed">
-                      Receive alerts for checklist completion and habits streaks.
+                    <p className="text-[9px] text-gray-400 dark:text-slate-555 font-semibold leading-none mt-0.5">
+                      Receive streaks and checklist updates.
                     </p>
                   </div>
                   
@@ -245,16 +181,13 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Language selection block */}
+              {/* Language Selection */}
               <div className="space-y-2">
                 <div>
                   <h3 className="text-xs font-bold text-gray-950 dark:text-white flex items-center gap-2">
                     <Globe size={14} className="text-emerald-500" />
                     <span>Language / भाषा</span>
                   </h3>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-550 font-semibold mt-0.5">
-                    Choose interface language.
-                  </p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
@@ -265,7 +198,7 @@ export default function Profile() {
                         key={lang.code}
                         type="button"
                         onClick={() => setLanguage(lang.code)}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition-all duration-200 cursor-pointer relative overflow-hidden group focus:outline-none
+                        className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-center transition-all duration-200 cursor-pointer relative overflow-hidden group focus:outline-none
                           ${
                             isSelected
                               ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.01] border-emerald-500 dark:border-emerald-500 shadow-sm ring-1 ring-emerald-500'
@@ -273,7 +206,7 @@ export default function Profile() {
                           }
                         `}
                       >
-                        <div className="text-base mb-1 select-none">{lang.flag}</div>
+                        <span className="text-sm select-none">{lang.flag}</span>
                         <p className="text-[10px] font-black text-slate-800 dark:text-slate-200 leading-none">
                           {lang.nativeName}
                         </p>
@@ -283,20 +216,81 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Submit Button Block */}
-              <div className="pt-2 flex justify-end">
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full md:w-auto px-8 py-3 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/10 cursor-pointer"
-                >
-                  {isLoading ? 'Saving Changes...' : t.saveChanges}
-                </Button>
-              </div>
-
             </div>
 
           </div>
+
+          {/* Section 2: Security & Password */}
+          <div className="border-t border-gray-100 dark:border-gray-850/60 pt-4 space-y-3">
+            <div>
+              <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Change Password</h3>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-0.5">Leave blank to keep your current credentials.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
+                  {t.newPassword}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                    <Lock size={15} />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-canvas-bg dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white rounded-2xl pl-9 pr-8 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue transition-all"
+                    placeholder="Min 6 chars"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-650 dark:text-gray-400 dark:hover:text-gray-250 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                  >
+                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
+                  {t.confirmPassword}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-550">
+                    <Lock size={15} />
+                  </div>
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-canvas-bg dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white rounded-2xl pl-9 pr-8 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue transition-all"
+                    placeholder="Repeat password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-655 dark:text-gray-400 dark:hover:text-gray-250 transition-colors cursor-pointer focus:outline-none border-none bg-transparent"
+                  >
+                    {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Submit Button */}
+          <div className="pt-2 border-t border-gray-100 dark:border-gray-850/60 flex justify-end">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="px-8 py-3 text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/10 cursor-pointer"
+            >
+              {isLoading ? 'Saving Changes...' : t.saveChanges}
+            </Button>
+          </div>
+
         </form>
       </Card>
     </div>
