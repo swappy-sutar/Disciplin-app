@@ -102,7 +102,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       case '/workout':
         return t.workout || 'Workout';
       case '/profile':
-        return t.accountSettings || 'Profile';
+        return t.profileSettings || 'Profile Settings';
       case '/admin':
         return 'Admin Panel';
       default:

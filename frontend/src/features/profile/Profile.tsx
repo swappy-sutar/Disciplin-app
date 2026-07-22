@@ -92,8 +92,9 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 md:space-y-8 select-none py-6">
-      <div className="space-y-3">
+    <div className="max-w-2xl mx-auto select-none pb-12">
+      {/* Sticky page header pinned under the top navbar */}
+      <div className="sticky top-16 z-30 bg-canvas-bg/90 backdrop-blur-md pt-6 pb-4 border-b border-slate-200/50 dark:border-slate-800/50 mb-6 space-y-3">
         <button 
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 cursor-pointer transition-colors"
@@ -105,7 +106,7 @@ export default function Profile() {
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
             {t.profileSettings}
           </h1>
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1.5 font-semibold">
+          <p className="text-sm text-gray-450 dark:text-gray-500 mt-1.5 font-semibold">
             Manage your personal details and account credentials.
           </p>
         </div>
