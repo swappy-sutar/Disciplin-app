@@ -341,30 +341,34 @@ export default function Workouts() {
         </div>
         
         {/* Navigation Tabs & Date Switcher */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto sm:justify-end">
-          <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1.5 bg-gray-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl w-full sm:w-auto border border-gray-150/40 dark:border-slate-800/80">
+        <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto sm:justify-end">
+          <div className="flex flex-row overflow-x-auto items-center gap-1 bg-slate-100/70 dark:bg-slate-900/60 p-1 rounded-2xl w-full sm:w-auto border border-slate-150 dark:border-slate-800/80 shadow-inner [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button 
               onClick={() => setActiveTab('today')}
-              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+              className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
+              <Dumbbell size={13} className={activeTab === 'today' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
               {t.todayWorkout || "Today's Lift"}
             </button>
             <button 
               onClick={() => setActiveTab('split')}
-              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+              className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
+              <Calendar size={13} className={activeTab === 'split' ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500'} />
               {t.workoutSplit || 'Weekly Split'}
             </button>
             <button 
               onClick={() => setActiveTab('library')}
-              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+              className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
+              <BookOpen size={13} className={activeTab === 'library' ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500'} />
               {t.exerciseLibrary || 'Exercise Library'}
             </button>
             <button 
               onClick={() => setActiveTab('progress')}
-              className={`py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none text-center ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-primary-accent shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/30'}`}
+              className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
+              <Activity size={13} className={activeTab === 'progress' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
               {t.workoutAnalytics || 'Analytics'}
             </button>
           </div>
