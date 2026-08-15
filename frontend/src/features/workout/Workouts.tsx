@@ -23,7 +23,7 @@ import {
   ChevronRight, 
   BookOpen, 
   Activity,
-  MessageSquare,
+  Bot,
   Send,
   Sparkles,
   Camera,
@@ -612,7 +612,7 @@ export default function Workouts() {
               onClick={() => setActiveTab('coach')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'coach' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
-              <MessageSquare size={13} className={activeTab === 'coach' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
+              <Bot size={13} className={activeTab === 'coach' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
               {'AI Coach'}
             </button>
           </div>
@@ -1737,7 +1737,7 @@ export default function Workouts() {
       )}
 
       {/* Floating Chat Button (FAB) & Swappy popover */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end select-none">
+      <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end select-none">
         
         {/* Floating Chat Box */}
         {isFloatingChatOpen && (
@@ -1821,12 +1821,12 @@ export default function Workouts() {
         <button 
           onClick={() => setIsFloatingChatOpen(!isFloatingChatOpen)}
           title="Chat with Swappy AI"
-          className="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/35 transition-all duration-205 hover:scale-110 active:scale-90 cursor-pointer border-none"
+          className="w-12 h-12 bg-primary-blue hover:bg-primary-blue-hover text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/20 cursor-pointer transition-all duration-200 active:scale-95 border-none"
         >
           {isFloatingChatOpen ? (
-            <X size={24} className="animate-fade-in" />
+            <X size={22} className="animate-fade-in" />
           ) : (
-            <MessageSquare size={24} className="animate-fade-in" />
+            <Bot size={22} className="animate-fade-in" />
           )}
         </button>
 
