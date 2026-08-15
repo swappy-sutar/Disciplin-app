@@ -81,6 +81,8 @@ export interface Application {
   status: ApplicationStatus;
   link?: string | null;
   notes?: string | null;
+  aiCoverLetter?: string | null;
+  aiResumeBullets?: string[] | null;
   createdAt?: string;
   updatedAt?: string;
 }

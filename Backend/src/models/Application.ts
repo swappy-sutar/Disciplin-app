@@ -8,6 +8,8 @@ export interface IApplication extends Document {
   status: 'Applied' | 'OA' | 'Interview' | 'Offer' | 'Rejected';
   link?: string;
   notes?: string;
+  aiCoverLetter?: string;
+  aiResumeBullets?: string[];
   createdAt: Date;
 }
 
@@ -24,6 +26,8 @@ const ApplicationSchema = new Schema<IApplication>({
   },
   link: { type: String, trim: true },
   notes: { type: String, trim: true },
+  aiCoverLetter: { type: String, trim: true },
+  aiResumeBullets: [{ type: String, trim: true }],
   createdAt: { type: Date, default: Date.now },
 });
 

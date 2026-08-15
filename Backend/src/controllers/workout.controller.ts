@@ -55,7 +55,7 @@ export const getSplit = async (req: Request, res: Response, next: NextFunction) 
   try {
     const userId = req.user?.id!;
 
-    let split = await WorkoutSplit.findOne({ userId });
+    let split = await WorkoutSplit.findOne({ userId, active: true });
     if (!split) {
       split = new WorkoutSplit({
         userId,
@@ -88,7 +88,7 @@ export const updateSplit = async (req: Request, res: Response, next: NextFunctio
     const { weekMap } = req.body;
 
     const split = await WorkoutSplit.findOneAndUpdate(
-      { userId },
+      { userId, active: true },
       { $set: { weekMap, updatedAt: new Date() } },
       { new: true, upsert: true, runValidators: true }
     );
@@ -121,7 +121,7 @@ export const getTodaySession = async (req: Request, res: Response, next: NextFun
 
     // Resolve split for the date's weekday
     const weekday = getWeekdayName(dateStr);
-    let split = await WorkoutSplit.findOne({ userId });
+    let split = await WorkoutSplit.findOne({ userId, active: true });
     if (!split) {
       split = new WorkoutSplit({
         userId,
@@ -321,3 +321,36 @@ export const getStreak = async (req: Request, res: Response, next: NextFunction)
     next(error);
   }
 };
+
+// 8. Get YouTube video ID for an exercise
+export const getExerciseVideo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      throw new BadRequestError('Exercise name is required');
+    }
+
+    const query = `${name} exercise form guidance tutorial`;
+    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    const html = await response.text();
+    
+    // Match the first YouTube video ID
+    const regex = /\/watch\?v=([a-zA-Z0-9_-]{11})/;
+    const match = html.match(regex);
+    const videoId = match ? match[1] : null;
+
+    res.status(200).json({
+      success: true,
+      data: { videoId }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

@@ -63,7 +63,7 @@ export const getApplications = async (req: Request, res: Response, next: NextFun
 export const createApplication = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id!;
-    const { company, role, dateApplied, status, link, notes } = req.body;
+    const { company, role, dateApplied, status, link, notes, aiCoverLetter, aiResumeBullets } = req.body;
 
     const application = new Application({
       userId,
@@ -73,6 +73,8 @@ export const createApplication = async (req: Request, res: Response, next: NextF
       status,
       link,
       notes,
+      aiCoverLetter,
+      aiResumeBullets,
     });
 
     await application.save();

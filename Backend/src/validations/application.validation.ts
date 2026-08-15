@@ -18,6 +18,8 @@ export const createApplicationSchema = z.object({
     status: z.enum(['Applied', 'OA', 'Interview', 'Offer', 'Rejected']).default('Applied'),
     link: z.string().url('Invalid URL').or(z.string().length(0)).optional().nullable(),
     notes: z.string().optional().nullable(),
+    aiCoverLetter: z.string().optional().nullable(),
+    aiResumeBullets: z.array(z.string()).optional().nullable(),
   }),
 });
 
@@ -32,5 +34,7 @@ export const updateApplicationSchema = z.object({
     status: z.enum(['Applied', 'OA', 'Interview', 'Offer', 'Rejected']).optional(),
     link: z.string().url('Invalid URL').or(z.string().length(0)).optional().nullable(),
     notes: z.string().optional().nullable(),
+    aiCoverLetter: z.string().optional().nullable(),
+    aiResumeBullets: z.array(z.string()).optional().nullable(),
   }),
 });

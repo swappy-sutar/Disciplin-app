@@ -14,7 +14,7 @@ export const useApplications = (params?: { date?: string; startDate?: string; en
   });
 
   const createMutation = useMutation({
-    mutationFn: (body: { company: string; role: string; dateApplied?: string; status?: ApplicationStatus; link?: string; notes?: string }) => 
+    mutationFn: (body: { company: string; role: string; dateApplied?: string; status?: ApplicationStatus; link?: string; notes?: string; aiCoverLetter?: string; aiResumeBullets?: string[] }) => 
       apiClient.applications.create(body),
     onSuccess: () => {
       toast.success('Job application logged successfully!');

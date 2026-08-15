@@ -1,22 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  CheckSquare, 
-  Target, 
-  Briefcase, 
-  BookOpen, 
+import {
+  LayoutDashboard,
+  CheckSquare,
+  Target,
+  Briefcase,
+  BookOpen,
   Dumbbell,
-  Bell, 
-  ChevronLeft, 
-  ChevronRight, 
+  Bell,
+  ChevronLeft,
+  ChevronRight,
   LogOut,
   Sun,
   Moon,
   User as UserIcon,
   Clock,
   Sparkles,
-  Check,
   ShieldCheck,
   PanelLeftClose,
   PanelLeftOpen
@@ -45,12 +44,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isOverviewPage = location.pathname === '/overview';
-  const { 
-    user, 
-    logout, 
-    activeDate, 
-    setActiveDate, 
-    activeWeekStart, 
+  const {
+    user,
+    logout,
+    activeDate,
+    setActiveDate,
+    activeWeekStart,
     setActiveWeekStart,
     theme,
     toggleTheme,
@@ -175,7 +174,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     const prev = subDays(parseISO(activeDate), 1);
     const prevStr = format(prev, 'yyyy-MM-dd');
     setActiveDate(prevStr);
-    
+
     // Shift week if date falls out of current week
     const newWeekStart = startOfWeek(prev, { weekStartsOn: 1 });
     setActiveWeekStart(format(newWeekStart, 'yyyy-MM-dd'));
@@ -201,7 +200,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-canvas-bg flex flex-col pb-16 md:pb-0 pt-16">
-      
+
       {/* Left Sidebar for Desktop */}
       <aside className={`hidden md:flex flex-col fixed left-0 top-0 bottom-0 bg-white dark:bg-[#0B0F19] border-r border-slate-200/80 dark:border-slate-800/80 z-50 transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-16' : 'w-52'}`}>
         {/* Sidebar Header with Logo & Toggle Button */}
@@ -253,8 +252,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               className={({ isActive }) => `
                 flex items-center gap-3 rounded-xl text-xs font-bold transition-all cursor-pointer group relative
                 ${isSidebarCollapsed ? 'w-10 h-10 mx-auto justify-center p-0' : 'w-full px-3 py-2.5 justify-start'}
-                ${isActive 
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm font-extrabold' 
+                ${isActive
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm font-extrabold'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }
               `}
@@ -280,14 +279,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               className={({ isActive }) => `
                 flex items-center gap-3 rounded-xl text-xs font-bold transition-all cursor-pointer group relative mt-4
                 ${isSidebarCollapsed ? 'w-10 h-10 mx-auto justify-center p-0' : 'w-full px-3 py-2.5 justify-start'}
-                ${isActive 
-                  ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 shadow-sm font-extrabold' 
+                ${isActive
+                  ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 shadow-sm font-extrabold'
                   : 'text-purple-600/80 dark:text-purple-400/80 hover:bg-purple-500/10 dark:hover:bg-purple-950/30 border border-transparent'
                 }
               `}
             >
               <ShieldCheck size={20} className="shrink-0 text-purple-500" />
-              
+
               {!isSidebarCollapsed && (
                 <span className="truncate">Admin Panel</span>
               )}
@@ -386,9 +385,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <header className={`bg-white dark:bg-[#0B0F19] border-b border-slate-200/80 dark:border-slate-800/80 fixed top-0 left-0 right-0 z-40 select-none transition-all duration-300 ${isSidebarCollapsed ? 'md:left-16' : 'md:left-52'}`}>
         {/* Glow underside line */}
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
-        
+
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
-          
+
           {/* Page Title (Desktop only) */}
           <div className="hidden md:block">
             <h1 className="text-base font-black text-slate-850 dark:text-slate-100 tracking-tight">
@@ -403,10 +402,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
           {/* Controls: Date range selector + Bell + User Menu */}
           <div className="flex items-center justify-end w-auto gap-4">
-            
+
             {/* Date Switcher */}
             <div className="hidden md:flex items-center bg-slate-100/70 dark:bg-slate-900/70 border border-slate-200/60 dark:border-slate-800/60 rounded-full px-1.5 py-0.5 gap-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm">
-              <button 
+              <button
                 onClick={handlePrevDay}
                 className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Previous day"
@@ -415,7 +414,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <ChevronLeft size={14} />
               </button>
               <CalendarPicker dateRangeLabel={dateRangeLabel} />
-              <button 
+              <button
                 onClick={handleNextDay}
                 className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Next day"
@@ -427,7 +426,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
             {/* Notification Bell */}
             <div className="relative" ref={notificationsRef}>
-              <button 
+              <button
                 onClick={handleToggleNotifications}
                 className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 relative transition-colors cursor-pointer"
                 aria-label="View Notifications"
@@ -441,69 +440,69 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {/* Notification Dropdown Box */}
               {isNotificationsOpen && (
                 <div className="absolute right-0 mt-2 bg-white dark:bg-slate-900 border border-gray-100/80 dark:border-gray-800/85 rounded-2xl shadow-xl p-4 w-[320px] md:w-[360px] z-50 animate-in fade-in slide-in-from-top-2 duration-205 select-none">
-                    <div className="flex justify-between items-center pb-2.5 mb-2 border-b border-gray-50 dark:border-gray-800">
-                      <div className="flex items-center gap-1.5">
-                        <h4 className="font-extrabold text-xs text-gray-900 dark:text-white uppercase tracking-wider">Notifications</h4>
-                        {unreadCount > 0 && (
-                          <span className="text-[9px] font-extrabold bg-attention-pink/10 text-attention-pink px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                            {unreadCount} New
-                          </span>
-                        )}
-                      </div>
-                      {notifications.length > 0 && (
-                        <button 
-                          onClick={() => {
-                            clearNotifications();
-                            setIsNotificationsOpen(false);
-                          }}
-                          className="text-[10px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors cursor-pointer"
-                        >
-                          Clear all
-                        </button>
+                  <div className="flex justify-between items-center pb-2.5 mb-2 border-b border-gray-50 dark:border-gray-800">
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="font-extrabold text-xs text-gray-900 dark:text-white uppercase tracking-wider">Notifications</h4>
+                      {unreadCount > 0 && (
+                        <span className="text-[9px] font-extrabold bg-attention-pink/10 text-attention-pink px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                          {unreadCount} New
+                        </span>
                       )}
                     </div>
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={() => {
+                          clearNotifications();
+                          setIsNotificationsOpen(false);
+                        }}
+                        className="text-[10px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors cursor-pointer"
+                      >
+                        Clear all
+                      </button>
+                    )}
+                  </div>
 
-                    <div className="max-h-[280px] overflow-y-auto space-y-2.5 pr-0.5">
-                      {notifications.length === 0 ? (
-                        <div className="py-8 text-center text-gray-400 dark:text-gray-500 text-xs font-semibold select-none flex flex-col items-center justify-center gap-2">
-                          <span>🎉</span>
-                          All caught up!
-                        </div>
-                      ) : (
-                        notifications.map((n) => {
-                          let Icon = Sparkles;
-                          let iconColor = 'text-primary-blue bg-blue-50 dark:bg-blue-950/30';
-                          if (n.type === 'goal') {
-                            Icon = Target;
-                            iconColor = 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30';
-                          } else if (n.type === 'topic') {
-                            Icon = BookOpen;
-                            iconColor = 'text-purple-500 bg-purple-50 dark:bg-purple-950/30';
-                          } else if (n.type === 'habit') {
-                            Icon = CheckSquare;
-                            iconColor = 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30';
-                          } else if (n.type === 'timetable') {
-                            Icon = Clock;
-                            iconColor = 'text-amber-500 bg-amber-50 dark:bg-amber-950/30';
-                          }
+                  <div className="max-h-[280px] overflow-y-auto space-y-2.5 pr-0.5">
+                    {notifications.length === 0 ? (
+                      <div className="py-8 text-center text-gray-400 dark:text-gray-500 text-xs font-semibold select-none flex flex-col items-center justify-center gap-2">
+                        <span>🎉</span>
+                        All caught up!
+                      </div>
+                    ) : (
+                      notifications.map((n) => {
+                        let Icon = Sparkles;
+                        let iconColor = 'text-primary-blue bg-blue-50 dark:bg-blue-950/30';
+                        if (n.type === 'goal') {
+                          Icon = Target;
+                          iconColor = 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30';
+                        } else if (n.type === 'topic') {
+                          Icon = BookOpen;
+                          iconColor = 'text-purple-500 bg-purple-50 dark:bg-purple-950/30';
+                        } else if (n.type === 'habit') {
+                          Icon = CheckSquare;
+                          iconColor = 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30';
+                        } else if (n.type === 'timetable') {
+                          Icon = Clock;
+                          iconColor = 'text-amber-500 bg-amber-50 dark:bg-amber-950/30';
+                        }
 
-                          return (
-                            <div key={n.id} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors relative group/item">
-                              <div className={`p-2 rounded-xl flex-shrink-0 ${iconColor}`}>
-                                <Icon size={14} />
-                              </div>
-                              <div className="text-left flex-1 min-w-0 pr-4">
-                                <h5 className="text-[11px] font-bold text-gray-900 dark:text-white truncate">{n.title}</h5>
-                                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-0.5 leading-normal">{n.message}</p>
-                                <span className="text-[8px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-wider block mt-1">{n.timestamp}</span>
-                              </div>
-                              {!n.isRead && (
-                                <span className="absolute right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-attention-pink rounded-full" />
-                              )}
+                        return (
+                          <div key={n.id} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors relative group/item">
+                            <div className={`p-2 rounded-xl flex-shrink-0 ${iconColor}`}>
+                              <Icon size={14} />
                             </div>
-                          );
-                        })
-                      )}
+                            <div className="text-left flex-1 min-w-0 pr-4">
+                              <h5 className="text-[11px] font-bold text-gray-900 dark:text-white truncate">{n.title}</h5>
+                              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-0.5 leading-normal">{n.message}</p>
+                              <span className="text-[8px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-wider block mt-1">{n.timestamp}</span>
+                            </div>
+                            {!n.isRead && (
+                              <span className="absolute right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-attention-pink rounded-full" />
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
               )}
@@ -511,7 +510,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
             {/* User Avatar & Logout */}
             <div className="relative z-[9999] md:hidden" ref={userMenuRef}>
-              <button 
+              <button
                 onClick={handleToggleUserMenu}
                 className="flex items-center justify-center p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer focus:outline-none"
               >
@@ -519,76 +518,106 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   {getInitials(user?.name)}
                 </div>
               </button>
-              
+
               {/* Dropdown Menu on Click */}
               {isUserMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100/80 dark:border-slate-800/80 p-2 min-w-[220px] z-[9999] animate-in fade-in slide-in-from-top-2 duration-150 select-none">
-                    <div className="px-3 py-2.5 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl mb-1.5 border border-slate-100/30 dark:border-slate-800/20">
-                      <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate">{user?.name || ''}</p>
-                      <p className="text-[10px] text-gray-450 dark:text-slate-450 font-semibold truncate mt-0.5">{user?.email || ''}</p>
-                    </div>
+                  <div className="px-3 py-2.5 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl mb-1.5 border border-slate-100/30 dark:border-slate-800/20">
+                    <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate">{user?.name || ''}</p>
+                    <p className="text-[10px] text-gray-450 dark:text-slate-450 font-semibold truncate mt-0.5">{user?.email || ''}</p>
+                  </div>
 
-                    {/* Language Selector for Mobile inside dropdown */}
-                    <div className="block md:hidden border-b border-slate-100 dark:border-slate-800/60 pb-2 mb-2 px-1">
-                      <p className="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 px-2.5">Language / भाषा</p>
-                      <div className="flex flex-col gap-0.5">
+                  {/* Language & Theme Selectors inside dropdown */}
+                  <div className="border-b border-slate-100 dark:border-slate-800/60 pb-2 mb-2 px-1 space-y-2.5">
+                    <div>
+                      <p className="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 px-1.5">Language / भाषा</p>
+                      <div className="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-slate-900/60 p-1 rounded-xl border border-slate-100/50 dark:border-slate-800/40">
                         {languages.map((lang) => {
                           const isSelected = lang.code === language;
                           return (
                             <button
                               key={lang.code}
-                              onClick={() => {
-                                setLanguage(lang.code);
-                              }}
-                              className={`flex items-center justify-between w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] font-bold cursor-pointer transition-colors duration-150
-                                ${
-                                  isSelected
-                                    ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              onClick={() => setLanguage(lang.code)}
+                              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-lg transition-all duration-200 cursor-pointer border-none
+                                 ${isSelected
+                                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs font-black'
+                                  : 'bg-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-bold'
                                 }
-                              `}
+                               `}
                             >
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs">{lang.flag}</span>
-                                <span>{lang.nativeName}</span>
-                              </div>
-                              {isSelected && <Check size={12} className="text-emerald-500" />}
+                              <span className="text-sm leading-none mb-1">{lang.flag}</span>
+                              <span className="text-[9px] tracking-tight">{lang.nativeName}</span>
                             </button>
                           );
                         })}
                       </div>
                     </div>
 
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsUserMenuOpen(false)}
-                      className="w-full text-left px-3 py-2 text-xs font-bold text-gray-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
-                    >
-                      <UserIcon size={14} className="text-gray-400 dark:text-slate-450" />
-                      {t.accountSettings}
-                    </Link>
-
-                    {user?.role === 'admin' && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="w-full text-left px-3 py-2 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block my-0.5"
-                      >
-                        <ShieldCheck size={14} className="text-purple-500" />
-                        Admin Control Panel
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        setIsUserMenuOpen(false);
-                        handleLogout();
-                      }}
-                      className="w-full text-left px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors mt-0.5"
-                    >
-                      <LogOut size={14} />
-                      {t.signOut}
-                    </button>
+                    <div>
+                      <p className="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 px-1.5">Theme / थीम</p>
+                      <div className="grid grid-cols-2 gap-1 bg-slate-50 dark:bg-slate-900/60 p-1 rounded-xl border border-slate-100/50 dark:border-slate-800/40">
+                        <button
+                          onClick={() => {
+                            if (theme !== 'light') toggleTheme();
+                          }}
+                          className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[10px] font-bold transition-all duration-200 cursor-pointer border-none
+                              ${theme === 'light'
+                              ? 'bg-white text-slate-800 shadow-xs font-black'
+                              : 'bg-transparent text-slate-500 hover:text-slate-200'
+                            }
+                            `}
+                        >
+                          <Sun size={12} className={theme === 'light' ? 'text-amber-500 shrink-0' : 'shrink-0'} />
+                          <span>Light</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (theme !== 'dark') toggleTheme();
+                          }}
+                          className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[10px] font-bold transition-all duration-200 cursor-pointer border-none
+                              ${theme === 'dark'
+                              ? 'bg-slate-800 text-emerald-450 shadow-xs font-black'
+                              : 'bg-transparent text-slate-500 hover:text-slate-800'
+                            }
+                            `}
+                        >
+                          <Moon size={12} className={theme === 'dark' ? 'text-emerald-450 shrink-0' : 'shrink-0'} />
+                          <span>Dark</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsUserMenuOpen(false)}
+                    className="w-full text-left px-3 py-2 text-xs font-bold text-gray-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block"
+                  >
+                    <UserIcon size={14} className="text-gray-400 dark:text-slate-450" />
+                    {t.accountSettings}
+                  </Link>
+
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="w-full text-left px-3 py-2 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50/60 dark:hover:bg-purple-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors block my-0.5"
+                    >
+                      <ShieldCheck size={14} className="text-purple-500" />
+                      Admin Control Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50/60 dark:hover:bg-rose-950/20 rounded-xl flex items-center gap-2.5 cursor-pointer transition-colors mt-0.5"
+                  >
+                    <LogOut size={14} />
+                    {t.signOut}
+                  </button>
+                </div>
               )}
             </div>
 
@@ -612,8 +641,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             to={item.path}
             className={({ isActive }) => `
               flex flex-col items-center justify-center flex-1 h-full text-[9px] font-black transition-all duration-200 cursor-pointer
-              ${isActive 
-                ? 'text-emerald-600 dark:text-emerald-400' 
+              ${isActive
+                ? 'text-emerald-600 dark:text-emerald-400'
                 : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
               }
             `}
@@ -631,12 +660,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </nav>
 
       {/* Go to Top Button */}
-      <GoToTop 
+      <GoToTop
         className={
-          isOverviewPage 
-            ? "bottom-36 md:bottom-20 right-5 md:right-6" 
+          isOverviewPage
+            ? "bottom-36 md:bottom-20 right-5 md:right-6"
             : "bottom-20 md:bottom-6 right-5 md:right-6"
-        } 
+        }
       />
 
     </div>

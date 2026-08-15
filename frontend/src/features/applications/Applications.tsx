@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApplications } from '../../hooks/useApplications';
+import { useGenerateCoverLetter, useGenerateResumeBullets } from '../../hooks/useAI';
 import { useStore } from '../../app/store';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -10,6 +11,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton';
 import { StatCard } from '../../components/ui/StatCard';
 import { format, parseISO } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
+import { apiClient } from '../../lib/api-client';
 import { 
   Search, 
   Filter, 
@@ -20,16 +22,23 @@ import {
   CheckCircle, 
   ChevronLeft, 
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  Sparkles,
+  Wand2,
+  Loader2,
+  FileText
 } from 'lucide-react';
 import type { ApplicationStatus, Application } from '../../types';
 
 export default function Applications() {
-  const { activeDate } = useStore();
+  const { activeDate, token } = useStore();
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   
+  // Detection logic for backend / AI features availability
+  const isBackendOnline = !!token && typeof window !== 'undefined' && window.navigator.onLine && !apiClient.isMockMode();
+
   // Modals state
   const [isAddOpen, setAddOpen] = useState(false);
   const [isEditOpen, setEditOpen] = useState(false);
@@ -50,12 +59,22 @@ export default function Applications() {
   const [link, setLink] = useState('');
   const [notes, setNotes] = useState('');
 
+  // AI Assistant form states
+  const [jobDescription, setJobDescription] = useState('');
+  const [userProfile, setUserProfile] = useState('');
+  const [rawExperience, setRawExperience] = useState('');
+  const [aiCoverLetter, setAiCoverLetter] = useState('');
+  const [aiResumeBulletsText, setAiResumeBulletsText] = useState('');
+  const [showAiAssistant, setShowAiAssistant] = useState(false);
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Queries
+  // Queries & AI Mutations
   const { applications, isLoading, createApplication, updateApplication, deleteApplication } = useApplications();
+  const { generateCoverLetter, isGeneratingCoverLetter } = useGenerateCoverLetter();
+  const { generateResumeBullets, isGeneratingBullets } = useGenerateResumeBullets();
 
   if (isLoading) {
     return <PageSkeleton cards={3} rows={5} />;
@@ -116,9 +135,27 @@ export default function Applications() {
     Rejected: 'pink',
   };
 
+  const resetForm = () => {
+    setCompany('');
+    setRole('');
+    setLink('');
+    setNotes('');
+    setJobDescription('');
+    setUserProfile('');
+    setRawExperience('');
+    setAiCoverLetter('');
+    setAiResumeBulletsText('');
+    setShowAiAssistant(false);
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!company.trim() || !role.trim()) return;
+
+    const bulletsArray = aiResumeBulletsText
+      .split('\n')
+      .map(b => b.replace(/^[-*•\s]+/, '').trim())
+      .filter(b => b.length > 0);
 
     await createApplication({
       company,
@@ -127,12 +164,11 @@ export default function Applications() {
       status,
       link: link || undefined,
       notes: notes || undefined,
+      aiCoverLetter: aiCoverLetter || undefined,
+      aiResumeBullets: bulletsArray.length > 0 ? bulletsArray : undefined,
     });
 
-    setCompany('');
-    setRole('');
-    setLink('');
-    setNotes('');
+    resetForm();
     setAddOpen(false);
   };
 
@@ -144,6 +180,13 @@ export default function Applications() {
     setStatus(app.status);
     setLink(app.link || '');
     setNotes(app.notes || '');
+    setAiCoverLetter(app.aiCoverLetter || '');
+    setAiResumeBulletsText(app.aiResumeBullets ? app.aiResumeBullets.map(b => `• ${b}`).join('\n') : '');
+    if (app.aiCoverLetter || (app.aiResumeBullets && app.aiResumeBullets.length > 0)) {
+      setShowAiAssistant(true);
+    } else {
+      setShowAiAssistant(false);
+    }
     setEditOpen(true);
   };
 
@@ -151,6 +194,11 @@ export default function Applications() {
     e.preventDefault();
     if (!selectedApp) return;
     if (!company.trim() || !role.trim()) return;
+
+    const bulletsArray = aiResumeBulletsText
+      .split('\n')
+      .map(b => b.replace(/^[-*•\s]+/, '').trim())
+      .filter(b => b.length > 0);
 
     await updateApplication({
       id: selectedApp._id,
@@ -161,15 +209,41 @@ export default function Applications() {
         status,
         link: link || null,
         notes: notes || null,
+        aiCoverLetter: aiCoverLetter || null,
+        aiResumeBullets: bulletsArray.length > 0 ? bulletsArray : null,
       }
     });
 
-    setCompany('');
-    setRole('');
-    setLink('');
-    setNotes('');
+    resetForm();
     setEditOpen(false);
     setSelectedApp(null);
+  };
+
+  const handleGenerateCoverLetter = async () => {
+    if (!jobDescription.trim()) return;
+    const res = await generateCoverLetter({
+      jobDescription,
+      userProfile: userProfile || notes || undefined,
+      company: company || undefined,
+      role: role || undefined,
+    });
+    if (res?.coverLetter) {
+      setAiCoverLetter(res.coverLetter);
+    }
+  };
+
+  const handleGenerateResumeBullets = async () => {
+    if (!jobDescription.trim()) return;
+    const expNotes = rawExperience || notes || 'Experience in software engineering, frontend development, and clean code principles.';
+    const res = await generateResumeBullets({
+      jobDescription,
+      rawExperience: expNotes,
+      company: company || undefined,
+      role: role || undefined,
+    });
+    if (res?.bullets && Array.isArray(res.bullets)) {
+      setAiResumeBulletsText(res.bullets.map(b => `• ${b}`).join('\n'));
+    }
   };
 
   return (
@@ -188,6 +262,7 @@ export default function Applications() {
         <Button 
           icon={<Plus size={16} />} 
           onClick={() => {
+            resetForm();
             setDateApplied(activeDate);
             setAddOpen(true);
           }}
@@ -199,9 +274,7 @@ export default function Applications() {
 
       {/* Main Counter Indicator Widget */}
       <Card className="relative overflow-hidden p-6">
-        {/* Accent border bar */}
         <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 rounded-t-2xl" />
-        {/* Glow ambient background */}
         <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-blue-500/5 dark:bg-blue-500/10 blur-3xl pointer-events-none" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
@@ -267,8 +340,6 @@ export default function Applications() {
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 select-none">
-        
-        {/* Search */}
         <div className="relative flex-1">
           <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
             <Search size={16} />
@@ -282,7 +353,6 @@ export default function Applications() {
           />
         </div>
 
-        {/* Status Dropdown Filter */}
         <div className="relative min-w-[160px]">
           <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
             <Filter size={14} />
@@ -303,7 +373,6 @@ export default function Applications() {
             <ChevronRight size={14} className="transform rotate-90" />
           </span>
         </div>
-
       </div>
 
       {/* Applications Table Card */}
@@ -317,6 +386,7 @@ export default function Applications() {
                 <th className="pb-3 text-left font-semibold">Date Logged</th>
                 <th className="pb-3 text-center font-semibold">Status Stage</th>
                 <th className="pb-3 text-left font-semibold">Notes / Details</th>
+                <th className="pb-3 text-center font-semibold">AI Drafts</th>
                 <th className="pb-3 text-center font-semibold">Links</th>
                 <th className="pb-3 text-right font-semibold pr-2">Actions</th>
               </tr>
@@ -324,7 +394,7 @@ export default function Applications() {
             <tbody className="divide-y divide-gray-50">
               {paginatedApps.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-gray-400 text-sm">
+                  <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
                     No applications recorded matching this status. Add one above!
                   </td>
                 </tr>
@@ -341,8 +411,17 @@ export default function Applications() {
                         {app.status}
                       </PillBadge>
                     </td>
-                    <td className="py-3.5 max-w-[200px] truncate text-gray-500 font-medium select-none" title={app.notes || ''}>
+                    <td className="py-3.5 max-w-[180px] truncate text-gray-500 font-medium select-none" title={app.notes || ''}>
                       {app.notes || '—'}
+                    </td>
+                    <td className="py-3.5 text-center select-none">
+                      {app.aiCoverLetter || (app.aiResumeBullets && app.aiResumeBullets.length > 0) ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900">
+                          <Sparkles size={10} /> AI Ready
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
                     </td>
                     <td className="py-3.5 text-center select-none">
                       {app.link ? (
@@ -420,7 +499,7 @@ export default function Applications() {
 
       {/* Add Application Modal */}
       <Modal isOpen={isAddOpen} onClose={() => setAddOpen(false)} title="Log Job Application">
-        <form onSubmit={handleCreate} className="space-y-4 font-medium select-none">
+        <form onSubmit={handleCreate} className="space-y-4 font-medium select-none max-h-[80vh] overflow-y-auto pr-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Company Name</label>
@@ -485,19 +564,152 @@ export default function Applications() {
             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Notes (Optional)</label>
             <textarea
               placeholder="Referral from John Doe, recruiter follow-up scheduled"
-              rows={3}
+              rows={2}
               value={notes}
               onChange={e => setNotes(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
             />
           </div>
+
+          {/* AI Assistant Section */}
+          <div className="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-gradient-to-br from-slate-50 to-indigo-50/40 dark:from-slate-900/90 dark:to-slate-900 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-500 dark:bg-indigo-400/20 dark:text-indigo-300">
+                  <Sparkles size={16} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                    AI Assistant
+                  </h4>
+                  <p className="text-[11px] font-medium text-slate-400">
+                    Generate tailored cover letter & resume bullets
+                  </p>
+                </div>
+              </div>
+              
+              <div className="relative group">
+                <button
+                  type="button"
+                  disabled={!isBackendOnline}
+                  onClick={() => setShowAiAssistant(!showAiAssistant)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-400 text-white shadow-sm transition-all cursor-pointer disabled:cursor-not-allowed"
+                  title={!isBackendOnline ? 'Connect to backend to use AI features' : undefined}
+                >
+                  <Sparkles size={13} />
+                  {showAiAssistant ? 'Hide AI' : 'Generate with AI'}
+                </button>
+
+                {!isBackendOnline && (
+                  <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block w-52 bg-slate-900 text-white text-[11px] font-semibold rounded-lg p-2 shadow-xl z-50 pointer-events-none text-center">
+                    Connect to backend to use AI features
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {showAiAssistant && (
+              <div className="space-y-3 pt-3 border-t border-slate-200/60 dark:border-slate-800">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                    Job Description (Required for AI)
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Paste job description requirements..."
+                    value={jobDescription}
+                    onChange={e => setJobDescription(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500 font-medium bg-white dark:bg-slate-950"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      User Profile / Resume Notes
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Background details..."
+                      value={userProfile}
+                      onChange={e => setUserProfile(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500 font-medium bg-white dark:bg-slate-950"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      Raw Experience Notes
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Key achievements..."
+                      value={rawExperience}
+                      onChange={e => setRawExperience(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500 font-medium bg-white dark:bg-slate-950"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-1">
+                  <button
+                    type="button"
+                    disabled={!isBackendOnline || isGeneratingCoverLetter || !jobDescription.trim()}
+                    onClick={handleGenerateCoverLetter}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {isGeneratingCoverLetter ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+                    {isGeneratingCoverLetter ? 'Generating...' : 'Cover Letter'}
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={!isBackendOnline || isGeneratingBullets || !jobDescription.trim()}
+                    onClick={handleGenerateResumeBullets}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-violet-200 dark:border-violet-900 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 text-xs font-bold hover:bg-violet-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {isGeneratingBullets ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />}
+                    {isGeneratingBullets ? 'Generating...' : 'Resume Bullets'}
+                  </button>
+                </div>
+
+                {aiCoverLetter && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      Generated Cover Letter Draft (Editable)
+                    </label>
+                    <textarea
+                      rows={5}
+                      value={aiCoverLetter}
+                      onChange={e => setAiCoverLetter(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-medium bg-white dark:bg-slate-950 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                )}
+
+                {aiResumeBulletsText && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      Tailored Resume Bullets (Editable)
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={aiResumeBulletsText}
+                      onChange={e => setAiResumeBulletsText(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-violet-200 dark:border-violet-800 text-xs font-medium bg-white dark:bg-slate-950 focus:outline-none focus:border-violet-500"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Log Job Posting</Button>
         </form>
       </Modal>
 
       {/* Edit Application Modal */}
       <Modal isOpen={isEditOpen} onClose={() => { setEditOpen(false); setSelectedApp(null); }} title="Edit Application Details">
-        <form onSubmit={handleUpdate} className="space-y-4 font-medium select-none">
+        <form onSubmit={handleUpdate} className="space-y-4 font-medium select-none max-h-[80vh] overflow-y-auto pr-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Company Name</label>
@@ -562,12 +774,145 @@ export default function Applications() {
             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Notes (Optional)</label>
             <textarea
               placeholder="Referral from John Doe, recruiter follow-up scheduled"
-              rows={3}
+              rows={2}
               value={notes}
               onChange={e => setNotes(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary-blue font-medium"
             />
           </div>
+
+          {/* AI Assistant Section */}
+          <div className="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-gradient-to-br from-slate-50 to-indigo-50/40 dark:from-slate-900/90 dark:to-slate-900 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-500 dark:bg-indigo-400/20 dark:text-indigo-300">
+                  <Sparkles size={16} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                    AI Assistant
+                  </h4>
+                  <p className="text-[11px] font-medium text-slate-400">
+                    Generate tailored cover letter & resume bullets
+                  </p>
+                </div>
+              </div>
+              
+              <div className="relative group">
+                <button
+                  type="button"
+                  disabled={!isBackendOnline}
+                  onClick={() => setShowAiAssistant(!showAiAssistant)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-400 text-white shadow-sm transition-all cursor-pointer disabled:cursor-not-allowed"
+                  title={!isBackendOnline ? 'Connect to backend to use AI features' : undefined}
+                >
+                  <Sparkles size={13} />
+                  {showAiAssistant ? 'Hide AI' : 'Generate with AI'}
+                </button>
+
+                {!isBackendOnline && (
+                  <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block w-52 bg-slate-900 text-white text-[11px] font-semibold rounded-lg p-2 shadow-xl z-50 pointer-events-none text-center">
+                    Connect to backend to use AI features
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {showAiAssistant && (
+              <div className="space-y-3 pt-3 border-t border-slate-200/60 dark:border-slate-800">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                    Job Description (Required for AI)
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Paste job description requirements..."
+                    value={jobDescription}
+                    onChange={e => setJobDescription(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500 font-medium bg-white dark:bg-slate-950"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      User Profile / Resume Notes
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Background details..."
+                      value={userProfile}
+                      onChange={e => setUserProfile(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500 font-medium bg-white dark:bg-slate-950"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      Raw Experience Notes
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Key achievements..."
+                      value={rawExperience}
+                      onChange={e => setRawExperience(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500 font-medium bg-white dark:bg-slate-950"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-1">
+                  <button
+                    type="button"
+                    disabled={!isBackendOnline || isGeneratingCoverLetter || !jobDescription.trim()}
+                    onClick={handleGenerateCoverLetter}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {isGeneratingCoverLetter ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+                    {isGeneratingCoverLetter ? 'Generating...' : 'Cover Letter'}
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={!isBackendOnline || isGeneratingBullets || !jobDescription.trim()}
+                    onClick={handleGenerateResumeBullets}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-violet-200 dark:border-violet-900 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 text-xs font-bold hover:bg-violet-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {isGeneratingBullets ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />}
+                    {isGeneratingBullets ? 'Generating...' : 'Resume Bullets'}
+                  </button>
+                </div>
+
+                {aiCoverLetter && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      Cover Letter Draft (Editable)
+                    </label>
+                    <textarea
+                      rows={5}
+                      value={aiCoverLetter}
+                      onChange={e => setAiCoverLetter(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-medium bg-white dark:bg-slate-950 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                )}
+
+                {aiResumeBulletsText && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                      Tailored Resume Bullets (Editable)
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={aiResumeBulletsText}
+                      onChange={e => setAiResumeBulletsText(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-violet-200 dark:border-violet-800 text-xs font-medium bg-white dark:bg-slate-950 focus:outline-none focus:border-violet-500"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <Button type="submit" fullWidth className="py-2.5 font-semibold mt-2">Save Changes</Button>
         </form>
       </Modal>

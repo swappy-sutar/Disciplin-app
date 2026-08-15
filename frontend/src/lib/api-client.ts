@@ -413,6 +413,49 @@ export const apiClient = {
     getTodaySession: (date: string) => request<WorkoutSession>('GET', `/workouts/session/today?date=${date}`),
     saveSession: (body: WorkoutSession) => request<WorkoutSession>('POST', '/workouts/session', body),
     getHistory: (startDate: string, endDate: string) => request<WorkoutSession[]>('GET', `/workouts/sessions?startDate=${startDate}&endDate=${endDate}`),
-    getStreak: (today: string) => request<WorkoutStreak>('GET', `/workouts/streak?today=${today}`)
+    getStreak: (today: string) => request<WorkoutStreak>('GET', `/workouts/streak?today=${today}`),
+    getExerciseVideo: (name: string) => request<{ videoId: string | null }>('GET', `/workouts/exercise-video?name=${encodeURIComponent(name)}`)
+  },
+
+  // AI Operations
+  ai: {
+    generateCoverLetter: (body: { jobDescription: string; userProfile?: string; company?: string; role?: string }) =>
+      request<{ coverLetter: string }>('POST', '/ai/cover-letter', body),
+    generateResumeBullets: (body: { jobDescription: string; rawExperience: string; company?: string; role?: string }) =>
+      request<{ bullets: string[] }>('POST', '/ai/resume-bullets', body),
+    generateStudyPlan: (body: { topicName: string; skillLevel: 'beginner' | 'intermediate' | 'advanced' }) =>
+      request<{ subTopics: { title: string }[] }>('POST', '/ai/study-plan', body),
+    
+    // Workout AI operations
+    generateWorkoutSplit: (body: { daysPerWeek: number; goal: string; experienceLevel: string }) =>
+      request<WorkoutSplit['weekMap']>('POST', '/ai/workout-split', body),
+    generateWorkoutSession: (body: {
+      date: string;
+      muscleGroup: string;
+      equipment: string[];
+      fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
+      painFlags?: string[];
+    }) => request<WorkoutSession>('POST', '/ai/workout-session', body),
+    getWorkoutInsights: () => request<{ summary: string; recommendations: { exerciseName: string; action: string; detail: string }[] }>('GET', '/ai/workout-insights'),
+    parseWorkoutLog: (body: { rawText: string; date: string }) =>
+      request<WorkoutSession>('POST', '/ai/parse-workout-log', body),
+    checkPlateau: () => request<{
+      plateauDetected: boolean;
+      affectedExercises: string[];
+      recommendation?: string;
+      suggestedDeloadWeek?: WorkoutSession;
+      message?: string;
+    }>('GET', '/ai/workout-plateau-check'),
+    detectEquipment: (body: { image: string }) =>
+      request<{ detectedEquipment: string[] }>('POST', '/ai/detect-equipment', body),
+    coachChat: (body: { threadId?: string; message: string }) =>
+      request<{ threadId: string; reply: string }>('POST', '/ai/coach-chat', body),
+    regenerateSplit: () => request<{
+      splitRegenerated: boolean;
+      oldWeekMap: WorkoutSplit['weekMap'];
+      newWeekMap: WorkoutSplit['weekMap'];
+      explanation: string;
+      message?: string;
+    }>('POST', '/ai/regenerate-split'),
   }
 };

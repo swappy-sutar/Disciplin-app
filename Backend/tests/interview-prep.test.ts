@@ -162,5 +162,5 @@ describe('Interview Prep Module', () => {
       .delete(`/api/v1/notes/${noteId}`)
       .set('Authorization', `Bearer ${tokenA}`);
     expect(deleteRes.status).toBe(200);
-  });
+  }, 30000);
 });

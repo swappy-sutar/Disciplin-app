@@ -40,7 +40,7 @@ interface UIState {
   isAddApplicationOpen: boolean;
   isAddTopicOpen: boolean;
   isMobileMenuOpen: boolean;
-  
+
   // Auth state
   user: User | null;
   token: string | null;
@@ -48,11 +48,11 @@ interface UIState {
   toggleTheme: () => void;
   accentColor: 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose';
   setAccentColor: (color: 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose') => void;
-  
+
   // Language state
   language: 'en' | 'hi' | 'mr';
   setLanguage: (lang: 'en' | 'hi' | 'mr') => void;
-  
+
   // Actions
   setActiveDate: (date: string) => void;
   setActiveWeekStart: (weekStart: string) => void;
@@ -62,7 +62,7 @@ interface UIState {
   setAddApplicationOpen: (open: boolean) => void;
   setAddTopicOpen: (open: boolean) => void;
   setMobileMenuOpen: (open: boolean) => void;
-  
+
   // Auth Actions
   setAuth: (user: User | null, token: string | null) => void;
   logout: () => void;
@@ -96,7 +96,7 @@ export const useStore = create<UIState>((set) => {
   // Load initial auth state
   const storedUser = localStorage.getItem('disciplin_user');
   const storedToken = localStorage.getItem('disciplin_token');
-  
+
   return {
     activeDate: getLocalDateString(new Date()),
     activeWeekStart: getMondayStr(new Date()),
@@ -106,34 +106,34 @@ export const useStore = create<UIState>((set) => {
     isAddApplicationOpen: false,
     isAddTopicOpen: false,
     isMobileMenuOpen: false,
-    
+
     user: storedUser ? JSON.parse(storedUser) : null,
     token: storedToken || null,
     theme: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_theme') : 'light') as 'light' | 'dark' || 'light',
     accentColor: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_accent_color') : 'emerald') as any || 'emerald',
     language: (typeof window !== 'undefined' ? localStorage.getItem('disciplin_language') : 'en') as any || 'en',
-    
+
     toggleTheme: () => set((state) => {
       const nextTheme = state.theme === 'light' ? 'dark' : 'light';
       if (typeof window !== 'undefined') {
         localStorage.setItem('disciplin_theme', nextTheme);
-        
+
         // Add temporary transition class for full dissolve color fade
         document.documentElement.classList.add('theme-transitioning');
-        
+
         if (nextTheme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
         }
-        
+
         setTimeout(() => {
           document.documentElement.classList.remove('theme-transitioning');
         }, 550);
       }
       return { theme: nextTheme };
     }),
-    
+
     setAccentColor: (color) => set(() => {
       if (typeof window !== 'undefined') {
         localStorage.setItem('disciplin_accent_color', color);
@@ -148,7 +148,7 @@ export const useStore = create<UIState>((set) => {
       }
       return { language: lang };
     }),
-    
+
     setActiveDate: (date) => set({ activeDate: date }),
     setActiveWeekStart: (weekStart) => set({ activeWeekStart: weekStart }),
     setCompareMode: (compareMode) => set({ compareMode }),
@@ -157,7 +157,7 @@ export const useStore = create<UIState>((set) => {
     setAddApplicationOpen: (open) => set({ isAddApplicationOpen: open }),
     setAddTopicOpen: (open) => set({ isAddTopicOpen: open }),
     setMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
-    
+
     setAuth: (user, token) => {
       clearQueryCache();
       if (user && token) {
@@ -269,9 +269,9 @@ if (typeof window !== 'undefined') {
     clearQueryCache();
     const user = localStorage.getItem('disciplin_user');
     const token = localStorage.getItem('disciplin_token');
-    useStore.setState({ 
-      user: user ? JSON.parse(user) : null, 
-      token: token || null 
+    useStore.setState({
+      user: user ? JSON.parse(user) : null,
+      token: token || null
     });
   });
 }
@@ -295,7 +295,7 @@ if (typeof window !== 'undefined') {
   } else {
     document.documentElement.classList.remove('dark');
   }
-  
+
   const storedAccent = localStorage.getItem('disciplin_accent_color') as any || 'emerald';
   applyAccentColor(storedAccent);
 

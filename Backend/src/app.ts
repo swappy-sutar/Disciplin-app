@@ -61,12 +61,14 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cookieParser());
 
 // API Routes with general rate limiting
 app.use('/api/v1', apiLimiter, routes);
+app.use('/api/ai', routes);
+
 
 // Health check endpoint
 app.get('/health', (req, res) => {

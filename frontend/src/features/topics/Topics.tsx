@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useTopics } from '../../hooks/useTopics';
 import { toast } from 'react-hot-toast';
 import { useStore } from '../../app/store';
+import { useGenerateStudyPlan } from '../../hooks/useAI';
+import { apiClient } from '../../lib/api-client';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
@@ -92,10 +94,13 @@ const getMocksForTopic = (title: string) => {
 };
 
 export default function Topics() {
-  const { addNotification } = useStore();
+  const { addNotification, token } = useStore();
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
+  
+  const isBackendOnline = !!token && typeof window !== 'undefined' && window.navigator.onLine && !apiClient.isMockMode();
+  const { generateStudyPlan, isGeneratingStudyPlan } = useGenerateStudyPlan();
   
   // Navigation & Drilldown State
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
@@ -106,6 +111,7 @@ export default function Topics() {
   const [newTopicTitle, setNewTopicTitle] = useState('');
   const [newTopicCategory, setNewTopicCategory] = useState('');
   const [newTopicSubtopics, setNewTopicSubtopics] = useState('');
+  const [skillLevel, setSkillLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [confirmModal, setConfirmModal] = useState<{
     type: 'delete' | 'update';
     id: string;
@@ -250,6 +256,27 @@ export default function Topics() {
     color: donutColors[name] || fallbackColors[idx % fallbackColors.length]
   }));
 
+  const handleGenerateCurriculum = async () => {
+    if (!newTopicTitle.trim()) {
+      toast.error('Please enter a Topic Name to generate a curriculum.');
+      return;
+    }
+    try {
+      const res = await generateStudyPlan({
+        topicName: newTopicTitle,
+        skillLevel: skillLevel,
+      });
+      if (res?.subTopics && res.subTopics.length > 0) {
+        const generatedLines = res.subTopics.map((sub: any) => sub.title).join('\n');
+        setNewTopicSubtopics(generatedLines);
+      } else {
+        toast.error('No subtopics returned.');
+      }
+    } catch (err) {
+      // Handled by toast in useGenerateStudyPlan hook
+    }
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTopicTitle.trim() || !newTopicCategory.trim()) return;
@@ -268,6 +295,7 @@ export default function Topics() {
     setNewTopicTitle('');
     setNewTopicCategory('');
     setNewTopicSubtopics('');
+    setSkillLevel('beginner');
     setAddOpen(false);
   };
 
@@ -1385,7 +1413,7 @@ export default function Topics() {
       {/* Add Topic Modal */}
       <Modal isOpen={isAddOpen} onClose={() => setAddOpen(false)} title="Add Study Topic">
         <form onSubmit={handleCreate} className="space-y-4 font-medium">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Topic Name</label>
               <input 
@@ -1408,9 +1436,50 @@ export default function Topics() {
                 required
               />
             </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Skill Level</label>
+              <select
+                value={skillLevel}
+                onChange={e => setSkillLevel(e.target.value as any)}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-500 font-medium bg-white"
+              >
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Sub-topics (One per line)</label>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sub-topics (One per line)</label>
+              <button
+                type="button"
+                onClick={handleGenerateCurriculum}
+                disabled={isGeneratingStudyPlan || !isBackendOnline}
+                title={!isBackendOnline ? 'Connect to backend to use AI features' : 'Generate curriculum using AI'}
+                className={`flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-lg border transition-all duration-200
+                  ${!isBackendOnline 
+                    ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-900/40 dark:border-slate-800' 
+                    : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 hover:border-emerald-300 text-emerald-600 dark:bg-emerald-950/20 dark:border-emerald-800 dark:hover:bg-emerald-900/30'
+                  }
+                `}
+              >
+                {isGeneratingStudyPlan ? (
+                  <>
+                    <svg className="animate-spin h-3 w-3 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={11} />
+                    <span>Generate curriculum</span>
+                  </>
+                )}
+              </button>
+            </div>
             <textarea
               placeholder="BFS traversal&#10;DFS traversal&#10;Dijkstra's search"
               rows={4}

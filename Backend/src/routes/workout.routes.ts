@@ -10,6 +10,7 @@ const router = Router();
 router.use(protect);
 
 router.get('/exercises', workoutController.getExercises);
+router.get('/exercise-video', workoutController.getExerciseVideo);
 router.get('/split', workoutController.getSplit);
 router.put('/split', validate(updateSplitSchema), workoutController.updateSplit);
 router.get('/session/today', workoutController.getTodaySession);

@@ -20,6 +20,8 @@ export interface IWorkoutSession extends Document {
   exercises: IWorkoutSessionExercise[];
   durationMinutes?: number;
   completed: boolean;
+  completionRate?: number;
+  painFlags?: string[];
   createdAt: Date;
 }
 
@@ -39,7 +41,25 @@ const WorkoutSessionSchema = new Schema<IWorkoutSession>({
   }],
   durationMinutes: { type: Number, default: 0 },
   completed: { type: Boolean, default: false },
+  completionRate: { type: Number, default: 0 },
+  painFlags: [{ type: String }],
   createdAt: { type: Date, default: Date.now }
+});
+
+// Pre-save hook to calculate completionRate from sets completed
+WorkoutSessionSchema.pre<IWorkoutSession>('save', function (next) {
+  let totalSets = 0;
+  let completedSets = 0;
+  if (this.exercises && this.exercises.length > 0) {
+    for (const ex of this.exercises) {
+      if (ex.sets) {
+        totalSets += ex.sets.length;
+        completedSets += ex.sets.filter(s => s.completed).length;
+      }
+    }
+  }
+  this.completionRate = totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0;
+  next();
 });
 
 // Compound index to ensure uniqueness of user sessions per date

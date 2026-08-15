@@ -12,7 +12,7 @@ export type MuscleGroup =
   | 'Cardio'
   | 'FullBody';
 
-export type EquipmentType = 'Dumbbell' | 'Machine' | 'Barbell' | 'Bodyweight' | 'Kettlebell' | 'Bands';
+export type EquipmentType = 'Dumbbell' | 'Machine' | 'Barbell' | 'Bodyweight' | 'Kettlebell' | 'Bands' | 'Cable';
 
 export interface IExercise extends Document {
   name: string;
@@ -32,7 +32,7 @@ const MUSCLE_GROUPS: MuscleGroup[] = [
 ];
 
 const EQUIPMENT_TYPES: EquipmentType[] = [
-  'Dumbbell', 'Machine', 'Barbell', 'Bodyweight', 'Kettlebell', 'Bands',
+  'Dumbbell', 'Machine', 'Barbell', 'Bodyweight', 'Kettlebell', 'Bands', 'Cable',
 ];
 
 const exerciseSchema = new Schema<IExercise>(

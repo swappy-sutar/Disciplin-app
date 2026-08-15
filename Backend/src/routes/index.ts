@@ -15,6 +15,7 @@ import workoutRoutes from './workout.routes';
 import reviewRoutes from './review.routes';
 import adminRoutes from './admin.routes';
 import notificationRoutes from './notification.routes';
+import aiRoutes from './ai.routes';
 
 const router = Router();
 
@@ -34,5 +35,7 @@ router.use('/workouts', workoutRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/admin', adminRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/ai', aiRoutes);
+
 
 export default router;

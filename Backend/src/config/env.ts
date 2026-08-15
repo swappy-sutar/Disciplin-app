@@ -14,6 +14,9 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   FRONTEND_URL: z.string().default('http://localhost:5173'),
   GOOGLE_CLIENT_ID: z.string().default(''),
+  GEMINI_API_KEY: z.string().default(''),
+  GEMINI_BASE_URL: z.string().default('https://generativelanguage.googleapis.com/v1beta/openai/'),
+  GEMINI_MODEL: z.string().default('gemini-3.5-flash-lite'),
 }).refine((data) => {
   if (data.NODE_ENV === 'production') {
     const isDefaultSecret = data.JWT_SECRET === 'super_secret_key_change_me_in_production';
