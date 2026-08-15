@@ -8,6 +8,10 @@ import {
   detectEquipmentOutputSchema,
   regenerateSplitOutputSchema,
 } from '../validations/workoutAi.validation';
+import {
+  goalProgramAiOutputSchema,
+  goalProgressAiOutputSchema,
+} from '../validations/fitnessGoalAi.validation';
 
 function getOpenAIClient(): OpenAI {
   const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
@@ -576,5 +580,199 @@ Low compliance days summary: ${lowDaysSummary}`;
     } catch (error: any) {
       throw new AppError(502, `Failed to regenerate split: ${error.message}`);
     }
+  }
+
+  // 9. Generate goal-aware workout program with nutritional guidance
+  static async generateGoalProgram(input: {
+    daysPerWeek: number;
+    experienceLevel: string;
+    goalType: string;
+    startingWeightKg: number;
+    targetWeightKg: number;
+    activityLevel: string;
+    heightCm?: number;
+    recentWeightTrend?: string;
+  }): Promise<{
+    weekMap: {
+      monday: string;
+      tuesday: string;
+      wednesday: string;
+      thursday: string;
+      friday: string;
+      saturday: string;
+      sunday: string;
+    };
+    calorieDirection: 'deficit' | 'surplus' | 'maintenance';
+    generalGuidance: string;
+  }> {
+    const openai = getOpenAIClient();
+
+    const systemPrompt = `You are a certified fitness and wellness coach.
+Your job is to design a goal-aware weekly workout program and provide high-level wellness/caloric guidance.
+
+CRITICAL INSTRUCTIONS & SAFETY:
+1. You MUST avoid any specific medical claims, prescriptive meal plans, specific supplement dosages, or extreme-diet recommendations.
+2. Keep all advice strictly at a general wellness and healthy lifestyle level (e.g. general hydration, protein prioritization, balanced sleep, and sustainable caloric balance).
+3. The response MUST be a valid JSON object matching this exact schema:
+{
+  "weekMap": {
+    "monday": string,
+    "tuesday": string,
+    "wednesday": string,
+    "thursday": string,
+    "friday": string,
+    "saturday": string,
+    "sunday": string
+  },
+  "calorieDirection": "deficit" | "surplus" | "maintenance",
+  "generalGuidance": "A concise, non-medical wellness & activity guidance paragraph (2-4 sentences)."
+}
+
+Valid muscle groups for weekMap: Chest, Back, Shoulders, Biceps, Triceps, Legs, Glutes, Core, Cardio, FullBody, rest.
+Ensure exactly ${input.daysPerWeek} training days are scheduled, and the remaining ${7 - input.daysPerWeek} days are "rest".`;
+
+    const userPrompt = `Generate a goal-aware workout split and general wellness guidance:
+- Goal: ${input.goalType}
+- Days per week: ${input.daysPerWeek}
+- Experience level: ${input.experienceLevel}
+- Starting weight: ${input.startingWeightKg} kg
+- Target weight: ${input.targetWeightKg} kg
+- Activity level: ${input.activityLevel}
+${input.heightCm ? `- Height: ${input.heightCm} cm` : ''}
+${input.recentWeightTrend ? `- Recent weight trend: ${input.recentWeightTrend}` : ''}
+`;
+
+    let attempts = 0;
+    while (attempts < 2) {
+      try {
+        const response = await callWithRetry(async () => {
+          return await openai.chat.completions.create({
+            model: AIService.modelName,
+            messages: [
+              {
+                role: 'system',
+                content:
+                  attempts === 0
+                    ? systemPrompt
+                    : `${systemPrompt}\nIMPORTANT: Previous response was invalid. Ensure pure JSON matching the required schema with calorieDirection, generalGuidance, and weekMap.`,
+              },
+              { role: 'user', content: userPrompt },
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.7,
+            max_tokens: 1200,
+          });
+        });
+
+        const content = response.choices[0]?.message?.content;
+        if (!content) {
+          throw new AppError(500, 'AI returned empty goal program response.');
+        }
+
+        const parsed = JSON.parse(content);
+        const validated = goalProgramAiOutputSchema.parse(parsed);
+        return validated;
+      } catch (error: any) {
+        attempts++;
+        if (attempts >= 2) {
+          if (error instanceof AppError) {
+            throw error;
+          }
+          throw new AppError(502, `Failed to generate goal program: ${error.message || 'Invalid output format'}`);
+        }
+      }
+    }
+
+    throw new AppError(502, 'Failed to generate goal program from AI.');
+  }
+
+  // 10. Phrase Goal Progress Feedback naturally based on pre-computed metrics
+  static async phraseGoalProgress(input: {
+    goalType: string;
+    startingWeightKg: number;
+    targetWeightKg: number;
+    currentWeightKg: number;
+    weightChangeKg: number;
+    ratePerWeekKg: number;
+    onTrack: boolean;
+    historyDays: number;
+    metricsCount: number;
+  }): Promise<{
+    onTrack: boolean;
+    summary: string;
+    adjustmentSuggestion?: string;
+  }> {
+    const openai = getOpenAIClient();
+
+    const systemPrompt = `You are a supportive, encouraging fitness and wellness coach.
+The server has ALREADY mathematically analyzed the user's weight metrics and determined if they are on track.
+Your task is ONLY to phrase clear, empathetic, and motivating feedback based on these computed facts.
+
+RULES:
+1. Output MUST be valid JSON:
+{
+  "onTrack": ${input.onTrack},
+  "summary": "2-3 sentences summarizing progress and trend naturally and encouragingly.",
+  "adjustmentSuggestion": "Optional 1-2 sentence actionable wellness/habit tweak if needed or next milestone motivation."
+}
+2. The "onTrack" field in your JSON MUST be ${input.onTrack}. Do NOT change it.
+3. Keep all suggestions strictly at a general wellness level (e.g. consistency, recovery, hydration, slight activity pacing). Never prescribe medications, clinical diets, or extreme deficit/surplus advice.`;
+
+    const userPrompt = `
+- Goal: ${input.goalType}
+- Starting weight: ${input.startingWeightKg} kg
+- Target weight: ${input.targetWeightKg} kg
+- Current weight: ${input.currentWeightKg} kg
+- Total change: ${input.weightChangeKg > 0 ? `+${input.weightChangeKg}` : `${input.weightChangeKg}`} kg over ${input.historyDays} days
+- Average change rate: ${input.ratePerWeekKg > 0 ? `+${input.ratePerWeekKg}` : `${input.ratePerWeekKg}`} kg/week
+- Status: ${input.onTrack ? 'ON TRACK' : 'OFF TRACK / SLOW PROGRESS'}
+- Number of logged entries: ${input.metricsCount}
+`;
+
+    let attempts = 0;
+    while (attempts < 2) {
+      try {
+        const response = await callWithRetry(async () => {
+          return await openai.chat.completions.create({
+            model: AIService.modelName,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.7,
+            max_tokens: 800,
+          });
+        });
+
+        const content = response.choices[0]?.message?.content;
+        if (!content) {
+          throw new AppError(500, 'AI returned empty goal progress phrasing response.');
+        }
+
+        const parsed = JSON.parse(content);
+        const validated = goalProgressAiOutputSchema.parse(parsed);
+        return validated;
+      } catch (error: any) {
+        attempts++;
+        if (attempts >= 2) {
+          // Fallback gracefully to calculated deterministic message if Gemini fails
+          return {
+            onTrack: input.onTrack,
+            summary: input.onTrack
+              ? `You are making steady progress towards your ${input.goalType.replace('_', ' ')} goal with an average rate of ${Math.abs(input.ratePerWeekKg).toFixed(2)} kg/week.`
+              : `Your weight trend is currently moving at ${input.ratePerWeekKg.toFixed(2)} kg/week, which is slightly off your target for ${input.goalType.replace('_', ' ')}.`,
+            adjustmentSuggestion: input.onTrack
+              ? 'Keep maintaining your workout split and balanced lifestyle habits.'
+              : 'Consider reviewing your daily hydration, sleep, and overall activity consistency.',
+          };
+        }
+      }
+    }
+
+    return {
+      onTrack: input.onTrack,
+      summary: `You are tracking ${input.metricsCount} logged entries towards your ${input.goalType} goal.`,
+    };
   }
 }

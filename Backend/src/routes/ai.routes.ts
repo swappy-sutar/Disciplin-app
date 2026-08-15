@@ -15,6 +15,9 @@ router.post('/resume-bullets', validate(resumeBulletsSchema), generateResumeBull
 router.post('/study-plan', validate(studyPlanSchema), generateStudyPlan);
 
 import workoutAiRoutes from './workoutAi.routes';
+import goalAiRoutes from './goalAi.routes';
+
 router.use(workoutAiRoutes);
+router.use(goalAiRoutes);
 
 export default router;

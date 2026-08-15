@@ -6,6 +6,8 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./tests/setup.ts'],
     fileParallelism: false,
+    hookTimeout: 30000,
+    testTimeout: 30000,
     sequence: {
       concurrent: false,
     },

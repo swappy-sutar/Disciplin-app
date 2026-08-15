@@ -183,3 +183,42 @@ export interface AppNotification {
   createdAt?: string;
   timestamp?: string;
 }
+
+export type FitnessGoalType = 'weight_loss' | 'weight_gain' | 'muscle_build' | 'recomposition';
+export type FitnessActivityLevel = 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active';
+
+export interface FitnessGoal {
+  _id?: string;
+  userId?: string;
+  goalType: FitnessGoalType;
+  startingWeightKg: number;
+  targetWeightKg: number;
+  heightCm?: number;
+  activityLevel: FitnessActivityLevel;
+  targetDate?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface BodyMetric {
+  _id?: string;
+  userId?: string;
+  date: string;
+  weightKg: number;
+  bodyFatPercent?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface GoalProgramResult {
+  workoutSplit: WorkoutSplit;
+  calorieDirection: 'deficit' | 'surplus' | 'maintenance';
+  generalGuidance: string;
+}
+
+export interface GoalProgressResult {
+  onTrack: boolean | null;
+  summary: string;
+  adjustmentSuggestion?: string;
+}

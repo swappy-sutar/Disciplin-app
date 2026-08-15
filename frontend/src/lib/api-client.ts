@@ -11,7 +11,11 @@ import type {
   WorkoutSplit,
   WorkoutSession,
   WorkoutStreak,
-  AppNotification
+  AppNotification,
+  FitnessGoal,
+  BodyMetric,
+  GoalProgramResult,
+  GoalProgressResult
 } from '../types';
 
 let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
@@ -417,6 +421,20 @@ export const apiClient = {
     getExerciseVideo: (name: string) => request<{ videoId: string | null }>('GET', `/workouts/exercise-video?name=${encodeURIComponent(name)}`)
   },
 
+  // Fitness Goals Operations
+  fitnessGoals: {
+    getActive: () => request<FitnessGoal | null>('GET', '/fitness-goals/active'),
+    create: (body: Omit<FitnessGoal, '_id' | 'userId' | 'isActive' | 'createdAt' | 'updatedAt'>) =>
+      request<FitnessGoal>('POST', '/fitness-goals', body),
+  },
+
+  // Body Metrics Operations
+  bodyMetrics: {
+    list: (days?: number) => request<BodyMetric[]>('GET', `/body-metrics${days ? `?days=${days}` : ''}`),
+    log: (body: { date: string; weightKg: number; bodyFatPercent?: number }) =>
+      request<BodyMetric>('POST', '/body-metrics', body),
+  },
+
   // AI Operations
   ai: {
     generateCoverLetter: (body: { jobDescription: string; userProfile?: string; company?: string; role?: string }) =>
@@ -457,5 +475,11 @@ export const apiClient = {
       explanation: string;
       message?: string;
     }>('POST', '/ai/regenerate-split'),
+
+    // Goal-Aware AI operations
+    generateGoalProgram: (body: { daysPerWeek: number; experienceLevel: string }) =>
+      request<GoalProgramResult>('POST', '/ai/goal-program', body),
+    checkGoalProgress: (days?: number) =>
+      request<GoalProgressResult>('GET', `/ai/goal-progress${days ? `?days=${days}` : ''}`),
   }
 };

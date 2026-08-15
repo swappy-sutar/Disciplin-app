@@ -30,8 +30,10 @@ import {
   Camera,
   AlertTriangle,
   RefreshCw,
-  X
+  X,
+  Target
 } from 'lucide-react';
+import { FitnessGoalPanel } from './FitnessGoalPanel';
 import {
   useGenerateWorkoutSession,
   useCheckPlateau,
@@ -53,7 +55,7 @@ import {
 export default function Workouts() {
   const { activeDate, setActiveDate, setActiveWeekStart, addNotification } = useStore();
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'today' | 'split' | 'library' | 'progress' | 'coach'>('today');
+  const [activeTab, setActiveTab] = useState<'today' | 'split' | 'goal' | 'library' | 'progress' | 'coach'>('today');
   
   // Custom Date Tracking for Today's tab
   const [targetDateStr, setTargetDateStr] = useState(activeDate);
@@ -593,6 +595,13 @@ export default function Workouts() {
             >
               <Calendar size={13} className={activeTab === 'split' ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500'} />
               {t.workoutSplit || 'Weekly Split'}
+            </button>
+            <button 
+              onClick={() => setActiveTab('goal')}
+              className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'goal' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
+            >
+              <Target size={13} className={activeTab === 'goal' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
+              {'Fitness Goal'}
             </button>
             <button 
               onClick={() => setActiveTab('library')}
@@ -1147,6 +1156,12 @@ export default function Workouts() {
             </Card>
           )}
 
+        </div>
+      )}
+
+      {activeTab === 'goal' && (
+        <div className="space-y-6 select-none animate-fade-in">
+          <FitnessGoalPanel />
         </div>
       )}
 

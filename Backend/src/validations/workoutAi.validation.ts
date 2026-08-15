@@ -7,7 +7,7 @@ const equipmentTypes = ['Dumbbell', 'Machine', 'Barbell', 'Bodyweight', 'Kettleb
 export const workoutSplitAiInputSchema = z.object({
   body: z.object({
     daysPerWeek: z.number().int().min(1).max(7, 'Days per week must be between 1 and 7'),
-    goal: z.enum(['strength', 'hypertrophy', 'endurance', 'general_fitness', 'weight_loss']),
+    goal: z.enum(['strength', 'hypertrophy', 'endurance', 'general_fitness', 'weight_loss', 'weight_gain', 'muscle_build']),
     experienceLevel: z.enum(['beginner', 'intermediate', 'advanced']),
   }),
 });
