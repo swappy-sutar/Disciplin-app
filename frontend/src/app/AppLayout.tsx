@@ -34,6 +34,7 @@ import { CalendarPicker } from '../components/ui/CalendarPicker';
 
 import { Logo } from '../components/ui/Logo';
 import { GoToTop } from '../components/ui/GoToTop';
+import { InstallPWA } from '../components/ui/InstallPWA';
 import { useTranslation } from '../hooks/useTranslation';
 
 interface AppLayoutProps {
@@ -667,6 +668,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             : "bottom-20 md:bottom-6 right-5 md:right-6"
         }
       />
+
+      {/* PWA Install Prompt */}
+      <InstallPWA />
 
     </div>
   );

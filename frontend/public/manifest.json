@@ -1,11 +1,24 @@
 {
+  "id": "/",
   "short_name": "Disciplin",
   "name": "Disciplin — Build Habits, Achieve Goals",
   "description": "Disciplin is a premium productivity dashboard to track daily timetables, habits, weekly goals, study progress, and job applications.",
+  "lang": "en",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon-32x32.png",
       "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
       "type": "image/png"
     },
     {
@@ -27,6 +40,11 @@
       "purpose": "maskable"
     },
     {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
       "src": "/favicon.svg",
       "type": "image/svg+xml",
       "sizes": "any",
@@ -37,6 +55,16 @@
   "background_color": "#0B0C10",
   "theme_color": "#10B981",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait",
-  "categories": ["productivity", "utilities"]
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "/disciplin_logo_system.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "form_factor": "narrow",
+      "label": "Disciplin App Overview"
+    }
+  ]
 }
