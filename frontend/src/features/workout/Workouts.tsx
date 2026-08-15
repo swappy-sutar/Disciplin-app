@@ -827,11 +827,17 @@ export default function Workouts() {
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150/40 dark:border-gray-850 pb-4 mb-4">
                             <div className="flex items-center gap-3">
                               {/* Thumbnail preview */}
+                              {exercise.imageUrl ? (
                               <img 
-                                src={exercise.imageUrl} 
+                                src={exercise.imageUrl || undefined} 
                                 alt={exercise.name} 
                                 className="w-12 h-12 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0" 
                               />
+                              ) : (
+                                <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-gray-150/80 dark:border-gray-850 shrink-0 flex items-center justify-center text-slate-400">
+                                  <Dumbbell size={18} />
+                                </div>
+                              )}
                               <div>
                                 <h4 className="text-sm font-black text-gray-900 dark:text-white leading-tight flex items-center gap-2">
                                   {exercise.name}
@@ -1212,11 +1218,17 @@ export default function Workouts() {
                   <Card key={ex._id} className="group hover:border-primary-accent/40 hover:shadow-md transition-all duration-300">
                     <div className="flex items-start gap-4">
                       {/* Image Thumbnail */}
+                      {ex.imageUrl ? (
                       <img 
-                        src={ex.imageUrl} 
+                        src={ex.imageUrl || undefined} 
                         alt={ex.name} 
                         className="w-16 h-16 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0" 
                       />
+                      ) : (
+                        <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 border border-gray-150/80 dark:border-gray-850 shrink-0 flex items-center justify-center text-slate-400">
+                          <Dumbbell size={22} />
+                        </div>
+                      )}
                       
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <h4 className="text-xs font-black text-gray-900 dark:text-white truncate">
