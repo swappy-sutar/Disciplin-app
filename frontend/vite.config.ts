@@ -9,23 +9,33 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
-    // Raise warning threshold slightly — we're actively splitting below
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // React core — cached long-term, rarely changes
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Data fetching / state
-          'vendor-query': ['@tanstack/react-query'],
-          // Charts library — large, isolate it
-          'vendor-charts': ['recharts'],
-          // Animation library
-          'vendor-motion': ['framer-motion'],
-          // Date utility
-          'vendor-date': ['date-fns'],
-          // Toast notifications
-          'vendor-toast': ['react-hot-toast'],
+        // Vite 8 (rolldown) requires manualChunks as a function
+        manualChunks(id) {
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+            return 'vendor-charts';
+          }
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-motion';
+          }
+          if (id.includes('node_modules/date-fns')) {
+            return 'vendor-date';
+          }
+          if (id.includes('node_modules/react-hot-toast')) {
+            return 'vendor-toast';
+          }
+          if (id.includes('node_modules/@tanstack')) {
+            return 'vendor-query';
+          }
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/react-router-dom/')
+          ) {
+            return 'vendor-react';
+          }
         },
       },
     },
