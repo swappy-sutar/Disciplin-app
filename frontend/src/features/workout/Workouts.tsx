@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useWorkouts } from '../../hooks/useWorkouts';
 import { useStore } from '../../app/store';
 import { Card } from '../../components/ui/Card';
@@ -401,8 +402,7 @@ export default function Workouts() {
   };
 
   const toastSuccess = (msg: string) => {
-    // Standard react-hot-toast fallback inside components
-    import('react-hot-toast').then(m => m.toast.success(msg));
+    toast.success(msg);
   };
 
   // Templates split appliers

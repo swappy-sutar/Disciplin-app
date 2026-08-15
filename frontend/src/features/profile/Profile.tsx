@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { toast } from 'react-hot-toast';
 import { User as UserIcon, Mail, Lock, Eye, EyeOff, Bell, Globe } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { requestNotificationPermission } from '../../utils/notifications';
 
 const languages = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
@@ -32,7 +33,6 @@ export default function Profile() {
     const nextState = !systemNotifications;
     
     if (nextState) {
-      const { requestNotificationPermission } = await import('../../utils/notifications');
       const granted = await requestNotificationPermission();
       if (granted) {
         localStorage.setItem('disciplin_system_notifications', 'true');
