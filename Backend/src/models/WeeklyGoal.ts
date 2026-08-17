@@ -18,4 +18,7 @@ const WeeklyGoalSchema = new Schema<IWeeklyGoal>({
   createdAt: { type: Date, default: Date.now },
 });
 
+WeeklyGoalSchema.index({ userId: 1, weekStartDate: 1 });
+WeeklyGoalSchema.index({ userId: 1, createdAt: -1 });
+
 export const WeeklyGoal = model<IWeeklyGoal>('WeeklyGoal', WeeklyGoalSchema);

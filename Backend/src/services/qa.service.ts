@@ -4,7 +4,7 @@ import { NotFoundError } from '../utils/custom-errors';
 
 export const getQAsByTopic = async (userId: string, topicId: string) => {
   await checkTopicOwnership(topicId, userId);
-  return QAItem.find({ topicId, userId }).sort({ createdAt: -1 });
+  return QAItem.find({ topicId, userId }).sort({ createdAt: -1 }).lean();
 };
 
 export const createQA = async (userId: string, topicId: string, data: any) => {

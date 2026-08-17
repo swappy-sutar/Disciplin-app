@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { TimetableBlock } from '../models/TimetableBlock';
 import { NotFoundError } from '../utils/custom-errors';
 import { getOrCreateBlocks, ensureMetaExists } from '../services/timetable.service';
+import { invalidateDashboardCache } from '../utils/cache';
 
 export const getBlocks = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -37,6 +38,7 @@ export const createBlock = async (req: Request, res: Response, next: NextFunctio
     });
 
     await block.save();
+    invalidateDashboardCache(userId);
 
     res.status(201).json({
       success: true,
@@ -62,6 +64,8 @@ export const updateBlock = async (req: Request, res: Response, next: NextFunctio
       throw new NotFoundError('Timetable block not found');
     }
 
+    if (userId) invalidateDashboardCache(userId);
+
     res.status(200).json({
       success: true,
       data: block,
@@ -82,6 +86,8 @@ export const deleteBlock = async (req: Request, res: Response, next: NextFunctio
       throw new NotFoundError('Timetable block not found');
     }
 
+    if (userId) invalidateDashboardCache(userId);
+
     res.status(200).json({
       success: true,
       message: 'Timetable block deleted successfully',
@@ -100,7 +106,7 @@ export const copyTemplate = async (req: Request, res: Response, next: NextFuncti
     await TimetableBlock.deleteMany({ userId, date: targetDate });
 
     // Fetch source blocks
-    const sourceBlocks = await TimetableBlock.find({ userId, date: sourceDate });
+    const sourceBlocks = await TimetableBlock.find({ userId, date: sourceDate }).lean();
 
     // Copy to target date
     const copiedBlocks = sourceBlocks.map((block) => {
@@ -119,6 +125,8 @@ export const copyTemplate = async (req: Request, res: Response, next: NextFuncti
     if (copiedBlocks.length > 0) {
       await TimetableBlock.insertMany(copiedBlocks);
     }
+
+    if (userId) invalidateDashboardCache(userId);
 
     res.status(200).json({
       success: true,

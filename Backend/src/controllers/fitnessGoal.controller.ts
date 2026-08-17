@@ -35,7 +35,9 @@ export const createFitnessGoal = async (req: Request, res: Response, next: NextF
 export const getActiveFitnessGoal = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id!;
-    const goal = await FitnessGoal.findOne({ userId, isActive: true }).sort({ createdAt: -1 });
+    const goal = await FitnessGoal.findOne({ userId, isActive: true })
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -61,7 +63,7 @@ export const logBodyMetric = async (req: Request, res: Response, next: NextFunct
         ...(bodyFatPercent !== undefined ? { bodyFatPercent } : {}),
       },
       { new: true, upsert: true, setDefaultsOnInsert: true }
-    );
+    ).lean();
 
     res.status(200).json({
       success: true,
@@ -77,15 +79,42 @@ export const getBodyMetrics = async (req: Request, res: Response, next: NextFunc
   try {
     const userId = req.user?.id!;
     const days = req.query.days ? parseInt(req.query.days as string, 10) : 90;
+    const { page, limit } = req.query;
 
     const lookbackDate = new Date();
     lookbackDate.setDate(lookbackDate.getDate() - days);
     const startDateStr = lookbackDate.toISOString().split('T')[0];
 
-    const metrics = await BodyMetric.find({
+    const filter = {
       userId,
       date: { $gte: startDateStr },
-    }).sort({ date: 1 }); // Sorted ascending for time-series charts
+    };
+
+    const query = BodyMetric.find(filter).sort({ date: 1 }).lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 30));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [metrics, total] = await Promise.all([
+        query.skip(skip).limit(limitNum),
+        BodyMetric.countDocuments(filter),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: metrics,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+    }
+
+    const metrics = await query;
 
     res.status(200).json({
       success: true,

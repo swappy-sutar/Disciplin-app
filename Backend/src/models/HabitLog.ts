@@ -17,5 +17,6 @@ const HabitLogSchema = new Schema<IHabitLog>({
 });
 
 HabitLogSchema.index({ userId: 1, habitId: 1, date: 1 }, { unique: true });
+HabitLogSchema.index({ userId: 1, date: 1, isDone: 1 });
 
 export const HabitLog = model<IHabitLog>('HabitLog', HabitLogSchema);

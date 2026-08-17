@@ -12,15 +12,17 @@ export const generateGoalProgram = async (req: Request, res: Response, next: Nex
     const { daysPerWeek, experienceLevel } = req.body;
 
     // Fetch active fitness goal
-    const activeGoal = await FitnessGoal.findOne({ userId, isActive: true });
+    const activeGoal = await FitnessGoal.findOne({ userId, isActive: true }).lean();
     if (!activeGoal) {
       throw new BadRequestError('Please create an active fitness goal first before generating a goal program.');
     }
 
     // Fetch recent 3 body metrics for weight trend context
     const recentMetrics = await BodyMetric.find({ userId })
+      .select('date weightKg')
       .sort({ date: -1 })
-      .limit(3);
+      .limit(3)
+      .lean();
 
     let recentWeightTrend: string | undefined;
     if (recentMetrics.length >= 2) {
@@ -81,7 +83,7 @@ export const checkGoalProgress = async (req: Request, res: Response, next: NextF
     const days = req.query.days ? parseInt(req.query.days as string, 10) : 30;
 
     // Fetch active fitness goal
-    const activeGoal = await FitnessGoal.findOne({ userId, isActive: true });
+    const activeGoal = await FitnessGoal.findOne({ userId, isActive: true }).lean();
     if (!activeGoal) {
       throw new NotFoundError('No active fitness goal found. Please set a goal first.');
     }
@@ -94,7 +96,10 @@ export const checkGoalProgress = async (req: Request, res: Response, next: NextF
     const metrics = await BodyMetric.find({
       userId,
       date: { $gte: startDateStr },
-    }).sort({ date: 1 }); // Chronological order
+    })
+      .select('date weightKg')
+      .sort({ date: 1 })
+      .lean(); // Chronological order
 
     // If fewer than 3 entries, skip Gemini and return friendly guidance message
     if (metrics.length < 3) {

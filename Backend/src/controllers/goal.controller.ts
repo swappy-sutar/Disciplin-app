@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { WeeklyGoal } from '../models/WeeklyGoal';
 import { NotFoundError } from '../utils/custom-errors';
+import { invalidateDashboardCache } from '../utils/cache';
 
 const getMondayStr = (d: Date = new Date()): string => {
   const day = d.getDay();
@@ -15,7 +16,7 @@ export const getGoals = async (req: Request, res: Response, next: NextFunction) 
     const userId = req.user?.id!;
     const week = (req.query.week as string) || getMondayStr();
 
-    const goals = await WeeklyGoal.find({ userId, weekStartDate: week });
+    const goals = await WeeklyGoal.find({ userId, weekStartDate: week }).lean();
 
     res.status(200).json({
       success: true,
@@ -39,6 +40,7 @@ export const createGoal = async (req: Request, res: Response, next: NextFunction
     });
 
     await goal.save();
+    invalidateDashboardCache(userId);
 
     res.status(201).json({
       success: true,
@@ -64,6 +66,8 @@ export const updateGoal = async (req: Request, res: Response, next: NextFunction
       throw new NotFoundError('Weekly goal not found');
     }
 
+    invalidateDashboardCache(userId);
+
     res.status(200).json({
       success: true,
       data: goal,
@@ -84,6 +88,8 @@ export const deleteGoal = async (req: Request, res: Response, next: NextFunction
       throw new NotFoundError('Weekly goal not found');
     }
 
+    invalidateDashboardCache(userId);
+
     res.status(200).json({
       success: true,
       message: 'Weekly goal deleted successfully',
@@ -96,7 +102,33 @@ export const deleteGoal = async (req: Request, res: Response, next: NextFunction
 export const getGoalsHistory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id!;
-    const goals = await WeeklyGoal.find({ userId }).sort({ weekStartDate: -1 });
+    const { page, limit } = req.query;
+
+    const query = WeeklyGoal.find({ userId }).sort({ weekStartDate: -1 }).lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [goals, total] = await Promise.all([
+        query.skip(skip).limit(limitNum),
+        WeeklyGoal.countDocuments({ userId }),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: goals,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+    }
+
+    const goals = await query;
 
     res.status(200).json({
       success: true,

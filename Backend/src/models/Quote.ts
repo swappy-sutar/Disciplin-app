@@ -18,4 +18,6 @@ const QuoteSchema = new Schema<IQuote>({
   createdAt: { type: Date, default: Date.now },
 });
 
+QuoteSchema.index({ isCustom: 1, userId: 1 });
+
 export const Quote = model<IQuote>('Quote', QuoteSchema);

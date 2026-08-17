@@ -37,4 +37,8 @@ TopicSchema.pre<ITopic>('save', function (next) {
   next();
 });
 
+TopicSchema.index({ userId: 1, progressPercent: 1, createdAt: -1 });
+TopicSchema.index({ userId: 1, category: 1, createdAt: -1 });
+TopicSchema.index({ userId: 1, createdAt: -1 });
+
 export const Topic = model<ITopic>('Topic', TopicSchema);

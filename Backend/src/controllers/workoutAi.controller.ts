@@ -3,7 +3,7 @@ import { AIService } from '../services/ai.service';
 import { WorkoutSession } from '../models/WorkoutSession';
 import { WorkoutSplit } from '../models/WorkoutSplit';
 import { WorkoutCoachThread } from '../models/WorkoutCoachThread';
-import { resolveExercise } from '../utils/resolveExercise';
+import { resolveExercise, resolveExercisesBatch } from '../utils/resolveExercise';
 import { BadRequestError, NotFoundError } from '../utils/custom-errors';
 
 const weekdaysOrder = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
@@ -54,7 +54,9 @@ export const generateWorkoutSession = async (req: Request, res: Response, next: 
     // Autopilot: Fetch previous session context for progressive overload
     const lastSession = await WorkoutSession.findOne({ userId, muscleGroup })
       .sort({ date: -1 })
-      .populate('exercises.exerciseId');
+      .select('date muscleGroup exercises')
+      .populate('exercises.exerciseId', 'name')
+      .lean();
 
     const prevSessionSummary = lastSession ? summarizeSession(lastSession) : undefined;
 
@@ -68,17 +70,20 @@ export const generateWorkoutSession = async (req: Request, res: Response, next: 
       painFlags,
     });
 
-    // Resolve AI exerciseName to Mongo Exercise IDs
-    const exercises = [];
+    // Resolve AI exerciseName to Mongo Exercise IDs in a single batch
+    let exercises: any[] = [];
     if (aiSession.exercises && aiSession.exercises.length > 0) {
-      for (const ex of aiSession.exercises) {
-        const exerciseId = await resolveExercise(ex.exerciseName, muscleGroup);
-        exercises.push({
-          exerciseId,
-          sets: ex.sets,
-          notes: ex.notes || '',
-        });
-      }
+      const exerciseRequests = aiSession.exercises.map((ex: any) => ({
+        exerciseName: ex.exerciseName,
+        muscleGroup,
+      }));
+      const resolvedDocs = await resolveExercisesBatch(exerciseRequests);
+
+      exercises = aiSession.exercises.map((ex: any, idx: number) => ({
+        exerciseId: resolvedDocs[idx],
+        sets: ex.sets,
+        notes: ex.notes || '',
+      }));
     }
 
     res.status(200).json({
@@ -142,16 +147,19 @@ export const parseWorkoutLog = async (req: Request, res: Response, next: NextFun
     const { rawText, date } = req.body;
     const aiSession = await AIService.parseWorkoutLog({ rawText, date });
 
-    const exercises = [];
+    let exercises: any[] = [];
     if (aiSession.exercises && aiSession.exercises.length > 0) {
-      for (const ex of aiSession.exercises) {
-        const exerciseId = await resolveExercise(ex.exerciseName, aiSession.muscleGroup);
-        exercises.push({
-          exerciseId,
-          sets: ex.sets,
-          notes: ex.notes || '',
-        });
-      }
+      const exerciseRequests = aiSession.exercises.map((ex: any) => ({
+        exerciseName: ex.exerciseName,
+        muscleGroup: aiSession.muscleGroup,
+      }));
+      const resolvedDocs = await resolveExercisesBatch(exerciseRequests);
+
+      exercises = aiSession.exercises.map((ex: any, idx: number) => ({
+        exerciseId: resolvedDocs[idx],
+        sets: ex.sets,
+        notes: ex.notes || '',
+      }));
     }
 
     res.status(200).json({
@@ -179,7 +187,9 @@ export const checkWorkoutPlateau = async (req: Request, res: Response, next: Nex
     
     const sessions = await WorkoutSession.find({ userId, date: { $gte: startDate } })
       .sort({ date: 1 })
-      .populate('exercises.exerciseId');
+      .select('date muscleGroup exercises')
+      .populate('exercises.exerciseId', 'name')
+      .lean();
 
     if (sessions.length < 3) {
       return res.status(200).json({
@@ -252,16 +262,19 @@ export const checkWorkoutPlateau = async (req: Request, res: Response, next: Nex
       prevSessionSummary: lastSessionsSummary,
     });
 
-    const exercises = [];
+    let exercises: any[] = [];
     if (deloadSession.exercises && deloadSession.exercises.length > 0) {
-      for (const ex of deloadSession.exercises) {
-        const exerciseId = await resolveExercise(ex.exerciseName, deloadSession.muscleGroup);
-        exercises.push({
-          exerciseId,
-          sets: ex.sets,
-          notes: ex.notes || '',
-        });
-      }
+      const exerciseRequests = deloadSession.exercises.map((ex: any) => ({
+        exerciseName: ex.exerciseName,
+        muscleGroup: deloadSession.muscleGroup,
+      }));
+      const resolvedDocs = await resolveExercisesBatch(exerciseRequests);
+
+      exercises = deloadSession.exercises.map((ex: any, idx: number) => ({
+        exerciseId: resolvedDocs[idx],
+        sets: ex.sets,
+        notes: ex.notes || '',
+      }));
     }
 
     res.status(200).json({

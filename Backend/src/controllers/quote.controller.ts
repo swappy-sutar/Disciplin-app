@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Quote } from '../models/Quote';
 import { NotFoundError } from '../utils/custom-errors';
+import { invalidateDashboardCache } from '../utils/cache';
 
 const getHashIndex = (str: string, max: number): number => {
   if (max <= 0) return 0;
@@ -20,7 +21,9 @@ export const getTodayQuote = async (req: Request, res: Response, next: NextFunct
     // Find all quotes available to this user (global quotes OR user's custom quotes)
     const quotes = await Quote.find({
       $or: [{ isCustom: false }, { isCustom: true, userId }],
-    });
+    })
+      .select('text author isFavorite isCustom')
+      .lean();
 
     if (quotes.length === 0) {
       return res.status(200).json({
@@ -59,6 +62,7 @@ export const createQuote = async (req: Request, res: Response, next: NextFunctio
     });
 
     await quote.save();
+    invalidateDashboardCache(userId);
 
     res.status(201).json({
       success: true,
@@ -86,6 +90,7 @@ export const toggleFavorite = async (req: Request, res: Response, next: NextFunc
 
     quote.isFavorite = !quote.isFavorite;
     await quote.save();
+    invalidateDashboardCache(userId);
 
     res.status(200).json({
       success: true,

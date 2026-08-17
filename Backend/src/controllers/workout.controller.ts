@@ -3,6 +3,7 @@ import { Exercise } from '../models/Exercise';
 import { WorkoutSplit } from '../models/WorkoutSplit';
 import { WorkoutSession } from '../models/WorkoutSession';
 import { NotFoundError, BadRequestError } from '../utils/custom-errors';
+import { invalidateDashboardCache } from '../utils/cache';
 
 const getWeekdayName = (dateStr: string): 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday' => {
   const [year, month, day] = dateStr.split('-').map(Number);
@@ -39,7 +40,7 @@ export const getExercises = async (req: Request, res: Response, next: NextFuncti
       filter.equipment = equipment;
     }
 
-    const exercises = await Exercise.find(filter).sort({ name: 1 });
+    const exercises = await Exercise.find(filter).sort({ name: 1 }).lean();
 
     res.status(200).json({
       success: true,
@@ -55,9 +56,9 @@ export const getSplit = async (req: Request, res: Response, next: NextFunction) 
   try {
     const userId = req.user?.id!;
 
-    let split = await WorkoutSplit.findOne({ userId, active: true });
+    let split = await WorkoutSplit.findOne({ userId, active: true }).lean();
     if (!split) {
-      split = new WorkoutSplit({
+      const newSplit = new WorkoutSplit({
         userId,
         weekMap: {
           monday: 'rest',
@@ -69,7 +70,8 @@ export const getSplit = async (req: Request, res: Response, next: NextFunction) 
           sunday: 'rest'
         }
       });
-      await split.save();
+      await newSplit.save();
+      split = newSplit.toObject();
     }
 
     res.status(200).json({
@@ -109,7 +111,9 @@ export const getTodaySession = async (req: Request, res: Response, next: NextFun
     const dateStr = (req.query.date as string) || new Date().toISOString().split('T')[0];
 
     // Find if user already has a logged session for this date
-    let session = await WorkoutSession.findOne({ userId, date: dateStr }).populate('exercises.exerciseId');
+    let session = await WorkoutSession.findOne({ userId, date: dateStr })
+      .populate('exercises.exerciseId')
+      .lean();
 
     if (session) {
       res.status(200).json({
@@ -121,9 +125,9 @@ export const getTodaySession = async (req: Request, res: Response, next: NextFun
 
     // Resolve split for the date's weekday
     const weekday = getWeekdayName(dateStr);
-    let split = await WorkoutSplit.findOne({ userId, active: true });
+    let split = await WorkoutSplit.findOne({ userId, active: true }).lean();
     if (!split) {
-      split = new WorkoutSplit({
+      const newSplit = new WorkoutSplit({
         userId,
         weekMap: {
           monday: 'rest',
@@ -135,10 +139,11 @@ export const getTodaySession = async (req: Request, res: Response, next: NextFun
           sunday: 'rest'
         }
       });
-      await split.save();
+      await newSplit.save();
+      split = newSplit.toObject();
     }
 
-    const muscleGroup = split.weekMap[weekday] || 'rest';
+    const muscleGroup = (split as any).weekMap[weekday] || 'rest';
 
     // If rest day, return empty template
     if (muscleGroup === 'rest') {
@@ -156,7 +161,7 @@ export const getTodaySession = async (req: Request, res: Response, next: NextFun
     }
 
     // Find exercises matching the split's muscle group
-    const matchingExercises = await Exercise.find({ muscleGroup }).sort({ name: 1 });
+    const matchingExercises = await Exercise.find({ muscleGroup }).sort({ name: 1 }).lean();
 
     const exercisesTemplate = matchingExercises.map((ex) => ({
       exerciseId: ex,
@@ -203,6 +208,8 @@ export const saveSession = async (req: Request, res: Response, next: NextFunctio
       { upsert: true, new: true, runValidators: true }
     ).populate('exercises.exerciseId');
 
+    invalidateDashboardCache(userId);
+
     res.status(200).json({
       success: true,
       data: session
@@ -216,16 +223,46 @@ export const saveSession = async (req: Request, res: Response, next: NextFunctio
 export const getHistory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id!;
-    const { startDate, endDate } = req.query as { startDate: string; endDate: string };
+    const { startDate, endDate, page, limit } = req.query as {
+      startDate?: string;
+      endDate?: string;
+      page?: string;
+      limit?: string;
+    };
 
     const filter: any = { userId };
     if (startDate && endDate) {
       filter.date = { $gte: startDate, $lte: endDate };
     }
 
-    const sessions = await WorkoutSession.find(filter)
+    const query = WorkoutSession.find(filter)
       .populate('exercises.exerciseId')
-      .sort({ date: -1 });
+      .sort({ date: -1 })
+      .lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [sessions, total] = await Promise.all([
+        query.skip(skip).limit(limitNum),
+        WorkoutSession.countDocuments(filter),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: sessions,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+    }
+
+    const sessions = await query;
 
     res.status(200).json({
       success: true,
@@ -245,7 +282,9 @@ export const getStreak = async (req: Request, res: Response, next: NextFunction)
     const completedSessions = await WorkoutSession.find({
       userId,
       completed: true
-    }).select('date');
+    })
+      .select('date')
+      .lean();
 
     const completedDates = new Set(completedSessions.map((s) => s.date));
 

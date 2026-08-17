@@ -4,7 +4,7 @@ import { NotFoundError } from '../utils/custom-errors';
 
 export const getNotesByTopic = async (userId: string, topicId: string) => {
   await checkTopicOwnership(topicId, userId);
-  return Note.find({ topicId, userId }).sort({ createdAt: -1 });
+  return Note.find({ topicId, userId }).sort({ createdAt: -1 }).lean();
 };
 
 export const createNote = async (userId: string, topicId: string, data: any) => {

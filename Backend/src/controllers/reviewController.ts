@@ -4,9 +4,35 @@ import { BadRequestError } from '../utils/custom-errors';
 
 export const getReviews = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const reviews = await Review.find({ isApproved: true })
-      .sort({ createdAt: -1 })
-      .limit(20);
+    const { page, limit } = req.query;
+    const filter = { isApproved: true };
+
+    const reviewQuery = Review.find(filter).sort({ createdAt: -1 }).lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [reviews, total] = await Promise.all([
+        reviewQuery.skip(skip).limit(limitNum),
+        Review.countDocuments(filter),
+      ]);
+
+      res.json({
+        success: true,
+        data: reviews,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+      return;
+    }
+
+    const reviews = await reviewQuery.limit(20);
 
     res.json({
       success: true,

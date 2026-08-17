@@ -33,6 +33,7 @@ const QAItemSchema = new Schema<IQAItem>(
   { timestamps: true }
 );
 
-QAItemSchema.index({ topicId: 1, userId: 1 });
+QAItemSchema.index({ topicId: 1, userId: 1, createdAt: -1 });
+QAItemSchema.index({ userId: 1, createdAt: -1 });
 
 export const QAItem = model<IQAItem>('QAItem', QAItemSchema);

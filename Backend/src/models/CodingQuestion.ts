@@ -43,6 +43,7 @@ const CodingQuestionSchema = new Schema<ICodingQuestion>(
   { timestamps: true }
 );
 
-CodingQuestionSchema.index({ topicId: 1, userId: 1 });
+CodingQuestionSchema.index({ topicId: 1, userId: 1, createdAt: -1 });
+CodingQuestionSchema.index({ userId: 1, createdAt: -1 });
 
 export const CodingQuestion = model<ICodingQuestion>('CodingQuestion', CodingQuestionSchema);

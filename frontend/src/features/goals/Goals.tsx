@@ -15,8 +15,6 @@ import { format, parseISO, addDays, endOfWeek, subDays } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Flag, 
-  ChevronLeft, 
-  ChevronRight, 
   Plus, 
   Clock, 
   Trash2, 
@@ -49,21 +47,6 @@ export default function Goals() {
   if (isLoading) {
     return <PageSkeleton cards={3} rows={4} />;
   }
-
-  // Calculate dates
-  const weekStart = parseISO(activeWeekStart);
-  const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
-  const weekRangeLabel = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
-
-  const handlePrevWeek = () => {
-    const prev = subDays(weekStart, 7);
-    setActiveWeekStart(format(prev, 'yyyy-MM-dd'));
-  };
-
-  const handleNextWeek = () => {
-    const next = addDays(weekStart, 7);
-    setActiveWeekStart(format(next, 'yyyy-MM-dd'));
-  };
 
   // Completion calculation
   const totalGoals = goals.length;
@@ -138,25 +121,8 @@ export default function Goals() {
           </p>
         </div>
         
-        {/* Buttons and Switcher */}
+        {/* Buttons and Actions */}
         <div className="flex items-center gap-4 self-start md:self-center">
-          {/* Week Selector switcher */}
-          <div className="flex items-center bg-white border border-gray-100 rounded-full px-2 py-0.5 text-xs md:text-sm font-medium text-gray-600 shadow-sm select-none">
-            <button 
-              onClick={handlePrevWeek}
-              className="p-1.5 rounded-full hover:bg-gray-50 text-gray-500 transition-colors cursor-pointer"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <span className="font-semibold px-2">{weekRangeLabel}</span>
-            <button 
-              onClick={handleNextWeek}
-              className="p-1.5 rounded-full hover:bg-gray-50 text-gray-500 transition-colors cursor-pointer"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-
           <Button 
             icon={<Plus size={16} />} 
             onClick={() => setAddOpen(true)}

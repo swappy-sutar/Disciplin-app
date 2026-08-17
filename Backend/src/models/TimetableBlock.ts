@@ -24,4 +24,6 @@ const TimetableBlockSchema = new Schema<ITimetableBlock>({
   createdAt: { type: Date, default: Date.now },
 });
 
+TimetableBlockSchema.index({ userId: 1, date: 1, order: 1, startTime: 1 });
+
 export const TimetableBlock = model<ITimetableBlock>('TimetableBlock', TimetableBlockSchema);

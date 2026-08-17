@@ -9,6 +9,8 @@ import { HabitLog } from '../models/HabitLog';
 import * as habitService from '../services/habit.service';
 import { getOrCreateBlocks } from '../services/timetable.service';
 
+import { getCache, setCache } from '../utils/cache';
+
 const parseDateStr = (dateStr: string): Date => {
   const [year, month, day] = dateStr.split('-').map(Number);
   return new Date(Date.UTC(year, month - 1, day));
@@ -52,18 +54,82 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
     const userId = req.user?.id!;
     const dateStr = (req.query.date as string) || new Date().toISOString().split('T')[0];
 
+    const cacheKey = `dashboard_${userId}_${dateStr}`;
+    const cachedResponse = getCache<any>(cacheKey);
+    if (cachedResponse) {
+      return res.status(200).json(cachedResponse);
+    }
+
     const yesterdayStr = getYesterdayDateStr(dateStr);
     const { start: weekStart, end: weekEnd } = getWeekStartAndEnd(dateStr);
 
-    // 1. Timetable Blocks for Today (Pre-populate template automatically if unvisited)
-    const todayBlocks = await getOrCreateBlocks(userId, dateStr);
+    // 1. Timetable Blocks for Today
+    const todayBlocksPromise = getOrCreateBlocks(userId, dateStr);
 
-    // 2. Day Progress Calculation (Today and Yesterday)
+    // 2. Concurrently execute all independent dashboard queries
+    const [
+      todayBlocks,
+      yesterdayBlocks,
+      habitsWithStreaks,
+      weekLogs,
+      weeklyGoals,
+      pendingTopics,
+      appFacetResults,
+      quotes,
+    ] = await Promise.all([
+      todayBlocksPromise,
+      TimetableBlock.find({ userId, date: yesterdayStr }).select('isDone').lean(),
+      habitService.calculateStreaks(userId, dateStr),
+      HabitLog.find({
+        userId,
+        date: { $gte: weekStart, $lte: weekEnd },
+      })
+        .select('habitId date isDone')
+        .lean(),
+      WeeklyGoal.find({ userId, weekStartDate: weekStart }).lean(),
+      Topic.find({
+        userId,
+        progressPercent: { $lt: 100 },
+      })
+        .select('title category progressPercent subTopics')
+        .sort({ progressPercent: -1, createdAt: -1 })
+        .limit(3)
+        .lean(),
+      Application.aggregate([
+        { $match: { userId: new Types.ObjectId(userId) } },
+        {
+          $facet: {
+            todayCount: [
+              { $match: { dateApplied: dateStr } },
+              { $count: 'count' },
+            ],
+            weeklyCount: [
+              { $match: { dateApplied: { $gte: weekStart, $lte: weekEnd } } },
+              { $count: 'count' },
+            ],
+            statusDistribution: [
+              {
+                $group: {
+                  _id: '$status',
+                  count: { $sum: 1 },
+                },
+              },
+            ],
+          },
+        },
+      ]),
+      Quote.find({
+        $or: [{ isCustom: false }, { isCustom: true, userId }],
+      })
+        .select('text author isFavorite isCustom')
+        .lean(),
+    ]);
+
+    // Calculate Day Progress
     const completedBlocksCount = todayBlocks.filter((b) => b.isDone).length;
     const totalBlocksCount = todayBlocks.length;
     const todayProgress = totalBlocksCount > 0 ? Math.round((completedBlocksCount / totalBlocksCount) * 100) : 0;
 
-    const yesterdayBlocks = await TimetableBlock.find({ userId, date: yesterdayStr });
     const completedYesterdayCount = yesterdayBlocks.filter((b) => b.isDone).length;
     const totalYesterdayCount = yesterdayBlocks.length;
     const yesterdayProgress =
@@ -71,40 +137,10 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
 
     const progressDelta = todayProgress - yesterdayProgress;
 
-    // 3. Habits with Streaks & Logs for Current Week
-    const habitsWithStreaks = await habitService.calculateStreaks(userId, dateStr);
-    const weekLogs = await HabitLog.find({
-      userId,
-      date: { $gte: weekStart, $lte: weekEnd },
-    });
-
-    // 4. Weekly Goals
-    const weeklyGoals = await WeeklyGoal.find({ userId, weekStartDate: weekStart });
-
-    // 5. Topics - Top 3 pending progress
-    const pendingTopics = await Topic.find({
-      userId,
-      progressPercent: { $lt: 100 },
-    })
-      .sort({ progressPercent: -1, createdAt: -1 })
-      .limit(3);
-
-    // 6. Job Application Tracker Stats
-    const appDailyCount = await Application.countDocuments({ userId, dateApplied: dateStr });
-    const appWeeklyCount = await Application.countDocuments({
-      userId,
-      dateApplied: { $gte: weekStart, $lte: weekEnd },
-    });
-
-    const statusCounts = await Application.aggregate([
-      { $match: { userId: new Types.ObjectId(userId) } },
-      {
-        $group: {
-          _id: '$status',
-          count: { $sum: 1 },
-        },
-      },
-    ]);
+    // Process Application Facet Results
+    const facetData = appFacetResults[0] || {};
+    const appDailyCount = facetData.todayCount?.[0]?.count || 0;
+    const appWeeklyCount = facetData.weeklyCount?.[0]?.count || 0;
 
     const statusMap: Record<string, number> = {
       Applied: 0,
@@ -113,16 +149,13 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
       Offer: 0,
       Rejected: 0,
     };
-    statusCounts.forEach((item) => {
+    (facetData.statusDistribution || []).forEach((item: any) => {
       if (item._id in statusMap) {
         statusMap[item._id] = item.count;
       }
     });
 
-    // 7. Today's Quote
-    const quotes = await Quote.find({
-      $or: [{ isCustom: false }, { isCustom: true, userId }],
-    });
+    // Today's Quote Selection
     let quote: any = {
       text: 'Make today your masterpiece.',
       author: 'John Wooden',
@@ -141,7 +174,7 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
       };
     }
 
-    res.status(200).json({
+    const payload = {
       success: true,
       data: {
         timetable: todayBlocks,
@@ -164,7 +197,12 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
         },
         quote,
       },
-    });
+    };
+
+    // Cache dashboard result for 60s
+    setCache(cacheKey, payload, 60);
+
+    res.status(200).json(payload);
   } catch (error) {
     next(error);
   }

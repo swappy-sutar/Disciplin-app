@@ -21,6 +21,7 @@ const NoteSchema = new Schema<INote>(
   { timestamps: true }
 );
 
-NoteSchema.index({ topicId: 1, userId: 1 });
+NoteSchema.index({ topicId: 1, userId: 1, createdAt: -1 });
+NoteSchema.index({ userId: 1, createdAt: -1 });
 
 export const Note = model<INote>('Note', NoteSchema);

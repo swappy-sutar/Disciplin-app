@@ -5,7 +5,7 @@ import { CodingQuestion } from '../models/CodingQuestion';
 import { ForbiddenError, NotFoundError } from '../utils/custom-errors';
 
 export const checkTopicOwnership = async (topicId: string, userId: string) => {
-  const topic = await Topic.findById(topicId);
+  const topic = await Topic.findById(topicId).select('userId title category progressPercent').lean();
   if (!topic) {
     throw new NotFoundError('Topic not found');
   }
@@ -19,9 +19,9 @@ export const getTopicDetail = async (userId: string, topicId: string) => {
   const topic = await checkTopicOwnership(topicId, userId);
 
   const [notes, qaItems, codingQuestions] = await Promise.all([
-    Note.find({ topicId, userId }).sort({ createdAt: -1 }),
-    QAItem.find({ topicId, userId }).sort({ createdAt: -1 }),
-    CodingQuestion.find({ topicId, userId }).sort({ createdAt: -1 }),
+    Note.find({ topicId, userId }).sort({ createdAt: -1 }).lean(),
+    QAItem.find({ topicId, userId }).sort({ createdAt: -1 }).lean(),
+    CodingQuestion.find({ topicId, userId }).sort({ createdAt: -1 }).lean(),
   ]);
 
   return {
@@ -41,16 +41,16 @@ export const getTopicReview = async (userId: string, topicId: string, filterWeak
   }
 
   const [qaItems, codingQuestions] = await Promise.all([
-    QAItem.find(queryFilter),
-    CodingQuestion.find(queryFilter),
+    QAItem.find(queryFilter).lean(),
+    CodingQuestion.find(queryFilter).lean(),
   ]);
 
   const taggedQa = qaItems.map(item => ({
-    ...item.toObject(),
+    ...item,
     type: 'qa' as const,
   }));
   const taggedCoding = codingQuestions.map(item => ({
-    ...item.toObject(),
+    ...item,
     type: 'coding' as const,
   }));
 

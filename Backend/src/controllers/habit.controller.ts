@@ -3,6 +3,7 @@ import { Habit } from '../models/Habit';
 import { HabitLog } from '../models/HabitLog';
 import * as habitService from '../services/habit.service';
 import { NotFoundError } from '../utils/custom-errors';
+import { invalidateDashboardCache, invalidateHabitsCache } from '../utils/cache';
 
 export const getHabits = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -33,6 +34,8 @@ export const createHabit = async (req: Request, res: Response, next: NextFunctio
     });
 
     await habit.save();
+    invalidateDashboardCache(userId);
+    invalidateHabitsCache(userId);
 
     res.status(201).json({
       success: true,
@@ -58,6 +61,9 @@ export const updateHabit = async (req: Request, res: Response, next: NextFunctio
       throw new NotFoundError('Habit not found');
     }
 
+    invalidateDashboardCache(userId);
+    invalidateHabitsCache(userId);
+
     res.status(200).json({
       success: true,
       data: habit,
@@ -81,6 +87,9 @@ export const deleteHabit = async (req: Request, res: Response, next: NextFunctio
     // Cascade delete all logs associated with this habit
     await HabitLog.deleteMany({ userId, habitId: id });
 
+    invalidateDashboardCache(userId);
+    invalidateHabitsCache(userId);
+
     res.status(200).json({
       success: true,
       message: 'Habit and its logs deleted successfully',
@@ -98,7 +107,7 @@ export const getLogs = async (req: Request, res: Response, next: NextFunction) =
     const logs = await HabitLog.find({
       userId,
       date: { $gte: startDate, $lte: endDate },
-    });
+    }).lean();
 
     res.status(200).json({
       success: true,
@@ -115,7 +124,7 @@ export const toggleLog = async (req: Request, res: Response, next: NextFunction)
     const { habitId, date, isDone } = req.body;
 
     // Check if habit exists and belongs to user
-    const habit = await Habit.findOne({ _id: habitId, userId });
+    const habit = await Habit.findOne({ _id: habitId, userId }).select('_id').lean();
     if (!habit) {
       throw new NotFoundError('Habit not found');
     }
@@ -125,6 +134,9 @@ export const toggleLog = async (req: Request, res: Response, next: NextFunction)
       { $set: { isDone } },
       { upsert: true, new: true, runValidators: true }
     );
+
+    invalidateDashboardCache(userId);
+    invalidateHabitsCache(userId);
 
     res.status(200).json({
       success: true,

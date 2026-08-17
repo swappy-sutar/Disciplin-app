@@ -31,4 +31,7 @@ const ApplicationSchema = new Schema<IApplication>({
   createdAt: { type: Date, default: Date.now },
 });
 
+ApplicationSchema.index({ userId: 1, dateApplied: -1, createdAt: -1 });
+ApplicationSchema.index({ userId: 1, status: 1 });
+
 export const Application = model<IApplication>('Application', ApplicationSchema);

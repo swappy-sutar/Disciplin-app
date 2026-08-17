@@ -22,4 +22,6 @@ const ReviewSchema = new Schema<IReview>({
   createdAt: { type: Date, default: Date.now },
 });
 
+ReviewSchema.index({ isApproved: 1, createdAt: -1 });
+
 export const Review = model<IReview>('Review', ReviewSchema);

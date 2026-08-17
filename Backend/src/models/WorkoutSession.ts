@@ -64,5 +64,8 @@ WorkoutSessionSchema.pre<IWorkoutSession>('save', function (next) {
 
 // Compound index to ensure uniqueness of user sessions per date
 WorkoutSessionSchema.index({ userId: 1, date: 1 }, { unique: true });
+WorkoutSessionSchema.index({ userId: 1, muscleGroup: 1, date: -1 });
+WorkoutSessionSchema.index({ userId: 1, completed: 1, date: 1 });
+WorkoutSessionSchema.index({ userId: 1, date: -1 });
 
 export const WorkoutSession = model<IWorkoutSession>('WorkoutSession', WorkoutSessionSchema);

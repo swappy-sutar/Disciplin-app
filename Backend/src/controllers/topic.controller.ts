@@ -1,18 +1,43 @@
 import { Request, Response, NextFunction } from 'express';
 import { Topic } from '../models/Topic';
 import { NotFoundError } from '../utils/custom-errors';
+import { invalidateDashboardCache } from '../utils/cache';
 
 export const getTopics = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id!;
-    const { category } = req.query;
+    const { category, page, limit } = req.query;
 
     const filter: any = { userId };
     if (category) {
       filter.category = category;
     }
 
-    const topics = await Topic.find(filter).sort({ createdAt: -1 });
+    const query = Topic.find(filter).sort({ createdAt: -1 }).lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [topics, total] = await Promise.all([
+        query.skip(skip).limit(limitNum),
+        Topic.countDocuments(filter),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: topics,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+    }
+
+    const topics = await query;
 
     res.status(200).json({
       success: true,
@@ -36,6 +61,7 @@ export const createTopic = async (req: Request, res: Response, next: NextFunctio
     });
 
     await topic.save();
+    invalidateDashboardCache(userId);
 
     res.status(201).json({
       success: true,
@@ -69,6 +95,7 @@ export const updateTopic = async (req: Request, res: Response, next: NextFunctio
     }
 
     await topic.save();
+    invalidateDashboardCache(userId);
 
     res.status(200).json({
       success: true,
@@ -89,6 +116,8 @@ export const deleteTopic = async (req: Request, res: Response, next: NextFunctio
     if (!topic) {
       throw new NotFoundError('Topic not found');
     }
+
+    invalidateDashboardCache(userId);
 
     res.status(200).json({
       success: true,

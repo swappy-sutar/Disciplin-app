@@ -4,7 +4,7 @@ import { NotFoundError } from '../utils/custom-errors';
 
 export const getCodingsByTopic = async (userId: string, topicId: string) => {
   await checkTopicOwnership(topicId, userId);
-  return CodingQuestion.find({ topicId, userId }).sort({ createdAt: -1 });
+  return CodingQuestion.find({ topicId, userId }).sort({ createdAt: -1 }).lean();
 };
 
 export const createCoding = async (userId: string, topicId: string, data: any) => {

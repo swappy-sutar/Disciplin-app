@@ -9,7 +9,6 @@ import { Checkbox } from '../../components/ui/Checkbox';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { format, parseISO, addDays, subDays, startOfWeek } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
-import { CalendarPicker } from '../../components/ui/CalendarPicker';
 import confetti from 'canvas-confetti';
 import { 
   Flame, 
@@ -625,31 +624,6 @@ export default function Workouts() {
               {'AI Coach'}
             </button>
           </div>
-
-          {/* Upgraded Date Switcher Pill */}
-          {activeTab === 'today' && (
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl select-none max-w-fit shrink-0 relative z-10">
-              <button 
-                onClick={() => shiftDate(-1)}
-                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
-                aria-label="Previous day"
-                title="Previous day"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              
-              <CalendarPicker dateRangeLabel={format(parseISO(targetDateStr), 'EEEE, MMMM d, yyyy')} align="right" />
-              
-              <button 
-                onClick={() => shiftDate(1)}
-                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer border-none bg-transparent"
-                aria-label="Next day"
-                title="Next day"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          )}
         </div>
       </div>
 

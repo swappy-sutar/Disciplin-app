@@ -10,8 +10,15 @@ const getPreviousDateString = (dateStr: string): string => {
 };
 
 export const calculateStreaks = async (userId: string | Types.ObjectId, todayStr: string) => {
-  const habits = await Habit.find({ userId, isActive: true }).sort({ order: 1 });
-  const logs = await HabitLog.find({ userId, isDone: true });
+  const [habits, logs] = await Promise.all([
+    Habit.find({ userId, isActive: true })
+      .select('name color isActive order')
+      .sort({ order: 1 })
+      .lean(),
+    HabitLog.find({ userId, isDone: true })
+      .select('habitId date')
+      .lean(),
+  ]);
 
   const logsMap = new Map<string, Set<string>>();
   for (const log of logs) {

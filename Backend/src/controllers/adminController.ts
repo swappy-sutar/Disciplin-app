@@ -44,7 +44,7 @@ export const getAdminStats = async (req: Request, res: Response, next: NextFunct
 // Get All Registered Users
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { search } = req.query;
+    const { search, page, limit } = req.query;
     let query: any = {};
 
     if (search) {
@@ -57,9 +57,35 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
       ];
     }
 
-    const users = await User.find(query)
+    const userQuery = User.find(query)
       .select('-passwordHash -passwordResetToken -verificationToken -hashedRefreshToken')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [users, total] = await Promise.all([
+        userQuery.skip(skip).limit(limitNum),
+        User.countDocuments(query),
+      ]);
+
+      res.json({
+        success: true,
+        data: users,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+      return;
+    }
+
+    const users = await userQuery;
 
     res.json({
       success: true,
@@ -130,8 +156,33 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 // Get All Reviews (Both Approved & Pending)
 export const getAllReviewsAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const reviews = await Review.find()
-      .sort({ createdAt: -1 });
+    const { page, limit } = req.query;
+    const reviewQuery = Review.find().sort({ createdAt: -1 }).lean();
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [reviews, total] = await Promise.all([
+        reviewQuery.skip(skip).limit(limitNum),
+        Review.countDocuments(),
+      ]);
+
+      res.json({
+        success: true,
+        data: reviews,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+      return;
+    }
+
+    const reviews = await reviewQuery;
 
     res.json({
       success: true,
