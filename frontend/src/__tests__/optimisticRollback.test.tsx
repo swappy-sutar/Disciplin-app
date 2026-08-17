@@ -28,6 +28,7 @@ describe('Optimistic Updates & Instant Rollback on Error', () => {
     const initialApps: Application[] = [
       {
         _id: 'app_1',
+        userId: 'user_1',
         company: 'Google',
         role: 'Software Engineer',
         dateApplied: '2026-08-17',

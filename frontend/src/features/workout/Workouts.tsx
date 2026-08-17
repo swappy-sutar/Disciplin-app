@@ -7,7 +7,7 @@ import { apiClient } from '../../lib/api-client';
 import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { PillBadge } from '../../components/ui/PillBadge';
-import { format, parseISO, addDays, subDays, startOfWeek } from 'date-fns';
+import { format, parseISO, addDays, subDays } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
 import confetti from 'canvas-confetti';
 import { 
@@ -19,8 +19,6 @@ import {
   Trash2, 
   Award, 
   Search, 
-  ChevronLeft, 
-  ChevronRight, 
   BookOpen, 
   Activity,
   Bot,
@@ -54,7 +52,7 @@ import {
 } from 'recharts';
 
 export default function Workouts() {
-  const { activeDate, setActiveDate, setActiveWeekStart, addNotification } = useStore();
+  const { activeDate, addNotification } = useStore();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'today' | 'split' | 'goal' | 'library' | 'progress' | 'coach'>('today');
   
@@ -503,16 +501,6 @@ export default function Workouts() {
     }
 
     updateSplit(weekMap);
-  };
-
-  // Date shifting handlers for today's view
-  const shiftDate = (amount: number) => {
-    const curr = parseISO(targetDateStr);
-    const shifted = addDays(curr, amount);
-    const dateStr = format(shifted, 'yyyy-MM-dd');
-    setActiveDate(dateStr);
-    const newWeekStart = startOfWeek(shifted, { weekStartsOn: 1 });
-    setActiveWeekStart(format(newWeekStart, 'yyyy-MM-dd'));
   };
 
   // Recharts Stats Calculations

@@ -662,7 +662,7 @@ export const FitnessGoalPanel: React.FC = () => {
                         {day.slice(0, 3)}
                       </span>
                       <span className="text-xs font-black capitalize block">
-                        {focus === 'rest' ? '☕ Rest' : focus}
+                        {focus === 'rest' ? '☕ Rest' : String(focus)}
                       </span>
                     </div>
                   ))}

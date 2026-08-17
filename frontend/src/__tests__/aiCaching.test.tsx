@@ -30,7 +30,7 @@ describe('Deterministic React Query AI Caching', () => {
     const { result } = renderHook(() => useGenerateStudyPlan(), { wrapper });
 
     // First call: calls API
-    let res1;
+    let res1: any;
     await act(async () => {
       res1 = await result.current.generateStudyPlan({
         topicName: 'Graph Theory',
@@ -42,7 +42,7 @@ describe('Deterministic React Query AI Caching', () => {
     expect(res1?.subTopics.length).toBe(2);
 
     // Second call with same inputs: returns cached data without calling API again
-    let res2;
+    let res2: any;
     await act(async () => {
       res2 = await result.current.generateStudyPlan({
         topicName: 'Graph Theory',

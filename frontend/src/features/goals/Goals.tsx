@@ -11,7 +11,7 @@ import { Modal } from '../../components/ui/Modal';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 import { PillBadge } from '../../components/ui/PillBadge';
 import { BarChart } from '../../components/charts/BarChart';
-import { format, parseISO, addDays, endOfWeek, subDays } from 'date-fns';
+import { format, parseISO, endOfWeek } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
 import { 
   Flag, 
@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 
 export default function Goals() {
-  const { activeWeekStart, setActiveWeekStart, addNotification } = useStore();
+  const { activeWeekStart, addNotification } = useStore();
   const { t } = useTranslation();
   const [isAddOpen, setAddOpen] = useState(false);
   const [newGoalTitle, setNewGoalTitle] = useState('');
