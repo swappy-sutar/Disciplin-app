@@ -86,15 +86,50 @@ export const useGoals = (weekStartDate?: string) => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiClient.goals.delete(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ['goals', weekStartDate] });
+      await queryClient.cancelQueries({ queryKey: ['goalsHistory'] });
+      await queryClient.cancelQueries({ queryKey: ['dashboardSummary', activeDate] });
+
+      const prevGoals = queryClient.getQueryData<WeeklyGoal[]>(['goals', weekStartDate]);
+      const prevHistory = queryClient.getQueryData<WeeklyGoal[]>(['goalsHistory']);
+      const prevSummary = queryClient.getQueryData<any>(['dashboardSummary', activeDate]);
+
+      if (prevGoals) {
+        queryClient.setQueryData<WeeklyGoal[]>(['goals', weekStartDate], prevGoals.filter(g => g._id !== id));
+      }
+      if (prevHistory) {
+        queryClient.setQueryData<WeeklyGoal[]>(['goalsHistory'], prevHistory.filter(g => g._id !== id));
+      }
+      if (prevSummary && prevSummary.weeklyGoals) {
+        queryClient.setQueryData(['dashboardSummary', activeDate], {
+          ...prevSummary,
+          weeklyGoals: prevSummary.weeklyGoals.filter((g: any) => g._id !== id),
+        });
+      }
+
+      return { prevGoals, prevHistory, prevSummary };
+    },
     onSuccess: () => {
       toast.success('Goal deleted');
+    },
+    onError: (e: any, _vars, context) => {
+      toast.error(e.message || 'Failed to delete goal');
+      if (context?.prevGoals) {
+        queryClient.setQueryData(['goals', weekStartDate], context.prevGoals);
+      }
+      if (context?.prevHistory) {
+        queryClient.setQueryData(['goalsHistory'], context.prevHistory);
+      }
+      if (context?.prevSummary) {
+        queryClient.setQueryData(['dashboardSummary', activeDate], context.prevSummary);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['goals', weekStartDate] });
       queryClient.invalidateQueries({ queryKey: ['goalsHistory'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardSummary', activeDate] });
     },
-    onError: (e: any) => {
-      toast.error(e.message || 'Failed to delete goal');
-    }
   });
 
   return {

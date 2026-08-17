@@ -93,14 +93,41 @@ export const useTopics = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiClient.topics.delete(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ['topics'] });
+      await queryClient.cancelQueries({ queryKey: ['dashboardSummary', activeDate] });
+
+      const prevTopics = queryClient.getQueryData<Topic[]>(['topics']);
+      const prevSummary = queryClient.getQueryData<any>(['dashboardSummary', activeDate]);
+
+      if (prevTopics) {
+        queryClient.setQueryData<Topic[]>(['topics'], prevTopics.filter(t => t._id !== id));
+      }
+      if (prevSummary && prevSummary.topics) {
+        queryClient.setQueryData(['dashboardSummary', activeDate], {
+          ...prevSummary,
+          topics: prevSummary.topics.filter((t: Topic) => t._id !== id),
+        });
+      }
+
+      return { prevTopics, prevSummary };
+    },
     onSuccess: () => {
       toast.success('Topic deleted');
+    },
+    onError: (e: any, _vars, context) => {
+      toast.error(e.message || 'Failed to delete topic');
+      if (context?.prevTopics) {
+        queryClient.setQueryData(['topics'], context.prevTopics);
+      }
+      if (context?.prevSummary) {
+        queryClient.setQueryData(['dashboardSummary', activeDate], context.prevSummary);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['topics'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardSummary', activeDate] });
     },
-    onError: (e: any) => {
-      toast.error(e.message || 'Failed to delete topic');
-    }
   });
 
   return {

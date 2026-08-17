@@ -56,7 +56,7 @@ export const getSplit = async (req: Request, res: Response, next: NextFunction) 
   try {
     const userId = req.user?.id!;
 
-    let split = await WorkoutSplit.findOne({ userId, active: true }).lean();
+    let split: any = await WorkoutSplit.findOne({ userId, active: true }).lean();
     if (!split) {
       const newSplit = new WorkoutSplit({
         userId,
@@ -125,7 +125,7 @@ export const getTodaySession = async (req: Request, res: Response, next: NextFun
 
     // Resolve split for the date's weekday
     const weekday = getWeekdayName(dateStr);
-    let split = await WorkoutSplit.findOne({ userId, active: true }).lean();
+    let split: any = await WorkoutSplit.findOne({ userId, active: true }).lean();
     if (!split) {
       const newSplit = new WorkoutSplit({
         userId,

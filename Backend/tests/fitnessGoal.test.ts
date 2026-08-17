@@ -23,13 +23,18 @@ vi.mock('openai', () => {
   };
 });
 
+import { createTestUser } from './helpers/authHelper';
+
 describe('Fitness Goal & Goal AI Module Endpoints', () => {
-  const userId = new mongoose.Types.ObjectId().toString();
-  const token = generateToken(userId, 'user');
+  let userId: string;
+  let token: string;
 
   beforeEach(async () => {
     vi.restoreAllMocks();
     mockCreate.mockReset();
+    const testCtx = await createTestUser();
+    userId = String(testCtx.user._id);
+    token = testCtx.token;
     await FitnessGoal.deleteMany({ userId });
     await BodyMetric.deleteMany({ userId });
     await WorkoutSplit.deleteMany({ userId });

@@ -3,6 +3,7 @@ import { useTopics } from '../../hooks/useTopics';
 import { toast } from 'react-hot-toast';
 import { useStore } from '../../app/store';
 import { useGenerateStudyPlan } from '../../hooks/useAI';
+import { useDebounce } from '../../hooks/useDebounce';
 import { apiClient } from '../../lib/api-client';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -97,6 +98,7 @@ export default function Topics() {
   const { addNotification, token } = useStore();
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 350);
   const [categoryFilter, setCategoryFilter] = useState('All');
   
   const isBackendOnline = !!token && typeof window !== 'undefined' && window.navigator.onLine && !apiClient.isMockMode();
@@ -130,9 +132,11 @@ export default function Topics() {
   
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const [noteSearch, setNoteSearch] = useState('');
+  const debouncedNoteSearch = useDebounce(noteSearch, 300);
   const [noteIsSaving, setNoteIsSaving] = useState(false);
 
   const [qnaSearch, setQnaSearch] = useState('');
+  const debouncedQnaSearch = useDebounce(qnaSearch, 300);
   const [qnaFilter, setQnaFilter] = useState('All');
   const [expandedQnas, setExpandedQnas] = useState<Record<string, boolean>>({});
   const [newQText, setNewQText] = useState('');
@@ -226,8 +230,8 @@ export default function Topics() {
   // Category listing helpers
   const categories = ['All', ...Array.from(new Set(topics.map(t => t.category)))];
   const filteredTopics = topics.filter(t => {
-    const matchesSearch = t.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          t.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = t.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 
+                          t.category.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'All' || t.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -320,8 +324,8 @@ export default function Topics() {
     setActiveNoteId(newId);
   };
   const filteredNotes = notesList.filter(n => 
-    n.title.toLowerCase().includes(noteSearch.toLowerCase()) ||
-    n.content.toLowerCase().includes(noteSearch.toLowerCase())
+    n.title.toLowerCase().includes(debouncedNoteSearch.toLowerCase()) ||
+    n.content.toLowerCase().includes(debouncedNoteSearch.toLowerCase())
   );
 
   // Q&A Bank operations
@@ -340,8 +344,8 @@ export default function Topics() {
     addNotification('Question Added! 🙋‍♂️', 'Successfully added to Q&A curriculum database fallback.', 'topic');
   };
   const filteredQnas = qnasList.filter(q => {
-    const matchesSearch = q.question.toLowerCase().includes(qnaSearch.toLowerCase()) || 
-                          q.answer.toLowerCase().includes(qnaSearch.toLowerCase());
+    const matchesSearch = q.question.toLowerCase().includes(debouncedQnaSearch.toLowerCase()) || 
+                          q.answer.toLowerCase().includes(debouncedQnaSearch.toLowerCase());
     const matchesFilter = qnaFilter === 'All' || q.frequency === qnaFilter;
     return matchesSearch && matchesFilter;
   });
@@ -1415,9 +1419,15 @@ export default function Topics() {
         <form onSubmit={handleCreate} className="space-y-4 font-medium">
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Topic Name</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Topic Name</label>
+                <span className={`text-[10px] font-semibold ${newTopicTitle.length >= 95 ? 'text-amber-500 font-bold' : 'text-slate-400'}`}>
+                  {newTopicTitle.length} / 100
+                </span>
+              </div>
               <input 
                 type="text" 
+                maxLength={100}
                 placeholder="e.g. Graph Algorithms"
                 value={newTopicTitle}
                 onChange={e => setNewTopicTitle(e.target.value)}

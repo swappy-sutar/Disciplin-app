@@ -8,6 +8,8 @@ import { WorkoutCoachThread } from '../src/models/WorkoutCoachThread';
 import { AIService } from '../src/services/ai.service';
 import { AppError } from '../src/utils/custom-errors';
 
+import { createTestUser } from './helpers/authHelper';
+
 const mockCreate = vi.fn();
 
 vi.mock('openai', () => {
@@ -25,34 +27,15 @@ vi.mock('openai', () => {
 });
 
 describe('Workout AI Router Endpoints (/api/v1/ai/*)', () => {
-  const testUser = {
-    name: 'Workout AI Tester',
-    email: 'workoutai@example.com',
-    password: 'password123',
-  };
-
   let token: string;
   let userId: string;
-
-  const getToken = async () => {
-    const existing = await User.findOne({ email: testUser.email });
-    if (!existing) {
-      await request(app).post('/api/v1/auth/register').send(testUser);
-      await User.updateOne({ email: testUser.email }, { isVerified: true });
-    }
-    const user = await User.findOne({ email: testUser.email });
-    userId = String(user?._id);
-
-    const loginRes = await request(app)
-      .post('/api/v1/auth/login')
-      .send({ email: testUser.email, password: testUser.password });
-    return loginRes.body.data.token;
-  };
 
   beforeEach(async () => {
     vi.restoreAllMocks();
     mockCreate.mockReset();
-    token = await getToken();
+    const testCtx = await createTestUser();
+    token = testCtx.token;
+    userId = String(testCtx.user._id);
     await WorkoutSession.deleteMany({ userId });
     await WorkoutSplit.deleteMany({ userId });
     await WorkoutSplit.syncIndexes();

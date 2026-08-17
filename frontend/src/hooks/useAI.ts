@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api-client';
 import { toast } from 'react-hot-toast';
 
@@ -17,8 +17,28 @@ export interface GenerateResumeBulletsParams {
 }
 
 export const useGenerateCoverLetter = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
-    mutationFn: (params: GenerateCoverLetterParams) => apiClient.ai.generateCoverLetter(params),
+    mutationFn: async (params: GenerateCoverLetterParams) => {
+      const normalizedDesc = (params.jobDescription || '').trim().slice(0, 1500);
+      const normalizedCompany = (params.company || '').trim().toLowerCase();
+      const normalizedRole = (params.role || '').trim().toLowerCase();
+      const cacheKey = ['ai_cover_letter', normalizedDesc, normalizedCompany, normalizedRole];
+
+      const cached = queryClient.getQueryData<{ coverLetter: string }>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await apiClient.ai.generateCoverLetter({
+        ...params,
+        jobDescription: normalizedDesc,
+      });
+
+      queryClient.setQueryData(cacheKey, result);
+      return result;
+    },
     onSuccess: () => {
       toast.success('Cover letter generated!');
     },
@@ -35,8 +55,30 @@ export const useGenerateCoverLetter = () => {
 };
 
 export const useGenerateResumeBullets = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
-    mutationFn: (params: GenerateResumeBulletsParams) => apiClient.ai.generateResumeBullets(params),
+    mutationFn: async (params: GenerateResumeBulletsParams) => {
+      const normalizedDesc = (params.jobDescription || '').trim().slice(0, 1500);
+      const normalizedExp = (params.rawExperience || '').trim().slice(0, 800);
+      const normalizedCompany = (params.company || '').trim().toLowerCase();
+      const normalizedRole = (params.role || '').trim().toLowerCase();
+      const cacheKey = ['ai_resume_bullets', normalizedDesc, normalizedExp, normalizedCompany, normalizedRole];
+
+      const cached = queryClient.getQueryData<{ bullets: string[] }>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await apiClient.ai.generateResumeBullets({
+        ...params,
+        jobDescription: normalizedDesc,
+        rawExperience: normalizedExp,
+      });
+
+      queryClient.setQueryData(cacheKey, result);
+      return result;
+    },
     onSuccess: () => {
       toast.success('Resume bullets generated!');
     },
@@ -58,8 +100,26 @@ export interface GenerateStudyPlanParams {
 }
 
 export const useGenerateStudyPlan = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
-    mutationFn: (params: GenerateStudyPlanParams) => apiClient.ai.generateStudyPlan(params),
+    mutationFn: async (params: GenerateStudyPlanParams) => {
+      const normalizedTopic = (params.topicName || '').trim().slice(0, 100).toLowerCase();
+      const cacheKey = ['ai_study_plan', normalizedTopic, params.skillLevel];
+
+      const cached = queryClient.getQueryData<{ subTopics: { title: string }[] }>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await apiClient.ai.generateStudyPlan({
+        ...params,
+        topicName: normalizedTopic,
+      });
+
+      queryClient.setQueryData(cacheKey, result);
+      return result;
+    },
     onSuccess: () => {
       toast.success('Curriculum generated successfully!');
     },
@@ -76,9 +136,23 @@ export const useGenerateStudyPlan = () => {
 };
 
 export const useGenerateWorkoutSplit = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
-    mutationFn: (body: { daysPerWeek: number; goal: string; experienceLevel: string }) =>
-      apiClient.ai.generateWorkoutSplit(body),
+    mutationFn: async (body: { daysPerWeek: number; goal: string; experienceLevel: string }) => {
+      const normalizedGoal = (body.goal || '').trim().toLowerCase();
+      const normalizedExp = (body.experienceLevel || '').trim().toLowerCase();
+      const cacheKey = ['ai_workout_split', body.daysPerWeek, normalizedGoal, normalizedExp];
+
+      const cached = queryClient.getQueryData<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await apiClient.ai.generateWorkoutSplit(body);
+      queryClient.setQueryData(cacheKey, result);
+      return result;
+    },
     onSuccess: () => {
       toast.success('Workout split generated!');
     },
@@ -93,14 +167,31 @@ export const useGenerateWorkoutSplit = () => {
 };
 
 export const useGenerateWorkoutSession = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
-    mutationFn: (body: {
+    mutationFn: async (body: {
       date: string;
       muscleGroup: string;
       equipment: string[];
       fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
       painFlags?: string[];
-    }) => apiClient.ai.generateWorkoutSession(body),
+    }) => {
+      const normalizedMuscle = (body.muscleGroup || '').trim().toLowerCase();
+      const normalizedEquip = [...(body.equipment || [])].sort().join(',');
+      const normalizedPains = [...(body.painFlags || [])].sort().join(',');
+      // Strictly date-scoped cache key to prevent serving stale sessions across dates
+      const cacheKey = ['ai_workout_session', body.date, normalizedMuscle, normalizedEquip, body.fitnessLevel, normalizedPains];
+
+      const cached = queryClient.getQueryData<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await apiClient.ai.generateWorkoutSession(body);
+      queryClient.setQueryData(cacheKey, result);
+      return result;
+    },
     onSuccess: () => {
       toast.success('Workout session generated!');
     },

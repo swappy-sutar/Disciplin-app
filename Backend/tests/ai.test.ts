@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../src/app';
-import { User } from '../src/models/User';
 import { AIService } from '../src/services/ai.service';
 import { AppError } from '../src/utils/custom-errors';
+import { createTestUser } from './helpers/authHelper';
 
 const mockCreate = vi.fn();
 
@@ -23,20 +23,9 @@ vi.mock('openai', () => {
 
 
 describe('AI Router Endpoints (/api/v1/ai/*)', () => {
-  const testUser = {
-    name: 'AI Test User',
-    email: 'aitest@example.com',
-    password: 'password123',
-  };
-
   const getToken = async () => {
-    await request(app).post('/api/v1/auth/register').send(testUser);
-    await User.updateOne({ email: testUser.email }, { isVerified: true });
-
-    const loginRes = await request(app)
-      .post('/api/v1/auth/login')
-      .send({ email: testUser.email, password: testUser.password });
-    return loginRes.body.data.token;
+    const { token } = await createTestUser();
+    return token;
   };
 
   beforeEach(() => {

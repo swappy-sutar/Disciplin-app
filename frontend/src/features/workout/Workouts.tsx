@@ -33,6 +33,8 @@ import {
   Target
 } from 'lucide-react';
 import { FitnessGoalPanel } from './FitnessGoalPanel';
+import { compressImageForAI } from '../../utils/imageCompression';
+import { useDebounce } from '../../hooks/useDebounce';
 import {
   useGenerateWorkoutSession,
   useCheckPlateau,
@@ -88,8 +90,9 @@ export default function Workouts() {
   // State for active session draft (to handle logging in UI before saving)
   const [sessionDraft, setSessionDraft] = useState<any>(null);
   
-  // Library search state
+  // Library search state with debounce
   const [libSearch, setLibSearch] = useState('');
+  const debouncedLibSearch = useDebounce(libSearch, 300);
   const [libMuscle, setLibMuscle] = useState<string>('All');
   const [libEquipment, setLibEquipment] = useState<string>('All');
   const [selectedExDetail, setSelectedExDetail] = useState<any>(null);
@@ -181,21 +184,20 @@ export default function Workouts() {
     setPainFlags(painFlags.filter(t => t !== tag));
   };
 
-  const handleScanEquipment = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleScanEquipment = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64String = reader.result as string;
-      try {
-        const res = await detectEquipment({ image: base64String });
-        if (res?.detectedEquipment) {
-          setSelectedEquipment(res.detectedEquipment);
-        }
-      } catch (err) {}
-    };
-    reader.readAsDataURL(file);
+    try {
+      // Compress camera/gallery image to ~640px JPEG before Base64 conversion
+      const compressedBase64 = await compressImageForAI(file, 640, 0.7);
+      const res = await detectEquipment({ image: compressedBase64 });
+      if (res?.detectedEquipment) {
+        setSelectedEquipment(res.detectedEquipment);
+      }
+    } catch (err) {
+      toast.error('Failed to process image');
+    }
   };
 
   const handleGenerateSession = async (muscleGroup: string) => {
@@ -1198,7 +1200,7 @@ export default function Workouts() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {exercises
                 .filter(ex => {
-                  const matchSearch = ex.name.toLowerCase().includes(libSearch.toLowerCase());
+                  const matchSearch = ex.name.toLowerCase().includes(debouncedLibSearch.toLowerCase());
                   const matchMuscle = libMuscle === 'All' || ex.muscleGroup === libMuscle;
                   const matchEquip = libEquipment === 'All' || ex.equipment === libEquipment;
                   return matchSearch && matchMuscle && matchEquip;
@@ -1396,22 +1398,30 @@ export default function Workouts() {
             </div>
 
             {/* Input form */}
-            <form onSubmit={handleSendChatMessage} className="flex gap-2 mt-4">
-              <input 
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder={!isBackendOnline ? 'Connect to backend to chat with coach' : 'Ask about form, routines, or cues...'}
-                disabled={!isBackendOnline || isSendingMessage}
-                className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold rounded-xl focus:outline-none focus:border-emerald-500 text-gray-800 dark:text-white placeholder-gray-400"
-              />
-              <Button 
-                type="submit"
-                disabled={!isBackendOnline || isSendingMessage || !chatInput.trim()}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white border-none py-2.5 px-4 font-black flex items-center justify-center shrink-0 rounded-xl"
-              >
-                <Send size={14} />
-              </Button>
+            <form onSubmit={handleSendChatMessage} className="space-y-1.5 mt-4">
+              <div className="flex gap-2">
+                <input 
+                  type="text"
+                  value={chatInput}
+                  maxLength={1000}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder={!isBackendOnline ? 'Connect to backend to chat with coach' : 'Ask about form, routines, or cues...'}
+                  disabled={!isBackendOnline || isSendingMessage}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold rounded-xl focus:outline-none focus:border-emerald-500 text-gray-800 dark:text-white placeholder-gray-400"
+                />
+                <Button 
+                  type="submit"
+                  disabled={!isBackendOnline || isSendingMessage || !chatInput.trim()}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white border-none py-2.5 px-4 font-black flex items-center justify-center shrink-0 rounded-xl"
+                >
+                  <Send size={14} />
+                </Button>
+              </div>
+              <div className="flex justify-end pr-1">
+                <span className={`text-[10px] font-semibold ${chatInput.length >= 950 ? 'text-amber-500 font-bold' : 'text-slate-400'}`}>
+                  {chatInput.length} / 1000
+                </span>
+              </div>
             </form>
           </Card>
         </div>

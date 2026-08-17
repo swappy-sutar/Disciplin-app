@@ -70,8 +70,19 @@ export const useGenerateGoalProgram = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (body: { daysPerWeek: number; experienceLevel: string }) =>
-      apiClient.ai.generateGoalProgram(body),
+    mutationFn: async (body: { daysPerWeek: number; experienceLevel: string }) => {
+      const normalizedExp = (body.experienceLevel || '').trim().toLowerCase();
+      const cacheKey = ['ai_goal_program', body.daysPerWeek, normalizedExp];
+
+      const cached = queryClient.getQueryData<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await apiClient.ai.generateGoalProgram(body);
+      queryClient.setQueryData(cacheKey, result);
+      return result;
+    },
     onSuccess: () => {
       toast.success('Goal-aware workout program generated!');
       queryClient.invalidateQueries({ queryKey: ['workoutSplit'] });

@@ -51,15 +51,17 @@ export const getApplications = async (req: Request, res: Response, next: NextFun
       filter.dateApplied = { $gte: startDate, $lte: endDate };
     }
 
-    const query = Application.find(filter).sort({ dateApplied: -1, createdAt: -1 }).lean();
-
     if (page !== undefined || limit !== undefined) {
       const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
       const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 20));
       const skip = (pageNum - 1) * limitNum;
 
       const [applications, total] = await Promise.all([
-        query.skip(skip).limit(limitNum),
+        Application.find(filter)
+          .sort({ dateApplied: -1, createdAt: -1 })
+          .skip(skip)
+          .limit(limitNum)
+          .lean(),
         Application.countDocuments(filter),
       ]);
 
@@ -75,7 +77,7 @@ export const getApplications = async (req: Request, res: Response, next: NextFun
       });
     }
 
-    const applications = await query;
+    const applications = await Application.find(filter).sort({ dateApplied: -1, createdAt: -1 }).lean();
 
     res.status(200).json({
       success: true,

@@ -7,6 +7,8 @@ export const getApplicationsSchema = z.object({
     date: z.string().regex(dateRegex).optional(),
     startDate: z.string().regex(dateRegex).optional(),
     endDate: z.string().regex(dateRegex).optional(),
+    page: z.string().optional(),
+    limit: z.string().optional(),
   }),
 });
 

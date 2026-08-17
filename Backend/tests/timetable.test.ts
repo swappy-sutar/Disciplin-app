@@ -1,23 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import app from '../src/app';
-import { User } from '../src/models/User';
+import { createTestUser } from './helpers/authHelper';
 
 describe('Timetable Endpoints', () => {
-  const testUser = {
-    name: 'Jane Doe',
-    email: 'jane@example.com',
-    password: 'password123',
-  };
-
   const getToken = async () => {
-    await request(app).post('/api/v1/auth/register').send(testUser);
-    await User.updateOne({ email: testUser.email }, { isVerified: true });
-    
-    const loginRes = await request(app)
-      .post('/api/v1/auth/login')
-      .send({ email: testUser.email, password: testUser.password });
-    return loginRes.body.data.token;
+    const { token } = await createTestUser();
+    return token;
   };
 
   it('should create and fetch timetable blocks', async () => {

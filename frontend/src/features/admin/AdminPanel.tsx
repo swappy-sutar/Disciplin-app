@@ -16,6 +16,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { apiClient } from '../../lib/api-client';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'users' | 'reviews'>('users');
@@ -33,6 +34,7 @@ export function AdminPanel() {
   // Users state
   const [users, setUsers] = useState<any[]>([]);
   const [userSearch, setUserSearch] = useState('');
+  const debouncedUserSearch = useDebounce(userSearch, 350);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
 
   // Reviews state
@@ -64,10 +66,10 @@ export function AdminPanel() {
   };
 
   // Fetch Users
-  const fetchUsers = async () => {
+  const fetchUsers = async (query?: string) => {
     setIsLoadingUsers(true);
     try {
-      const res = await apiClient.admin.users(userSearch);
+      const res = await apiClient.admin.users(query ?? debouncedUserSearch);
       setUsers(Array.isArray(res) ? res : (res as any).data || []);
     } catch (err: any) {
       toast.error(err.message || 'Failed to fetch users');
@@ -91,16 +93,12 @@ export function AdminPanel() {
 
   useEffect(() => {
     fetchStats();
-    fetchUsers();
     fetchReviews();
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchUsers();
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [userSearch]);
+    fetchUsers(debouncedUserSearch);
+  }, [debouncedUserSearch]);
 
   // Handlers for User Management
   const handleToggleUserRole = async (userId: string, currentRole: string) => {

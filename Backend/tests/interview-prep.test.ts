@@ -1,34 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import app from '../src/app';
-import { User } from '../src/models/User';
+import { createTwoUsers } from './helpers/authHelper';
 
 describe('Interview Prep Module', () => {
-  const userA = {
-    name: 'User A',
-    email: 'usera@example.com',
-    password: 'password123',
-  };
-
-  const userB = {
-    name: 'User B',
-    email: 'userb@example.com',
-    password: 'password123',
-  };
-
-  const getTokenForUser = async (userData: typeof userA) => {
-    await request(app).post('/api/v1/auth/register').send(userData);
-    await User.updateOne({ email: userData.email }, { isVerified: true });
-    
-    const loginRes = await request(app)
-      .post('/api/v1/auth/login')
-      .send({ email: userData.email, password: userData.password });
-    return loginRes.body.data.token;
-  };
-
   it('should verify CRUD on prep module & ownership authorization (403)', async () => {
-    const tokenA = await getTokenForUser(userA);
-    const tokenB = await getTokenForUser(userB);
+    const { userA, userB } = await createTwoUsers();
+    const tokenA = userA.token;
+    const tokenB = userB.token;
 
     // 1. Create a Topic for User A
     const topicRes = await request(app)

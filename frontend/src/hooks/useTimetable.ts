@@ -85,14 +85,51 @@ export const useTimetable = (date: string) => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiClient.timetable.delete(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ['timetable', date] });
+      await queryClient.cancelQueries({ queryKey: ['dashboardSummary', date] });
+
+      const prevTimetable = queryClient.getQueryData<TimetableBlock[]>(['timetable', date]);
+      const prevSummary = queryClient.getQueryData<any>(['dashboardSummary', date]);
+
+      if (prevTimetable) {
+        queryClient.setQueryData<TimetableBlock[]>(['timetable', date], prevTimetable.filter(b => b._id !== id));
+      }
+      if (prevSummary && prevSummary.timetable) {
+        const updatedTimetable = prevSummary.timetable.filter((b: any) => b._id !== id);
+        const total = updatedTimetable.length;
+        const done = updatedTimetable.filter((t: any) => t.isDone).length;
+        const todayPercent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+        queryClient.setQueryData(['dashboardSummary', date], {
+          ...prevSummary,
+          timetable: updatedTimetable,
+          progress: {
+            ...prevSummary.progress,
+            todayPercent,
+            delta: todayPercent - prevSummary.progress.yesterdayPercent,
+          },
+        });
+      }
+
+      return { prevTimetable, prevSummary };
+    },
     onSuccess: () => {
       toast.success('Event deleted');
+    },
+    onError: (e: any, _vars, context) => {
+      toast.error(e.message || 'Failed to delete event');
+      if (context?.prevTimetable) {
+        queryClient.setQueryData(['timetable', date], context.prevTimetable);
+      }
+      if (context?.prevSummary) {
+        queryClient.setQueryData(['dashboardSummary', date], context.prevSummary);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['timetable', date] });
       queryClient.invalidateQueries({ queryKey: ['dashboardSummary', date] });
     },
-    onError: (e: any) => {
-      toast.error(e.message || 'Failed to delete event');
-    }
   });
 
   return {

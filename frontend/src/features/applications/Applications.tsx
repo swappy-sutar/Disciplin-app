@@ -28,12 +28,14 @@ import {
   Loader2,
   FileText
 } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
 import type { ApplicationStatus, Application } from '../../types';
 
 export default function Applications() {
   const { activeDate, token } = useStore();
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 350);
   const [statusFilter, setStatusFilter] = useState('All');
   
   // Detection logic for backend / AI features availability
@@ -80,11 +82,11 @@ export default function Applications() {
     return <PageSkeleton cards={3} rows={5} />;
   }
 
-  // Filter application items
+  // Filter application items using debounced search term
   const filteredApps = applications.filter((app) => {
-    const matchesSearch = app.company.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          app.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (app.notes || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = app.company.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 
+                          app.role.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          (app.notes || '').toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All' || app.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -611,11 +613,17 @@ export default function Applications() {
             {showAiAssistant && (
               <div className="space-y-3 pt-3 border-t border-slate-200/60 dark:border-slate-800">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
-                    Job Description (Required for AI)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      Job Description (Required for AI)
+                    </label>
+                    <span className={`text-[10px] font-semibold ${jobDescription.length >= 1450 ? 'text-amber-500 font-bold' : 'text-slate-400'}`}>
+                      {jobDescription.length} / 1500
+                    </span>
+                  </div>
                   <textarea
                     rows={3}
+                    maxLength={1500}
                     placeholder="Paste job description requirements..."
                     value={jobDescription}
                     onChange={e => setJobDescription(e.target.value)}
@@ -637,11 +645,17 @@ export default function Applications() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
-                      Raw Experience Notes
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        Raw Experience Notes
+                      </label>
+                      <span className={`text-[10px] font-semibold ${rawExperience.length >= 750 ? 'text-amber-500 font-bold' : 'text-slate-400'}`}>
+                        {rawExperience.length} / 800
+                      </span>
+                    </div>
                     <textarea
                       rows={2}
+                      maxLength={800}
                       placeholder="Key achievements..."
                       value={rawExperience}
                       onChange={e => setRawExperience(e.target.value)}
