@@ -136,10 +136,54 @@ describe('Interview Prep Module', () => {
       expect(item.confidence).toBe('weak');
     });
 
-    // 9. Clean up / delete note
-    const deleteRes = await request(app)
+    // 9. Update QA and Coding items
+    const updateQaRes = await request(app)
+      .patch(`/api/v1/qa/${qaId}`)
+      .set('Authorization', `Bearer ${tokenA}`)
+      .send({ confidence: 'strong' });
+    expect(updateQaRes.status).toBe(200);
+    expect(updateQaRes.body.data.confidence).toBe('strong');
+
+    const updateCodingRes = await request(app)
+      .patch(`/api/v1/coding/${codingId}`)
+      .set('Authorization', `Bearer ${tokenA}`)
+      .send({ confidence: 'ok' });
+    expect(updateCodingRes.status).toBe(200);
+    expect(updateCodingRes.body.data.confidence).toBe('ok');
+
+    // 10. List separate endpoints
+    const listNotesRes = await request(app)
+      .get(`/api/v1/topics/${topicId}/notes`)
+      .set('Authorization', `Bearer ${tokenA}`);
+    expect(listNotesRes.status).toBe(200);
+    expect(listNotesRes.body.data.length).toBe(1);
+
+    const listQaRes = await request(app)
+      .get(`/api/v1/topics/${topicId}/qa`)
+      .set('Authorization', `Bearer ${tokenA}`);
+    expect(listQaRes.status).toBe(200);
+    expect(listQaRes.body.data.length).toBe(2);
+
+    const listCodingRes = await request(app)
+      .get(`/api/v1/topics/${topicId}/coding`)
+      .set('Authorization', `Bearer ${tokenA}`);
+    expect(listCodingRes.status).toBe(200);
+    expect(listCodingRes.body.data.length).toBe(1);
+
+    // 11. Clean up / delete note, qa, and coding
+    const deleteNoteRes = await request(app)
       .delete(`/api/v1/notes/${noteId}`)
       .set('Authorization', `Bearer ${tokenA}`);
-    expect(deleteRes.status).toBe(200);
+    expect(deleteNoteRes.status).toBe(200);
+
+    const deleteQaRes = await request(app)
+      .delete(`/api/v1/qa/${qaId}`)
+      .set('Authorization', `Bearer ${tokenA}`);
+    expect(deleteQaRes.status).toBe(200);
+
+    const deleteCodingRes = await request(app)
+      .delete(`/api/v1/coding/${codingId}`)
+      .set('Authorization', `Bearer ${tokenA}`);
+    expect(deleteCodingRes.status).toBe(200);
   }, 30000);
 });

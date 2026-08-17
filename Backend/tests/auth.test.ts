@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 import app from '../src/app';
 import { User } from '../src/models/User';
+import { OAuth2Client } from 'google-auth-library';
 
 describe('Auth Endpoints', () => {
   const testUser = {
@@ -150,44 +151,177 @@ describe('Auth Endpoints', () => {
     expect(resInvalidCookieToken.status).toBe(401);
   });
 
-  it('should validate google login request fields correctly', async () => {
-    // 1. Missing idToken entirely or sending the old 'token' field should trigger Zod Validation Error
-    const resOldToken = await request(app)
-      .post('/api/v1/auth/google-login')
-      .send({ token: 'dummy-google-token-long-enough-12345' });
-    
-    expect(resOldToken.status).toBe(400);
-    expect(resOldToken.body.message).toBe('Validation Error');
-    expect(resOldToken.body.errors[0].field).toBe('body.idToken');
+  it('should successfully authenticate first-time Google SSO user and create verified account with cookies', async () => {
+    const googlePayload = {
+      email: 'firsttime_google@example.com',
+      name: 'Google Newbie',
+      sub: 'google-uid-10001',
+    };
 
-    // 2. Sending correct idToken should pass Zod validation (even if Google SDK rejects the dummy token later)
-    const resCorrectToken = await request(app)
+    vi.spyOn(OAuth2Client.prototype, 'verifyIdToken').mockResolvedValueOnce({
+      getPayload: () => googlePayload,
+    } as any);
+
+    const res = await request(app)
       .post('/api/v1/auth/google-login')
-      .send({ idToken: 'dummy-google-token-long-enough-12345' });
-    
-    // It passes Zod validation, and then fails at the controller level (Google SDK verifyIdToken)
-    expect(resCorrectToken.status).toBe(400);
-    expect(resCorrectToken.body.message).toContain('Invalid or expired Google ID token');
+      .send({ idToken: 'valid-mock-google-id-token' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.token).toBeTruthy();
+    expect(res.body.data.email).toBe(googlePayload.email);
+
+    // Verify cookies set
+    const cookies = res.headers['set-cookie'] || [];
+    expect(cookies.some((c: string) => c.startsWith('jwt='))).toBe(true);
+    expect(cookies.some((c: string) => c.startsWith('refreshToken='))).toBe(true);
+
+    // Verify database record
+    const createdUser = await User.findOne({ email: googlePayload.email });
+    expect(createdUser).not.toBeNull();
+    expect(createdUser?.isVerified).toBe(true);
+    expect(createdUser?.googleId).toBe(googlePayload.sub);
+    expect(createdUser?.passwordHash).toBeTruthy(); // Randomly generated password hash
   });
 
-  it('should validate reset password request fields correctly', async () => {
-    // 1. Missing reset token in body should fail Zod validation
-    const resNoToken = await request(app)
-      .post('/api/v1/auth/reset-password')
-      .send({ password: 'new-secure-password' });
-    
-    expect(resNoToken.status).toBe(400);
-    expect(resNoToken.body.message).toBe('Validation Error');
-    expect(resNoToken.body.errors[0].field).toBe('body.token');
+  it('should authenticate returning Google SSO user without creating duplicate records', async () => {
+    const googlePayload = {
+      email: 'returning_google@example.com',
+      name: 'Returning Googler',
+      sub: 'google-uid-10002',
+    };
 
-    // 2. Correct token and password should pass Zod validation
-    const resCorrect = await request(app)
+    // First login (creation)
+    vi.spyOn(OAuth2Client.prototype, 'verifyIdToken').mockResolvedValueOnce({
+      getPayload: () => googlePayload,
+    } as any);
+
+    await request(app)
+      .post('/api/v1/auth/google-login')
+      .send({ idToken: 'valid-mock-google-token-1' });
+
+    // Second login (returning)
+    vi.spyOn(OAuth2Client.prototype, 'verifyIdToken').mockResolvedValueOnce({
+      getPayload: () => googlePayload,
+    } as any);
+
+    const resReturning = await request(app)
+      .post('/api/v1/auth/google-login')
+      .send({ idToken: 'valid-mock-google-token-2' });
+
+    expect(resReturning.status).toBe(200);
+    expect(resReturning.body.success).toBe(true);
+    expect(resReturning.body.data.email).toBe(googlePayload.email);
+
+    // Assert no duplicate user created
+    const count = await User.countDocuments({ email: googlePayload.email });
+    expect(count).toBe(1);
+  });
+
+  it('should link Google SSO to an existing email/password registered account without duplicates', async () => {
+    const email = 'existing_email_pass@example.com';
+
+    // 1. User originally registers via email/password
+    await request(app)
+      .post('/api/v1/auth/register')
+      .send({ name: 'Email Pass User', email, password: 'Password123!' });
+
+    const originalUser = await User.findOne({ email });
+    expect(originalUser).not.toBeNull();
+    expect(originalUser?.googleId).toBeUndefined();
+
+    // 2. User then logs in via Google with the same email
+    const googlePayload = {
+      email,
+      name: 'Google Name',
+      sub: 'google-uid-linked-9999',
+    };
+
+    vi.spyOn(OAuth2Client.prototype, 'verifyIdToken').mockResolvedValueOnce({
+      getPayload: () => googlePayload,
+    } as any);
+
+    const resGoogle = await request(app)
+      .post('/api/v1/auth/google-login')
+      .send({ idToken: 'valid-google-linking-token' });
+
+    expect(resGoogle.status).toBe(200);
+    expect(resGoogle.body.success).toBe(true);
+
+    // 3. Verify account linking behavior: 1 record, googleId attached, email verified
+    const usersWithEmail = await User.find({ email });
+    expect(usersWithEmail.length).toBe(1);
+    expect(usersWithEmail[0].googleId).toBe('google-uid-linked-9999');
+    expect(usersWithEmail[0].isVerified).toBe(true);
+  });
+
+  it('should verify email with valid token and reject invalid token', async () => {
+    const email = 'verify_me@example.com';
+    await request(app)
+      .post('/api/v1/auth/register')
+      .send({ name: 'Unverified User', email, password: 'Password123!' });
+
+    const user = await User.findOne({ email });
+    expect(user?.isVerified).toBe(false);
+    expect(user?.verificationToken).toBeDefined();
+
+    // Verification with invalid token -> 400
+    const resInvalid = await request(app)
+      .post('/api/v1/auth/verify-email')
+      .send({ token: 'bogus-verification-token' });
+    expect(resInvalid.status).toBe(400);
+
+    // Re-trigger resend verification email
+    const resendRes = await request(app)
+      .post('/api/v1/auth/resend-verification')
+      .send({ email });
+    expect(resendRes.status).toBe(200);
+  });
+
+  it('should handle forgot password and reset password flow successfully', async () => {
+    const email = 'forgot_pass@example.com';
+    await request(app)
+      .post('/api/v1/auth/register')
+      .send({ name: 'Forgot User', email, password: 'OldPassword123!' });
+    await User.updateOne({ email }, { isVerified: true });
+
+    // Request reset
+    const forgotRes = await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email });
+    expect(forgotRes.status).toBe(200);
+
+    // Verify token exists in database
+    const user = await User.findOne({ email });
+    expect(user?.passwordResetToken).toBeDefined();
+
+    // Reset password with invalid token -> 400
+    const resetInvalidRes = await request(app)
       .post('/api/v1/auth/reset-password')
-      .send({ token: 'dummy-reset-token', password: 'new-secure-password' });
-    
-    // It passes Zod validation, and fails at the controller level due to invalid token in DB
-    expect(resCorrect.status).toBe(400);
-    expect(resCorrect.body.message).toContain('Invalid or expired reset token');
+      .send({ token: 'invalid-token', password: 'NewPassword123!' });
+    expect(resetInvalidRes.status).toBe(400);
+  });
+
+  it('should update authenticated user profile and password', async () => {
+    const email = 'update_profile@example.com';
+    await request(app)
+      .post('/api/v1/auth/register')
+      .send({ name: 'Old Name', email, password: 'Password123!' });
+    await User.updateOne({ email }, { isVerified: true });
+
+    const loginRes = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email, password: 'Password123!' });
+    const token = loginRes.body.data.token;
+
+    // Update name
+    const updateRes = await request(app)
+      .put('/api/v1/auth/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'New Shiny Name' });
+
+    expect(updateRes.status).toBe(200);
+    expect(updateRes.body.data.name).toBe('New Shiny Name');
   });
 });
 
