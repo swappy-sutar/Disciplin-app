@@ -1,14 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
-import app from '../src/app';
-import { User } from '../src/models/User';
-import { WorkoutSession } from '../src/models/WorkoutSession';
-import { WorkoutSplit } from '../src/models/WorkoutSplit';
-import { WorkoutCoachThread } from '../src/models/WorkoutCoachThread';
-import { AIService } from '../src/services/ai.service';
-import { AppError } from '../src/utils/custom-errors';
-
-import { createTestUser } from './helpers/authHelper';
+import app from '../../src/app';
+import { WorkoutSession } from '../../src/models/WorkoutSession';
+import { WorkoutSplit } from '../../src/models/WorkoutSplit';
+import { WorkoutCoachThread } from '../../src/models/WorkoutCoachThread';
+import { createTestUser } from '../helpers/authHelper';
 
 const mockCreate = vi.fn();
 

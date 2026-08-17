@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import request from 'supertest';
-import app from '../src/app';
-import { createTestUser } from './helpers/authHelper';
+import app from '../../src/app';
+import { createTestUser } from '../helpers/authHelper';
 
 describe('Timetable Endpoints', () => {
   const getToken = async () => {

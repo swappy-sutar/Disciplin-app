@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
-import app from '../src/app';
-import { AIService } from '../src/services/ai.service';
-import { AppError } from '../src/utils/custom-errors';
-import { createTestUser } from './helpers/authHelper';
+import app from '../../src/app';
+import { AIService } from '../../src/services/ai.service';
+import { AppError } from '../../src/utils/custom-errors';
+import { createTestUser } from '../helpers/authHelper';
 
 const mockCreate = vi.fn();
 
@@ -20,7 +20,6 @@ vi.mock('openai', () => {
     }),
   };
 });
-
 
 describe('AI Router Endpoints (/api/v1/ai/*)', () => {
   const getToken = async () => {

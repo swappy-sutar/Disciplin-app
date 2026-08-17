@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import request from 'supertest';
-import app from '../src/app';
-import { createTwoUsers } from './helpers/authHelper';
+import app from '../../src/app';
+import { createTwoUsers } from '../helpers/authHelper';
 
 describe('Interview Prep Module', () => {
   it('should verify CRUD on prep module & ownership authorization (403)', async () => {

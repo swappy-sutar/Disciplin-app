@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
-import mongoose from 'mongoose';
-import app from '../src/app';
-import { FitnessGoal } from '../src/models/FitnessGoal.model';
-import { BodyMetric } from '../src/models/BodyMetric.model';
-import { WorkoutSplit } from '../src/models/WorkoutSplit';
-import { generateToken } from '../src/utils/auth-helpers';
+import app from '../../src/app';
+import { FitnessGoal } from '../../src/models/FitnessGoal.model';
+import { BodyMetric } from '../../src/models/BodyMetric.model';
+import { WorkoutSplit } from '../../src/models/WorkoutSplit';
+import { createTestUser } from '../helpers/authHelper';
 
 const mockCreate = vi.fn();
 
@@ -22,8 +21,6 @@ vi.mock('openai', () => {
     }),
   };
 });
-
-import { createTestUser } from './helpers/authHelper';
 
 describe('Fitness Goal & Goal AI Module Endpoints', () => {
   let userId: string;
