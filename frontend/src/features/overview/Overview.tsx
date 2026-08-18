@@ -20,8 +20,7 @@ import { DotGrid } from '../../components/ui/DotGrid';
 import { Modal } from '../../components/ui/Modal';
 import { OverviewSkeleton } from '../../components/ui/Skeleton';
 import { Link } from 'react-router-dom';
-import { format, parseISO, addDays, subDays } from 'date-fns';
-import { CalendarPicker } from '../../components/ui/CalendarPicker';
+import { format, parseISO, addDays } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from '../../hooks/useTranslation';
 import { 
@@ -34,8 +33,6 @@ import {
   Award,
   BookOpen,
   X,
-  ChevronLeft,
-  ChevronRight,
   ChevronDown,
   ChevronUp,
   Calendar,
@@ -86,7 +83,6 @@ export default function Overview() {
   const { 
     activeDate, 
     activeWeekStart, 
-    setActiveDate,
     addNotification,
     token
   } = useStore();
@@ -95,16 +91,6 @@ export default function Overview() {
   const { generateStudyPlan, isGeneratingStudyPlan } = useGenerateStudyPlan();
 
   const { t } = useTranslation();
-
-  const handlePrevDay = () => {
-    const prev = subDays(new Date(activeDate), 1);
-    setActiveDate(format(prev, 'yyyy-MM-dd'));
-  };
-
-  const handleNextDay = () => {
-    const next = addDays(new Date(activeDate), 1);
-    setActiveDate(format(next, 'yyyy-MM-dd'));
-  };
   
   // Queries
   const { data: summary, isLoading, isError, refetch } = useDashboardSummary(activeDate);
@@ -389,8 +375,7 @@ export default function Overview() {
     }
   };
 
-  // Check off date ranges
-  const dateFormatted = format(parseISO(activeDate), 'EEEE, MMMM d, yyyy');
+
 
   // Calculate Habit Columns Map
   const weekdayShortNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -405,7 +390,7 @@ export default function Overview() {
 
   return (
     <div className="space-y-6 md:space-y-8 select-none">
-           {/* Title Header */}
+      {/* Title Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight leading-none">
@@ -414,43 +399,6 @@ export default function Overview() {
           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1.5 select-none">
             Track your daily focus hours, habit compliance & schedule
           </p>
-        </div>
-        
-        {/* Upgraded Date Switcher Pill */}
-        <div className="flex items-center gap-1 bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-md backdrop-blur-xl select-none max-w-fit shrink-0 relative z-10">
-          <button 
-            onClick={handlePrevDay}
-            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
-            aria-label="Previous day"
-            title="Previous day"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          
-          <CalendarPicker dateRangeLabel={dateFormatted} align="left" />
-          
-          <button 
-            onClick={handleNextDay}
-            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
-            aria-label="Next day"
-            title="Next day"
-          >
-            <ChevronRight size={16} />
-          </button>
-
-          {activeDate === format(new Date(), 'yyyy-MM-dd') ? (
-            <span className="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 ml-0.5 select-none">
-              Today
-            </span>
-          ) : (
-            <button
-              onClick={() => setActiveDate(format(new Date(), 'yyyy-MM-dd'))}
-              className="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white transition-all cursor-pointer ml-0.5"
-              title="Go to Today"
-            >
-              Go to Today
-            </button>
-          )}
         </div>
       </div>
 

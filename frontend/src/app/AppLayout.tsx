@@ -29,7 +29,7 @@ const languages = [
 ] as const;
 
 import { apiClient } from '../lib/api-client';
-import { addDays, subDays, startOfWeek, endOfWeek, format, parseISO } from 'date-fns';
+import { addDays, subDays, startOfWeek, format, parseISO } from 'date-fns';
 import { CalendarPicker } from '../components/ui/CalendarPicker';
 
 import { Logo } from '../components/ui/Logo';
@@ -50,7 +50,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     logout,
     activeDate,
     setActiveDate,
-    activeWeekStart,
     setActiveWeekStart,
     theme,
     toggleTheme,
@@ -190,13 +189,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     setActiveWeekStart(format(newWeekStart, 'yyyy-MM-dd'));
   };
 
-  // Get active week range label e.g. "Jul 20 - 26"
-  const currentWeekStart = parseISO(activeWeekStart);
-  const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
-  const isSameMonthWeek = currentWeekStart.getMonth() === currentWeekEnd.getMonth();
-  const dateRangeLabel = isSameMonthWeek
-    ? `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'd')}`
-    : `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'MMM d')}`;
+  const handleGoToToday = () => {
+    const today = new Date();
+    const todayStr = format(today, 'yyyy-MM-dd');
+    setActiveDate(todayStr);
+    const newWeekStart = startOfWeek(today, { weekStartsOn: 1 });
+    setActiveWeekStart(format(newWeekStart, 'yyyy-MM-dd'));
+  };
+
+  // Formatted active date for desktop navbar picker e.g. "Tuesday, August 18, 2026"
+  const dateFormatted = format(parseISO(activeDate), 'EEEE, MMMM d, yyyy');
+  // Compact date for mobile navbar picker e.g. "Aug 18"
+  const mobileDateFormatted = format(parseISO(activeDate), 'MMM d');
+  const isToday = activeDate === format(new Date(), 'yyyy-MM-dd');
 
 
   return (
@@ -387,7 +392,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {/* Glow underside line */}
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent dark:via-emerald-500/30" />
 
-        <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-8 h-16 flex items-center justify-between gap-2">
 
           {/* Page Title (Desktop only) */}
           <div className="hidden md:block">
@@ -397,32 +402,69 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
 
           {/* Logo (Mobile only) */}
-          <Link to="/" className="md:hidden hover:opacity-90 transition-opacity flex-shrink-0 -ml-5 sm:-ml-7">
-            <Logo className="h-12" />
+          <Link to="/" className="md:hidden hover:opacity-90 transition-opacity flex-shrink-0">
+            <Logo className="h-8 sm:h-9" />
           </Link>
 
           {/* Controls: Date range selector + Bell + User Menu */}
-          <div className="flex items-center justify-end w-auto gap-4">
+          <div className="flex items-center justify-end w-auto gap-1.5 sm:gap-2.5 md:gap-4">
 
-            {/* Date Switcher */}
-            <div className="hidden md:flex items-center bg-slate-100/70 dark:bg-slate-900/70 border border-slate-200/60 dark:border-slate-800/60 rounded-full px-1.5 py-0.5 gap-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm">
+            {/* Mobile Date Switcher: Compact Sleek Glass Capsule */}
+            <div className="flex md:hidden items-center bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-full px-1 py-0.5 shadow-sm backdrop-blur-md shrink-0 relative z-20">
               <button
                 onClick={handlePrevDay}
-                className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Previous day"
                 title="Previous day"
               >
-                <ChevronLeft size={14} />
+                <ChevronLeft size={12} />
               </button>
-              <CalendarPicker dateRangeLabel={dateRangeLabel} />
+              <CalendarPicker dateRangeLabel={mobileDateFormatted} align="right" compact={true} />
               <button
                 onClick={handleNextDay}
-                className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Next day"
                 title="Next day"
               >
-                <ChevronRight size={14} />
+                <ChevronRight size={12} />
               </button>
+            </div>
+
+            {/* Upgraded Desktop Date Switcher Pill (Matching Dashboard) */}
+            <div className="hidden md:flex items-center gap-1 bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-1.5 shadow-sm backdrop-blur-xl select-none max-w-fit shrink-0 relative z-10">
+              <button
+                onClick={handlePrevDay}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                aria-label="Previous day"
+                title="Previous day"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              <CalendarPicker dateRangeLabel={dateFormatted} align="center" />
+
+              <button
+                onClick={handleNextDay}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                aria-label="Next day"
+                title="Next day"
+              >
+                <ChevronRight size={16} />
+              </button>
+
+              {isToday ? (
+                <span className="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 ml-0.5 select-none">
+                  Today
+                </span>
+              ) : (
+                <button
+                  onClick={handleGoToToday}
+                  className="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white transition-all cursor-pointer ml-0.5"
+                  title="Go to Today"
+                >
+                  Today
+                </button>
+              )}
             </div>
 
             {/* Notification Bell */}
