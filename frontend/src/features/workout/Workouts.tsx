@@ -10,16 +10,16 @@ import { PillBadge } from '../../components/ui/PillBadge';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { useTranslation } from '../../hooks/useTranslation';
 import confetti from 'canvas-confetti';
-import { 
-  Flame, 
-  Dumbbell, 
-  Calendar, 
-  Check, 
-  Plus, 
-  Trash2, 
-  Award, 
-  Search, 
-  BookOpen, 
+import {
+  Flame,
+  Dumbbell,
+  Calendar,
+  Check,
+  Plus,
+  Trash2,
+  Award,
+  Search,
+  BookOpen,
   Activity,
   Bot,
   Send,
@@ -28,9 +28,11 @@ import {
   AlertTriangle,
   RefreshCw,
   X,
-  Target
+  Target,
+  TrendingUp
 } from 'lucide-react';
 import { FitnessGoalPanel } from './FitnessGoalPanel';
+import { WorkoutHeatmap } from './WorkoutHeatmap';
 import { compressImageForAI } from '../../utils/imageCompression';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
@@ -40,22 +42,24 @@ import {
   useCoachChat,
   useRegenerateSplit
 } from '../../hooks/useAI';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  CartesianGrid,
+  Cell
 } from 'recharts';
 
 export default function Workouts() {
   const { activeDate, addNotification } = useStore();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'today' | 'split' | 'goal' | 'library' | 'progress' | 'coach'>('today');
-  
+
   // Custom Date Tracking for Today's tab
   const [targetDateStr, setTargetDateStr] = useState(activeDate);
 
@@ -64,30 +68,30 @@ export default function Workouts() {
     setTargetDateStr(activeDate);
   }, [activeDate]);
 
-  // Hook data loading
-  const startDay = format(subDays(parseISO(targetDateStr), 30), 'yyyy-MM-dd');
+  // Hook data loading - fetch 365 days for full 52-week yearly heatmap
+  const startDay = format(subDays(parseISO(targetDateStr), 365), 'yyyy-MM-dd');
   const endDay = format(addDays(parseISO(targetDateStr), 30), 'yyyy-MM-dd');
-  
-  const { 
-    exercises, 
-    split, 
-    todaySession, 
-    history, 
-    streak, 
+
+  const {
+    exercises,
+    split,
+    todaySession,
+    history,
+    streak,
     isLoadingExercises,
     isLoadingSplit,
     isLoadingTodaySession,
-    updateSplit, 
-    saveSession 
-  } = useWorkouts({ 
-    date: targetDateStr, 
-    startDate: startDay, 
-    endDate: endDay 
+    updateSplit,
+    saveSession
+  } = useWorkouts({
+    date: targetDateStr,
+    startDate: startDay,
+    endDate: endDay
   });
 
   // State for active session draft (to handle logging in UI before saving)
   const [sessionDraft, setSessionDraft] = useState<any>(null);
-  
+
   // Library search state with debounce
   const [libSearch, setLibSearch] = useState('');
   const debouncedLibSearch = useDebounce(libSearch, 300);
@@ -102,7 +106,7 @@ export default function Workouts() {
       setCurrentVideoId(null);
       return;
     }
-    
+
     setIsLoadingVideo(true);
     apiClient.workouts.getExerciseVideo(selectedExDetail.name)
       .then((res) => {
@@ -211,7 +215,7 @@ export default function Workouts() {
         setSessionDraft(res);
         setShowAiGenModal(false);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handlePlateauCheckClick = async () => {
@@ -221,7 +225,7 @@ export default function Workouts() {
         setPlateauResult(res);
         setShowPlateauModal(true);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleLoadDeloadWeek = () => {
@@ -239,7 +243,7 @@ export default function Workouts() {
       if (res && res.splitRegenerated) {
         setSplitRegenPreview(res);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleConfirmSplitRegeneration = async () => {
@@ -247,7 +251,7 @@ export default function Workouts() {
     try {
       await updateSplit(splitRegenPreview.newWeekMap);
       setSplitRegenPreview(null);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleSendChatMessage = async (e: React.FormEvent) => {
@@ -293,11 +297,11 @@ export default function Workouts() {
     if (!sessionDraft) return;
     const updated = { ...sessionDraft };
     updated.exercises[exIdx].sets[setIdx][field] = value;
-    
+
     // Auto calculate if the whole session is completed
     let allCompleted = true;
     let loggedAnySet = false;
-    
+
     updated.exercises.forEach((ex: any) => {
       ex.sets.forEach((set: any) => {
         if (set.reps > 0 || set.weightKg > 0) {
@@ -311,7 +315,7 @@ export default function Workouts() {
 
     updated.completed = loggedAnySet && allCompleted;
     setSessionDraft(updated);
-    
+
     // Auto save to database
     saveSession(updated);
   };
@@ -323,7 +327,7 @@ export default function Workouts() {
     const sets = updated.exercises[exIdx].sets;
     const newNum = sets.length + 1;
     const lastSet = sets[sets.length - 1] || { reps: 8, weightKg: 10 };
-    
+
     sets.push({
       setNumber: newNum,
       reps: lastSet.reps,
@@ -339,12 +343,12 @@ export default function Workouts() {
     if (!sessionDraft) return;
     const updated = { ...sessionDraft };
     updated.exercises[exIdx].sets.splice(setIdx, 1);
-    
+
     // Renumber sets
     updated.exercises[exIdx].sets.forEach((set: any, idx: number) => {
       set.setNumber = idx + 1;
     });
-    
+
     setSessionDraft(updated);
     saveSession(updated);
   };
@@ -380,7 +384,7 @@ export default function Workouts() {
   const handleCompleteWorkout = async () => {
     if (!sessionDraft) return;
     const finalSession = { ...sessionDraft, completed: true };
-    
+
     // Mark all sets completed if they aren't
     finalSession.exercises.forEach((ex: any) => {
       ex.sets.forEach((set: any) => {
@@ -506,20 +510,24 @@ export default function Workouts() {
   // Recharts Stats Calculations
   const getVolumeData = () => {
     if (!history || history.length === 0) return [];
-    return history.slice(0, 8).reverse().map(session => {
-      let totalVolume = 0;
-      session.exercises.forEach(ex => {
-        ex.sets.forEach(set => {
-          if (set.completed) {
-            totalVolume += set.reps * set.weightKg;
-          }
+    return history
+      .filter(s => s.completed)
+      .slice(0, 12)
+      .reverse()
+      .map(session => {
+        let totalVolume = 0;
+        session.exercises.forEach(ex => {
+          ex.sets.forEach(set => {
+            if (set.completed) {
+              totalVolume += (Number(set.reps) || 0) * (Number(set.weightKg) || 0);
+            }
+          });
         });
+        return {
+          date: format(parseISO(session.date), 'MMM d'),
+          volume: totalVolume
+        };
       });
-      return {
-        date: format(parseISO(session.date), 'MMM d'),
-        volume: totalVolume
-      };
-    });
   };
 
   const getFrequencyData = () => {
@@ -536,27 +544,9 @@ export default function Workouts() {
     }));
   };
 
-  // Generate 56 days contribution heatmap grid
-  const getHeatmapDays = () => {
-    const days = [];
-    const today = new Date();
-    // Start from 7 weeks ago (56 days)
-    for (let i = 55; i >= 0; i--) {
-      const d = subDays(today, i);
-      const str = format(d, 'yyyy-MM-dd');
-      const hasCompleted = history.some(s => s.date === str && s.completed);
-      days.push({
-        dateStr: str,
-        dayLabel: format(d, 'd'),
-        completed: hasCompleted
-      });
-    }
-    return days;
-  };
-
   return (
     <div className="space-y-6 md:space-y-8 select-none pb-24 animate-fade-in">
-      
+
       {/* Header Title */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -567,46 +557,46 @@ export default function Workouts() {
             Build athletic power, track weekly splits, and log lift volumes.
           </p>
         </div>
-        
+
         {/* Navigation Tabs & Date Switcher */}
         <div className="flex flex-col-reverse sm:flex-row items-center gap-3.5 w-full sm:w-auto sm:justify-end">
           <div className="flex flex-row overflow-x-auto items-center gap-1 bg-slate-100/70 dark:bg-slate-900/60 p-1 rounded-2xl w-full sm:w-auto border border-slate-150 dark:border-slate-800/80 shadow-inner [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <button 
+            <button
               onClick={() => setActiveTab('today')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'today' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
               <Dumbbell size={13} className={activeTab === 'today' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
               {t.todayWorkout || "Today's Lift"}
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('split')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'split' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
               <Calendar size={13} className={activeTab === 'split' ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500'} />
               {t.workoutSplit || 'Weekly Split'}
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('goal')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'goal' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
               <Target size={13} className={activeTab === 'goal' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
               {'Fitness Goal'}
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('library')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'library' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
               <BookOpen size={13} className={activeTab === 'library' ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500'} />
               {t.exerciseLibrary || 'Exercise Library'}
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('progress')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'progress' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
               <Activity size={13} className={activeTab === 'progress' ? 'text-emerald-500 animate-pulse' : 'text-slate-400 dark:text-slate-500'} />
               {t.workoutAnalytics || 'Analytics'}
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('coach')}
               className={`flex items-center justify-center gap-2 py-2 px-3 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 border-none shrink-0 ${activeTab === 'coach' ? 'bg-white dark:bg-slate-800 text-emerald-500 dark:text-emerald-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/20'}`}
             >
@@ -619,7 +609,7 @@ export default function Workouts() {
 
       {/* Stats Cards Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-4 select-none">
-        
+
         {/* Current Workout Streak */}
         <div className="relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-slate-900/60 border border-gray-150/40 dark:border-slate-800/80 shadow-sm transition-all duration-255 hover:shadow-md hover:shadow-orange-500/5">
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-500" />
@@ -702,7 +692,7 @@ export default function Workouts() {
               <h4 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">AI Workout Builder</h4>
               <p className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 mt-1">Generate a custom routine with injury-awareness and overload autopilot.</p>
             </div>
-            <Button 
+            <Button
               onClick={() => setShowAiGenModal(true)}
               disabled={!isBackendOnline}
               title={!isBackendOnline ? 'Connect to backend to use AI features' : 'Open AI workout builder'}
@@ -712,7 +702,7 @@ export default function Workouts() {
               Generate routine
             </Button>
           </div>
-          
+
 
 
           {/* If Loading today's session */}
@@ -737,7 +727,7 @@ export default function Workouts() {
                   <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 mt-3 max-w-xs mx-auto">
                     Muscles grow when you rest. Recover well, stay hydrated, and focus on clean nutrition today.
                   </p>
-                  
+
                   <div className="mt-8 border-t border-gray-200/60 dark:border-slate-800 pt-6">
                     <span className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 uppercase">Or lift anyway:</span>
                     <div className="flex flex-wrap justify-center gap-1.5 mt-3">
@@ -756,7 +746,7 @@ export default function Workouts() {
               ) : (
                 /* Active Workout Routine View */
                 <div className="space-y-6">
-                  
+
                   {/* Top Header Card */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-700 dark:to-teal-900 text-white rounded-2xl p-6 shadow-md shadow-emerald-600/15">
                     <div>
@@ -770,14 +760,13 @@ export default function Workouts() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <button 
+                      <button
                         onClick={handleCompleteWorkout}
                         disabled={sessionDraft.completed}
-                        className={`font-black select-none text-xs px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer ${
-                          sessionDraft.completed 
-                            ? 'bg-emerald-800/50 text-emerald-200 cursor-not-allowed border border-emerald-500/30' 
+                        className={`font-black select-none text-xs px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer ${sessionDraft.completed
+                            ? 'bg-emerald-800/50 text-emerald-200 cursor-not-allowed border border-emerald-500/30'
                             : 'bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 border-none'
-                        }`}
+                          }`}
                       >
                         {sessionDraft.completed ? <Check size={14} /> : <Dumbbell size={14} />}
                         <span>{sessionDraft.completed ? 'Workout Logged' : 'Finish Workout'}</span>
@@ -790,9 +779,9 @@ export default function Workouts() {
                     {sessionDraft.exercises.map((ex: any, exIdx: number) => {
                       const exercise = ex.exerciseId;
                       if (!exercise) return null;
-                      
+
                       return (
-                        <Card 
+                        <Card
                           key={ex._id || exIdx}
                           className={`relative transition-all duration-300 ${ex.sets.every((s: any) => s.completed) && ex.sets.length > 0 ? 'border-emerald-500/20 bg-emerald-500/[0.01]' : 'border-gray-150/80 dark:border-gray-800'}`}
                         >
@@ -801,11 +790,11 @@ export default function Workouts() {
                             <div className="flex items-center gap-3">
                               {/* Thumbnail preview */}
                               {exercise.imageUrl ? (
-                              <img 
-                                src={exercise.imageUrl || undefined} 
-                                alt={exercise.name} 
-                                className="w-12 h-12 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0" 
-                              />
+                                <img
+                                  src={exercise.imageUrl || undefined}
+                                  alt={exercise.name}
+                                  className="w-12 h-12 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0"
+                                />
                               ) : (
                                 <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-gray-150/80 dark:border-gray-850 shrink-0 flex items-center justify-center text-slate-400">
                                   <Dumbbell size={18} />
@@ -826,10 +815,10 @@ export default function Workouts() {
                                 </div>
                               </div>
                             </div>
-                            
+
                             {/* Buttons */}
                             <div className="flex items-center gap-1.5 self-end sm:self-center">
-                              <Button 
+                              <Button
                                 onClick={() => setSelectedExDetail(exercise)}
                                 variant="outline"
                                 className="py-1 px-3 text-[10px] font-bold"
@@ -837,7 +826,7 @@ export default function Workouts() {
                               >
                                 Instructions
                               </Button>
-                              <Button 
+                              <Button
                                 onClick={() => addSet(exIdx)}
                                 variant="outline"
                                 className="py-1 px-3 text-[10px] font-bold border-primary-accent/30 text-primary-accent hover:bg-primary-accent/5"
@@ -863,11 +852,11 @@ export default function Workouts() {
                             {ex.sets.map((set: any, setIdx: number) => {
                               const isSetDone = set.completed;
                               return (
-                                <div 
-                                  key={setIdx} 
+                                <div
+                                  key={setIdx}
                                   className={`grid grid-cols-[2.5rem_1fr_1fr_3.5rem_2rem] items-center gap-2 sm:gap-4 px-2 sm:px-3 py-1.5 rounded-2xl border transition-all duration-300
-                                    ${isSetDone 
-                                      ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.06] border-emerald-500/20 shadow-sm shadow-emerald-500/[0.01]' 
+                                    ${isSetDone
+                                      ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.06] border-emerald-500/20 shadow-sm shadow-emerald-500/[0.01]'
                                       : 'bg-slate-50/40 dark:bg-slate-900/40 border-slate-100 dark:border-slate-800/70 hover:border-slate-200/80 dark:hover:border-slate-700/60 hover:bg-slate-50/80 dark:hover:bg-slate-900/60'
                                     }
                                   `}
@@ -886,7 +875,7 @@ export default function Workouts() {
 
                                   {/* Weight Input */}
                                   <div>
-                                    <input 
+                                    <input
                                       type="number"
                                       value={set.weightKg === 0 ? '' : set.weightKg}
                                       onChange={(e) => handleSetChange(exIdx, setIdx, 'weightKg', Number(e.target.value))}
@@ -903,7 +892,7 @@ export default function Workouts() {
 
                                   {/* Reps Input */}
                                   <div>
-                                    <input 
+                                    <input
                                       type="number"
                                       value={set.reps === 0 ? '' : set.reps}
                                       onChange={(e) => handleSetChange(exIdx, setIdx, 'reps', Number(e.target.value))}
@@ -920,7 +909,7 @@ export default function Workouts() {
 
                                   {/* Done Toggle */}
                                   <div className="flex justify-center">
-                                    <Checkbox 
+                                    <Checkbox
                                       checked={set.completed}
                                       disabled={sessionDraft.completed}
                                       onChange={(checked) => handleSetChange(exIdx, setIdx, 'completed', checked)}
@@ -931,7 +920,7 @@ export default function Workouts() {
 
                                   {/* Remove Set Button */}
                                   <div className="flex justify-center">
-                                    <button 
+                                    <button
                                       onClick={() => removeSet(exIdx, setIdx)}
                                       disabled={sessionDraft.completed}
                                       className="text-gray-300 hover:text-red-500 dark:text-slate-650 dark:hover:text-red-400 p-1.5 cursor-pointer transition-all border-none bg-transparent disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-800/40 rounded-lg"
@@ -967,7 +956,7 @@ export default function Workouts() {
               </h4>
               <p className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 mt-1">Regenerate split day targets based on low session compliance rates ({"< 40%"}) in the past 3 weeks.</p>
             </div>
-            <Button 
+            <Button
               onClick={handleRegenerateSplitClick}
               disabled={isRegeneratingSplit || !isBackendOnline}
               title={!isBackendOnline ? 'Connect to backend to use AI features' : 'Adjust split configuration'}
@@ -1001,14 +990,14 @@ export default function Workouts() {
                 })}
               </div>
               <div className="flex justify-end gap-2">
-                <Button 
+                <Button
                   onClick={() => setSplitRegenPreview(null)}
                   variant="outline"
                   className="py-1.5 px-4 text-xs font-black"
                 >
                   Reject Changes
                 </Button>
-                <Button 
+                <Button
                   onClick={handleConfirmSplitRegeneration}
                   className="py-1.5 px-6 text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white border-none"
                 >
@@ -1017,60 +1006,60 @@ export default function Workouts() {
               </div>
             </div>
           )}
-          
+
           {/* Template Preset bar */}
           <Card title="Quick Split Setup Templates" subtitle="Apply standard fitness layouts directly">
             <div className="flex flex-wrap gap-2.5">
-              <Button 
+              <Button
                 onClick={() => applyTemplate('bro')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 💪 Bro Split (5-Day Bodypart)
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('ppl')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 🏋️ Push/Pull/Legs (6-Day Cyclic)
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('upperlower')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 📈 Upper/Lower Strength split
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('fullbody')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 🏃 Full Body x3 Cardio split
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('arnold')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 ⭐ Arnold Split (6-Day Arms/Chest/Legs)
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('upperlower4')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 📊 Upper/Lower 4-Day Strength
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('pplarnold')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
               >
                 🔥 PPL + Arnold 6-Day Hybrid
               </Button>
-              <Button 
+              <Button
                 onClick={() => applyTemplate('conditioning')}
                 variant="outline"
                 className="font-bold py-2 text-xs"
@@ -1093,14 +1082,14 @@ export default function Workouts() {
                 {Object.keys(split.weekMap).map((day) => {
                   const dayKey = day as keyof typeof split.weekMap;
                   const currentMuscle = split.weekMap[dayKey];
-                  
+
                   return (
                     <div key={day} className="flex flex-col gap-1.5 p-3.5 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-150/40 dark:border-gray-800/50">
                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-slate-500">
                         {day}
                       </span>
-                      
-                      <select 
+
+                      <select
                         value={currentMuscle}
                         onChange={(e) => {
                           const updatedMap = { ...split.weekMap, [dayKey]: e.target.value };
@@ -1131,13 +1120,13 @@ export default function Workouts() {
 
       {activeTab === 'library' && (
         <div className="space-y-6 select-none animate-fade-in">
-          
+
           {/* Filters strip */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-150/80 dark:border-gray-800 shadow-sm">
-            
+
             {/* Search Input */}
             <div className="relative">
-              <input 
+              <input
                 type="text"
                 value={libSearch}
                 onChange={(e) => setLibSearch(e.target.value)}
@@ -1149,7 +1138,7 @@ export default function Workouts() {
 
             {/* Muscle Filter */}
             <div>
-              <select 
+              <select
                 value={libMuscle}
                 onChange={(e) => setLibMuscle(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-gray-850 bg-white dark:bg-slate-900 rounded-lg text-xs font-bold text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
@@ -1163,7 +1152,7 @@ export default function Workouts() {
 
             {/* Equipment Filter */}
             <div>
-              <select 
+              <select
                 value={libEquipment}
                 onChange={(e) => setLibEquipment(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-gray-850 bg-white dark:bg-slate-900 rounded-lg text-xs font-bold text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
@@ -1198,22 +1187,22 @@ export default function Workouts() {
                     <div className="flex items-start gap-4">
                       {/* Image Thumbnail */}
                       {ex.imageUrl ? (
-                      <img 
-                        src={ex.imageUrl || undefined} 
-                        alt={ex.name} 
-                        className="w-16 h-16 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0" 
-                      />
+                        <img
+                          src={ex.imageUrl || undefined}
+                          alt={ex.name}
+                          className="w-16 h-16 rounded-xl object-cover border border-gray-150/80 dark:border-gray-850 shrink-0"
+                        />
                       ) : (
                         <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 border border-gray-150/80 dark:border-gray-850 shrink-0 flex items-center justify-center text-slate-400">
                           <Dumbbell size={22} />
                         </div>
                       )}
-                      
+
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <h4 className="text-xs font-black text-gray-900 dark:text-white truncate">
                           {ex.name}
                         </h4>
-                        
+
                         <div className="flex flex-wrap items-center gap-1">
                           <span className="px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 uppercase select-none shrink-0">
                             {ex.muscleGroup}
@@ -1222,8 +1211,8 @@ export default function Workouts() {
                             {ex.equipment}
                           </span>
                         </div>
-                        
-                        <button 
+
+                        <button
                           onClick={() => setSelectedExDetail(ex)}
                           className="text-[10px] font-black text-primary-accent hover:underline border-none bg-transparent cursor-pointer p-0 block"
                         >
@@ -1250,7 +1239,7 @@ export default function Workouts() {
               </h4>
               <p className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 mt-1">Run a 6-week progressive volume scan on your exercises to detect plateau traps.</p>
             </div>
-            <Button 
+            <Button
               onClick={handlePlateauCheckClick}
               disabled={isCheckingPlateau || !isBackendOnline}
               title={!isBackendOnline ? 'Connect to backend to use AI features' : 'Scan exercise volume trends'}
@@ -1259,60 +1248,84 @@ export default function Workouts() {
               {isCheckingPlateau ? 'Analyzing...' : 'Scan for Plateaus'}
             </Button>
           </div>
-          
-          {/* Heatmap Contribution Card */}
-          <Card title="Workout Log Heatmap" subtitle="Active logs over the past 8 weeks">
-            <div className="flex justify-center md:justify-start">
-              <div className="grid grid-flow-col grid-rows-7 gap-1 bg-gray-50 dark:bg-slate-900/40 p-4 rounded-xl border border-gray-150/40 dark:border-gray-800/80">
-                {getHeatmapDays().map((day, idx) => (
-                  <div 
-                    key={idx}
-                    title={`${day.dateStr}: ${day.completed ? 'Workout Logged 💪' : 'No workout'}`}
-                    className={`w-3.5 h-3.5 rounded-sm transition-all shadow-sm ${day.completed ? 'bg-primary-accent border border-primary-accent-hover/30 hover:scale-110 shadow-emerald-500/10' : 'bg-gray-200 dark:bg-slate-800 hover:bg-gray-300 dark:hover:bg-slate-700'}`}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-3 mt-4 text-[10px] text-gray-400 font-bold select-none justify-end">
-              <span>Less</span>
-              <div className="w-2.5 h-2.5 rounded-sm bg-gray-200 dark:bg-slate-800" />
-              <div className="w-2.5 h-2.5 rounded-sm bg-primary-accent" />
-              <span>More</span>
-            </div>
-          </Card>
+
+          {/* Enhanced Interactive Heatmap & Consistency Card */}
+          <WorkoutHeatmap
+            history={history}
+            streak={streak}
+            selectedDate={targetDateStr}
+            onSelectDate={(d) => {
+              setTargetDateStr(d);
+              setActiveTab('today');
+            }}
+          />
 
           {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 select-none">
-            
+
             {/* Volume Chart */}
-            <Card title="Total Lifted Volume (kg)" subtitle="Aggregated sets volume (weight × reps × completed sets)">
-              <div className="h-64 mt-2">
+            <Card
+              title="Total Lifted Volume (kg)"
+              subtitle="Aggregated sets volume (weight × reps × completed sets)"
+              icon={TrendingUp}
+              iconColor="bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+            >
+              <div className="h-68 mt-3">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={getVolumeData()} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={getVolumeData()} margin={{ top: 15, right: 15, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="volGlow" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="var(--primary-accent)" stopOpacity={0.25}/>
-                        <stop offset="95%" stopColor="var(--primary-accent)" stopOpacity={0.0}/>
+                        <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
+                        <stop offset="95%" stopColor="#10B981" stopOpacity={0.0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="date" stroke="#94A3B8" fontSize={9} fontWeight={600} />
-                    <YAxis stroke="#94A3B8" fontSize={9} fontWeight={600} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        background: 'var(--card-bg, #FFFFFF)', 
-                        border: '1.5px solid var(--border-main, #E5E7EB)', 
-                        borderRadius: '12px',
-                        fontSize: '11px',
-                        fontWeight: 650
-                      }} 
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
+                    <XAxis
+                      dataKey="date"
+                      stroke="#94A3B8"
+                      fontSize={10}
+                      fontWeight={700}
+                      tickLine={false}
+                      axisLine={false}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="volume" 
-                      stroke="var(--primary-accent)" 
-                      strokeWidth={2.5}
-                      fillOpacity={1} 
-                      fill="url(#volGlow)" 
+                    <YAxis
+                      stroke="#94A3B8"
+                      fontSize={10}
+                      fontWeight={700}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}
+                    />
+                    <Tooltip
+                      cursor={{ stroke: 'rgba(16, 185, 129, 0.4)', strokeWidth: 1.5, strokeDasharray: '4 4' }}
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const val = Number(payload[0].value) || 0;
+                          return (
+                            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl select-none">
+                              <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
+                                {label}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs" />
+                                <span className="text-sm font-black text-slate-900 dark:text-white">
+                                  {val.toLocaleString()} <span className="text-xs font-semibold text-slate-400">kg volume</span>
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="volume"
+                      stroke="#10B981"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#volGlow)"
+                      activeDot={{ r: 6, fill: '#10B981', stroke: '#FFFFFF', strokeWidth: 2 }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -1320,27 +1333,89 @@ export default function Workouts() {
             </Card>
 
             {/* Split Frequency Distribution */}
-            <Card title="Frequency distribution" subtitle="Count of logged sessions per muscle group">
-              <div className="h-64 mt-2">
+            <Card
+              title="Frequency Distribution"
+              subtitle="Count of logged sessions per muscle group"
+              icon={Activity}
+              iconColor="bg-blue-500/10 text-blue-500 border-blue-500/20"
+            >
+              <div className="h-68 mt-3">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={getFrequencyData()} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                    <XAxis dataKey="name" stroke="#94A3B8" fontSize={9} fontWeight={600} />
-                    <YAxis stroke="#94A3B8" fontSize={9} fontWeight={600} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        background: 'var(--card-bg, #FFFFFF)', 
-                        border: '1.5px solid var(--border-main, #E5E7EB)', 
-                        borderRadius: '12px',
-                        fontSize: '11px',
-                        fontWeight: 650
+                  <BarChart data={getFrequencyData()} margin={{ top: 15, right: 15, left: -25, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="freqGrad0" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10B981" />
+                        <stop offset="100%" stopColor="#059669" />
+                      </linearGradient>
+                      <linearGradient id="freqGrad1" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#06B6D4" />
+                        <stop offset="100%" stopColor="#0891B2" />
+                      </linearGradient>
+                      <linearGradient id="freqGrad2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8B5CF6" />
+                        <stop offset="100%" stopColor="#7C3AED" />
+                      </linearGradient>
+                      <linearGradient id="freqGrad3" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#F59E0B" />
+                        <stop offset="100%" stopColor="#D97706" />
+                      </linearGradient>
+                      <linearGradient id="freqGrad4" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#EC4899" />
+                        <stop offset="100%" stopColor="#DB2777" />
+                      </linearGradient>
+                      <linearGradient id="freqGrad5" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#3B82F6" />
+                        <stop offset="100%" stopColor="#2563EB" />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
+                    <XAxis
+                      dataKey="name"
+                      stroke="#94A3B8"
+                      fontSize={10}
+                      fontWeight={700}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="#94A3B8"
+                      fontSize={10}
+                      fontWeight={700}
+                      allowDecimals={false}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(16, 185, 129, 0.08)', radius: 10 }}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl select-none min-w-[140px]">
+                              <div className="flex items-center justify-between gap-3 mb-1">
+                                <span className="text-xs font-black text-slate-900 dark:text-white">{data.name}</span>
+                                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                  {data.count} {data.count === 1 ? 'session' : 'sessions'}
+                                </span>
+                              </div>
+                              <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+                                Target muscle group
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
                       }}
                     />
-                    <Bar 
-                      dataKey="count" 
-                      fill="var(--primary-accent)" 
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={30}
-                    />
+                    <Bar
+                      dataKey="count"
+                      radius={[8, 8, 4, 4]}
+                      maxBarSize={38}
+                    >
+                      {getFrequencyData().map((_, idx) => (
+                        <Cell key={`cell-${idx}`} fill={`url(#freqGrad${idx % 6})`} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -1354,17 +1429,17 @@ export default function Workouts() {
       {activeTab === 'coach' && (
         <div className="space-y-6 select-none animate-fade-in max-w-2xl mx-auto">
           <Card title="AI Workout Coach Chat" subtitle="Chat with your personal fitness coach. Ask about exercise cues, form corrections, or training programs.">
-            
+
             {/* Messages box */}
             <div id="chat-box" className="h-96 overflow-y-auto border border-gray-100 dark:border-gray-800 p-4 rounded-2xl space-y-3 bg-slate-50/50 dark:bg-slate-950/30 flex flex-col">
               {chatMessages.map((m, idx) => {
                 const isAssistant = m.role === 'assistant';
                 return (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className={`max-w-[85%] p-3 rounded-2xl text-xs font-semibold leading-relaxed
-                      ${isAssistant 
-                        ? 'bg-white dark:bg-slate-900 border border-gray-150/40 dark:border-gray-800/80 text-gray-800 dark:text-slate-350 self-start' 
+                      ${isAssistant
+                        ? 'bg-white dark:bg-slate-900 border border-gray-150/40 dark:border-gray-800/80 text-gray-800 dark:text-slate-350 self-start'
                         : 'bg-emerald-500 text-white self-end shadow-sm'
                       }
                     `}
@@ -1388,7 +1463,7 @@ export default function Workouts() {
             {/* Input form */}
             <form onSubmit={handleSendChatMessage} className="space-y-1.5 mt-4">
               <div className="flex gap-2">
-                <input 
+                <input
                   type="text"
                   value={chatInput}
                   maxLength={1000}
@@ -1397,7 +1472,7 @@ export default function Workouts() {
                   disabled={!isBackendOnline || isSendingMessage}
                   className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold rounded-xl focus:outline-none focus:border-emerald-500 text-gray-800 dark:text-white placeholder-gray-400"
                 />
-                <Button 
+                <Button
                   type="submit"
                   disabled={!isBackendOnline || isSendingMessage || !chatInput.trim()}
                   className="bg-emerald-500 hover:bg-emerald-600 text-white border-none py-2.5 px-4 font-black flex items-center justify-center shrink-0 rounded-xl"
@@ -1416,15 +1491,15 @@ export default function Workouts() {
       )}
 
       {selectedExDetail && (
-        <div 
+        <div
           onClick={() => setSelectedExDetail(null)}
           className="fixed inset-0 z-50 bg-black/45 dark:bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs select-none"
         >
-          <div 
+          <div
             onClick={(e) => e.stopPropagation()}
             className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-150 dark:border-gray-800 shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[85vh] animate-scale-up"
           >
-            
+
             {/* Modal Header Image or YouTube Video */}
             <div className="relative h-56 w-full bg-slate-900 shrink-0 select-none overflow-hidden">
               {isLoadingVideo ? (
@@ -1442,15 +1517,15 @@ export default function Workouts() {
                 ></iframe>
               ) : (
                 <>
-                  <img 
-                    src={selectedExDetail.imageUrl || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=60'} 
-                    alt={selectedExDetail.name} 
-                    className="w-full h-full object-cover opacity-60" 
+                  <img
+                    src={selectedExDetail.imageUrl || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=60'}
+                    alt={selectedExDetail.name}
+                    className="w-full h-full object-cover opacity-60"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 </>
               )}
-              
+
               {/* Overlay title and badges when not playing video or while loading */}
               {(!currentVideoId || isLoadingVideo) && (
                 <div className="absolute bottom-4 left-5 right-5 pointer-events-none z-10">
@@ -1467,7 +1542,7 @@ export default function Workouts() {
 
             {/* Modal Scrollable Body */}
             <div className="p-6 overflow-y-auto space-y-5">
-              
+
               {/* Title & Badges below video player if video is active */}
               {currentVideoId && !isLoadingVideo && (
                 <div className="border-b border-gray-150/60 dark:border-slate-800/80 pb-3">
@@ -1481,7 +1556,7 @@ export default function Workouts() {
                   </div>
                 </div>
               )}
-              
+
               {/* Cues List */}
               <div className="space-y-3">
                 <h5 className="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-slate-500">
@@ -1516,7 +1591,7 @@ export default function Workouts() {
 
             {/* Modal Footer */}
             <div className="p-4 bg-gray-50 dark:bg-slate-850 border-t border-gray-150/40 dark:border-gray-800/80 flex justify-end shrink-0">
-              <Button 
+              <Button
                 onClick={() => setSelectedExDetail(null)}
                 variant="primary"
                 className="py-1.5 px-6 font-black text-xs"
@@ -1541,11 +1616,11 @@ export default function Workouts() {
               <p className="text-xs text-gray-400 dark:text-slate-400">
                 Generate a tailored muscle group routine leveraging Progressive Overload based on your previous logs.
               </p>
-              
+
               {/* Muscle group */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Target Muscle Group</label>
-                <select 
+                <select
                   id="ai-muscle-select"
                   defaultValue={sessionDraft?.muscleGroup || 'Chest'}
                   className="w-full px-3 py-2 rounded-xl border border-gray-250 dark:border-slate-800 text-xs font-bold bg-white dark:bg-slate-950 text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
@@ -1559,7 +1634,7 @@ export default function Workouts() {
               {/* Fitness level */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Fitness Level</label>
-                <select 
+                <select
                   value={fitnessLevel}
                   onChange={(e) => setFitnessLevel(e.target.value as any)}
                   className="w-full px-3 py-2 rounded-xl border border-gray-250 dark:border-slate-800 text-xs font-bold bg-white dark:bg-slate-950 text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
@@ -1577,11 +1652,11 @@ export default function Workouts() {
                   <label className="cursor-pointer flex items-center gap-1.5 text-[10px] font-black text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/60 px-3 py-1.5 rounded-xl border border-emerald-500/10">
                     <Camera size={11} />
                     {isDetectingEquipment ? 'Scanning...' : 'Scan Gym space'}
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleScanEquipment} 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleScanEquipment}
                       disabled={isDetectingEquipment}
                     />
                   </label>
@@ -1591,8 +1666,8 @@ export default function Workouts() {
                     const checked = selectedEquipment.includes(eq);
                     return (
                       <label key={eq} className="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-slate-350 cursor-pointer">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           checked={checked}
                           onChange={() => {
                             if (checked) {
@@ -1614,16 +1689,16 @@ export default function Workouts() {
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Pain or Soreness today?</label>
                 <div className="flex gap-2">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="e.g. lower back, knee"
                     value={currentPainInput}
                     onChange={(e) => setCurrentPainInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddPainTag(); } }}
                     className="flex-1 px-3 py-2 border border-gray-250 dark:border-slate-800 rounded-xl text-xs font-bold bg-white dark:bg-slate-950 text-gray-800 dark:text-white focus:outline-none focus:border-primary-accent"
                   />
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     onClick={handleAddPainTag}
                     variant="outline"
                     className="py-2 px-4 text-xs font-bold"
@@ -1636,8 +1711,8 @@ export default function Workouts() {
                     {painFlags.map(tag => (
                       <span key={tag} className="inline-flex items-center gap-1.5 text-[10px] font-bold bg-red-50 dark:bg-red-950/20 text-red-600 border border-red-500/10 px-2.5 py-0.5 rounded-lg">
                         {tag}
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           onClick={() => handleRemovePainTag(tag)}
                           className="text-red-500 hover:text-red-700 p-0 border-none bg-transparent cursor-pointer font-bold leading-none"
                         >
@@ -1651,14 +1726,14 @@ export default function Workouts() {
             </div>
 
             <div className="p-4 bg-gray-50 dark:bg-slate-850 border-t border-gray-150/40 dark:border-gray-800/80 flex justify-end gap-2 shrink-0">
-              <Button 
+              <Button
                 onClick={() => setShowAiGenModal(false)}
                 variant="outline"
                 className="py-1.5 px-4 font-black text-xs"
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={() => {
                   const selectEl = document.getElementById('ai-muscle-select') as HTMLSelectElement;
                   const muscle = selectEl ? selectEl.value : 'Chest';
@@ -1683,7 +1758,7 @@ export default function Workouts() {
                 <AlertTriangle className={plateauResult.plateauDetected ? 'text-amber-550' : 'text-emerald-500'} size={20} />
                 Plateau & Deload Analysis
               </h3>
-              
+
               {plateauResult.plateauDetected ? (
                 <div className="space-y-4">
                   <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl">
@@ -1715,7 +1790,7 @@ export default function Workouts() {
             </div>
 
             <div className="p-4 bg-gray-50 dark:bg-slate-850 border-t border-gray-150/40 dark:border-gray-800/80 flex justify-end gap-2 shrink-0">
-              <Button 
+              <Button
                 onClick={() => setShowPlateauModal(false)}
                 variant="outline"
                 className="py-1.5 px-4 font-black text-xs"
@@ -1723,7 +1798,7 @@ export default function Workouts() {
                 Close
               </Button>
               {plateauResult.plateauDetected && plateauResult.suggestedDeloadWeek && (
-                <Button 
+                <Button
                   onClick={handleLoadDeloadWeek}
                   className="py-1.5 px-6 font-black text-xs bg-amber-500 text-white hover:bg-amber-600 border-none"
                 >
@@ -1737,11 +1812,11 @@ export default function Workouts() {
 
       {/* Floating Chat Button (FAB) & Swappy popover */}
       <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end select-none">
-        
+
         {/* Floating Chat Box */}
         {isFloatingChatOpen && (
           <div className="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800/80 rounded-3xl shadow-2xl w-[320px] sm:w-[360px] h-[450px] flex flex-col overflow-hidden mb-4 animate-scale-up border-emerald-500/10">
-            
+
             {/* Header */}
             <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-3 flex items-center justify-between shrink-0 shadow-sm">
               <div className="flex items-center gap-2">
@@ -1756,7 +1831,7 @@ export default function Workouts() {
                   <span className="text-[9px] font-semibold text-emerald-100 block">Coach Online</span>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setIsFloatingChatOpen(false)}
                 className="text-white/85 hover:text-white p-1 hover:bg-white/10 rounded-lg cursor-pointer border-none bg-transparent transition-all"
               >
@@ -1769,11 +1844,11 @@ export default function Workouts() {
               {chatMessages.map((m, idx) => {
                 const isAssistant = m.role === 'assistant';
                 return (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className={`max-w-[85%] p-2.5 rounded-2xl text-[11px] font-semibold leading-relaxed
-                      ${isAssistant 
-                        ? 'bg-white dark:bg-slate-900 border border-gray-150/40 dark:border-gray-800/80 text-gray-800 dark:text-slate-350 self-start' 
+                      ${isAssistant
+                        ? 'bg-white dark:bg-slate-900 border border-gray-150/40 dark:border-gray-800/80 text-gray-800 dark:text-slate-350 self-start'
                         : 'bg-emerald-500 text-white self-end shadow-sm'
                       }
                     `}
@@ -1796,7 +1871,7 @@ export default function Workouts() {
 
             {/* Input Form */}
             <form onSubmit={handleSendChatMessage} className="p-2 border-t border-slate-100 dark:border-slate-800/60 bg-white dark:bg-slate-900 flex gap-1.5 items-center shrink-0">
-              <input 
+              <input
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
@@ -1804,7 +1879,7 @@ export default function Workouts() {
                 disabled={!isBackendOnline || isSendingMessage}
                 className="flex-1 px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-[11px] font-semibold rounded-xl focus:outline-none focus:border-emerald-500 text-gray-800 dark:text-white placeholder-gray-400"
               />
-              <button 
+              <button
                 type="submit"
                 disabled={!isBackendOnline || isSendingMessage || !chatInput.trim()}
                 className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-white p-2 rounded-xl border-none flex items-center justify-center shrink-0 cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-sm"
@@ -1817,7 +1892,7 @@ export default function Workouts() {
         )}
 
         {/* FAB Button */}
-        <button 
+        <button
           onClick={() => setIsFloatingChatOpen(!isFloatingChatOpen)}
           title="Chat with Swappy AI"
           className="w-12 h-12 bg-primary-blue hover:bg-primary-blue-hover text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/20 cursor-pointer transition-all duration-200 active:scale-95 border-none"
