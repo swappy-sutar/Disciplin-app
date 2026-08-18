@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
   format,
-  parseISO,
   subDays,
   startOfWeek,
   addDays,
@@ -16,10 +15,8 @@ import {
   Calendar as CalendarIcon,
   Sparkles,
   ChevronRight,
-  Activity,
   PieChart,
-  Zap,
-  Target
+  Zap
 } from 'lucide-react';
 import type { WorkoutSession, WorkoutStreak } from '../../types';
 
@@ -48,7 +45,7 @@ export const WorkoutHeatmap: React.FC<WorkoutHeatmapProps> = ({
   history = [],
   streak,
   onSelectDate,
-  selectedDate,
+  selectedDate: _selectedDate,
 }) => {
   // Default to 52 weeks (1 full year) to use full desktop width
   const [selectedRange, setSelectedRange] = useState<TimeRangeWeeks>(52);
